@@ -8,8 +8,9 @@ interface Props {
   locale: Locale;
   title: string;
   description: string;
+  languagePath?: string;
 }
-const { locale, title, description } = Astro.props;
+const { locale, title, description, languagePath } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -36,7 +37,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     }
   </head>
   <body>
-    <Header {locale} />
+    <Header {locale} {languagePath} />
     <main id="top"><slot /></main>
     <Footer {locale} />
   </body>

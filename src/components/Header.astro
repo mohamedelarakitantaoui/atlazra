@@ -6,8 +6,9 @@ import { t } from '../i18n/content';
 import type { Locale } from '../i18n/routing';
 interface Props {
   locale: Locale;
+  languagePath?: string;
 }
-const { locale } = Astro.props;
+const { locale, languagePath } = Astro.props;
 ---
 
 <header>
@@ -23,14 +24,16 @@ const { locale } = Astro.props;
     >
       <ul>
         <li>
-          <a href={`/${locale}/#services`}>{t(locale, 'nav.services')}</a>
+          <a href={`/${locale}/services/`}>{t(locale, 'nav.services')}</a>
         </li>
         <li><a href={`/${locale}/#etapes`}>{t(locale, 'nav.process')}</a></li>
-        <li><a href={`/${locale}/#projets`}>{t(locale, 'nav.projects')}</a></li>
+        <li>
+          <a href={`/${locale}/realisations/`}>{t(locale, 'nav.projects')}</a>
+        </li>
         <li><a href={`/${locale}/contact/`}>{t(locale, 'nav.contact')}</a></li>
       </ul>
     </nav>
-    <LanguageSwitcher {locale} />
+    <LanguageSwitcher {locale} path={languagePath} />
     <Button class="header-cta" href={`/${locale}/contact/`}
       >{t(locale, 'nav.cta')}</Button
     >

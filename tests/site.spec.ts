@@ -2,8 +2,17 @@ import { expect, test } from '@playwright/test';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { locales, localizedPath } from '../src/i18n/routing';
+import { t } from '../src/i18n/content';
 
-const pages = ['', 'contact/', 'dev/ui/'];
+const pages = [
+  '',
+  'contact/',
+  'services/',
+  'realisations/',
+  'mentions-legales/',
+  'confidentialite/',
+  'dev/ui/',
+];
 
 for (const path of pages) {
   for (const locale of locales) {
@@ -96,9 +105,12 @@ for (const locale of ['fr', 'ar'] as const) {
     await expect(nav).not.toBeVisible();
     await expect(menu).toBeFocused();
     await menu.click();
-    await nav.locator(`a[href="/${locale}/#services"]`).click();
+    await nav.locator(`a[href="/${locale}/services/"]`).click();
+    await expect(page).toHaveURL(new RegExp(`/${locale}/services/$`));
     await expect(nav).not.toBeVisible();
-    await expect(page.locator('#services')).toBeInViewport();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+      t(locale, 'pages.services.title'),
+    );
     await page.goto(`/${locale}/contact/`, { waitUntil: 'networkidle' });
     await expect(nav).not.toBeVisible();
   });

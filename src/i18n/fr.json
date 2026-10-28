@@ -17,7 +17,12 @@
   },
   "footer": {
     "brand": "Atlazra Design",
-    "copyright": "© {year} Atlazra Design · Dar Nizar, Rabat – Salé"
+    "copyright": "© {year} Atlazra Design · Dar Nizar, Rabat – Salé",
+    "legal": "Mentions légales",
+    "privacy": "Confidentialité",
+    "location": "Dar Nizar, Rabat – Salé",
+    "map": "Ouvrir dans Google Maps",
+    "links": "Liens légaux"
   },
   "home": {
     "title": "L'art des espaces verts",
@@ -79,6 +84,28 @@
       "error": "Indiquez un numéro où vous joindre.",
       "errorLabel": "Exemple avec erreur",
       "link": "Voir les champs"
+    },
+    "services": {
+      "title": "Services",
+      "intro": "Un seul interlocuteur pour la conception, les plantations et les ouvrages extérieurs."
+    },
+    "realisations": {
+      "title": "Réalisations",
+      "intro": "Les photos de nos chantiers seront publiées ici."
+    },
+    "legal": {
+      "title": "Mentions légales",
+      "intro": "Les informations légales seront publiées ici.",
+      "todo": "TODO(client): fournir les mentions légales de l’entreprise."
+    },
+    "privacy": {
+      "title": "Confidentialité",
+      "intro": "Les informations sur la confidentialité seront publiées ici.",
+      "todo": "TODO(client): fournir la politique de confidentialité."
+    },
+    "notFound": {
+      "title": "Page introuvable",
+      "intro": "Cette page est introuvable. Choisissez une langue pour revenir à l’accueil."
     }
   }
 }

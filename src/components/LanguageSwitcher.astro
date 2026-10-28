@@ -3,15 +3,24 @@ import { locales, localizedPath, type Locale } from '../i18n/routing';
 import { t } from '../i18n/content';
 interface Props {
   locale: Locale;
+  path?: string;
 }
-const { locale } = Astro.props;
+const { locale, path } = Astro.props;
 ---
 
-<nav class="lang" aria-label={t(locale, 'nav.language')} data-language-switch>
+<nav
+  class="lang"
+  aria-label={t(locale, 'nav.language')}
+  data-language-switch
+  data-language-path={path}
+>
   {
     locales.map((target) => (
       <a
-        href={localizedPath(Astro.url.pathname + Astro.url.search, target)}
+        href={localizedPath(
+          path ?? Astro.url.pathname + Astro.url.search,
+          target,
+        )}
         lang={target}
         hreflang={target}
         aria-current={locale === target ? 'page' : undefined}
@@ -30,7 +39,9 @@ const { locale } = Astro.props;
       .querySelectorAll<HTMLAnchorElement>('[data-language-switch] a[lang]')
       .forEach((link) => {
         link.href = localizedPath(
-          location.pathname + location.search + location.hash,
+          link.closest<HTMLElement>('[data-language-switch]')?.dataset
+            .languagePath ??
+            location.pathname + location.search + location.hash,
           link.lang as Locale,
         );
       });

@@ -17,7 +17,12 @@
   },
   "footer": {
     "brand": "Atlazra Design",
-    "copyright": "© {year} Atlazra Design · Dar Nizar, Rabat – Salé"
+    "copyright": "© {year} Atlazra Design · Dar Nizar, Rabat – Salé",
+    "legal": "Legal notice",
+    "privacy": "Privacy",
+    "location": "Dar Nizar, Rabat – Salé",
+    "map": "Open in Google Maps",
+    "links": "Legal links"
   },
   "home": {
     "title": "The art of green spaces",
@@ -79,6 +84,28 @@
       "error": "Enter a phone number we can call.",
       "errorLabel": "Example with an error",
       "link": "View fields"
+    },
+    "services": {
+      "title": "Services",
+      "intro": "One contact for design, planting and outdoor construction."
+    },
+    "realisations": {
+      "title": "Projects",
+      "intro": "Photos of our sites will be published here."
+    },
+    "legal": {
+      "title": "Legal notice",
+      "intro": "Legal information will be published here.",
+      "todo": "TODO(client): provide the company’s legal notice."
+    },
+    "privacy": {
+      "title": "Privacy",
+      "intro": "Privacy information will be published here.",
+      "todo": "TODO(client): provide the privacy policy."
+    },
+    "notFound": {
+      "title": "Page not found",
+      "intro": "This page could not be found. Choose a language to return home."
     }
   }
 }

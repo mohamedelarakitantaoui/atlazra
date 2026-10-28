@@ -88,6 +88,22 @@ p {
 .muted {
   color: var(--ink-2);
 }
+.page-shell {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-6);
+  padding-block: clamp(64px, 9vw, 120px);
+}
+.page-shell p {
+  max-width: 60ch;
+  color: var(--ink-2);
+}
+.placeholder {
+  background: var(--mist);
+  padding: var(--space-6);
+  border-radius: var(--radius-m);
+  overflow-wrap: anywhere;
+}
 .link {
   color: var(--forest);
   font-weight: 600;

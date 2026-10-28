@@ -19,7 +19,18 @@ const [copyrightStart, copyrightEnd] = t(locale, 'footer.copyright')
         ><Logo decorative /></a
       >
       <small>{t(locale, 'home.title')}</small>
+      <small>{t(locale, 'footer.location')}</small>
+      <a
+        class="map-link"
+        href="https://maps.app.goo.gl/6f43CHxzyrMHoT4f9"
+        target="_blank"
+        rel="noopener">{t(locale, 'footer.map')}</a
+      >
     </div>
+    <nav class="legal-links" aria-label={t(locale, 'footer.links')}>
+      <a href={`/${locale}/mentions-legales/`}>{t(locale, 'footer.legal')}</a>
+      <a href={`/${locale}/confidentialite/`}>{t(locale, 'footer.privacy')}</a>
+    </nav>
     <small class="copyright"
       >{copyrightStart}<bdi>{brand}</bdi>{copyrightEnd}</small
     >
@@ -56,5 +67,19 @@ const [copyrightStart, copyrightEnd] = t(locale, 'footer.copyright')
   small {
     color: var(--ink-2);
     font-size: 0.85rem;
+  }
+  .legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+  }
+  .legal-links a,
+  .map-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--ink-2);
+    font-size: 0.85rem;
+    text-underline-offset: 3px;
   }
 </style>
