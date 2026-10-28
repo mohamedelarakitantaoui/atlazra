@@ -1,0 +1,84 @@
+{
+  "nav": {
+    "services": "Services",
+    "process": "Comment ça marche",
+    "projects": "Réalisations",
+    "contact": "Contact",
+    "cta": "Demander une visite",
+    "label": "Navigation principale",
+    "language": "Langue",
+    "menu": "Menu",
+    "home": "Atlazra Design, accueil",
+    "locales": {
+      "fr": "FR",
+      "ar": "ع",
+      "en": "EN"
+    }
+  },
+  "footer": {
+    "brand": "Atlazra Design",
+    "copyright": "© {year} Atlazra Design · Dar Nizar, Rabat – Salé"
+  },
+  "home": {
+    "title": "L'art des espaces verts",
+    "intro": "Nous dessinons votre jardin en 3D, vous le modifiez jusqu'à ce qu'il vous ressemble, puis nos équipes le réalisent.",
+    "servicesTitle": "Du plan au jardin fini",
+    "servicesText": "Un seul interlocuteur pour la conception, les plantations et les ouvrages extérieurs.",
+    "processTitle": "Comment se passe un projet",
+    "processText": "Quatre étapes, de la première visite à la remise des clés du jardin.",
+    "projectsText": "Les photos de nos chantiers seront publiées ici."
+  },
+  "contact": {
+    "title": "Parlons de votre jardin",
+    "intro": "Décrivez votre terrain en quelques lignes. Nous vous rappelons pour fixer une visite.",
+    "address": "Adresse",
+    "region": "Rabat – Salé",
+    "phone": "Téléphone et WhatsApp",
+    "email": "Email",
+    "hours": "Horaires",
+    "pending": "À compléter",
+    "map": "Ouvrir dans Google Maps",
+    "location": "Dar Nizar, Rabat – Salé",
+    "todos": {
+      "phone": "TODO(client): Phone / WhatsApp number.",
+      "email": "TODO(client): Email address.",
+      "hours": "TODO(client): Opening hours.",
+      "address": "TODO(client): Confirm Dar Nizar label; the map pin is named Top Dar Fleur."
+    }
+  },
+  "pages": {
+    "ui": {
+      "title": "Composants d’interface",
+      "intro": "Phase 1 · Primitives Atlazra Design",
+      "language": "Langue",
+      "logos": "Logo",
+      "full": "Complet",
+      "mark": "Symbole",
+      "wordmark": "Signature",
+      "buttons": "Boutons et étiquettes",
+      "primary": "Demander une visite",
+      "quiet": "Nos services",
+      "chip": "Jardins de villa",
+      "selected": "Plan 2D coté",
+      "controls": "Sélection",
+      "model": "Affichage de la maquette",
+      "current": "Terrain actuel",
+      "project": "Projet Atlazra",
+      "controlsNote": "Utilisez les flèches du clavier pour changer la sélection.",
+      "accordion": "Accordéon",
+      "design": "Conception 3D",
+      "summary": "Vous voyez le jardin avant les travaux",
+      "detail": "Plan coté et maquette 3D : arbres, allées, éclairage, mobilier. Vous demandez des changements sur la maquette, et le devis suit le plan que vous avez validé.",
+      "more": "Choix des matériaux",
+      "moreDetail": "Vous demandez des modifications sur la maquette.",
+      "fields": "Champs de saisie",
+      "name": "Nom",
+      "phone": "Téléphone",
+      "projectLabel": "Votre projet",
+      "placeholder": "Surface, ville, ce que vous aimeriez avoir dans le jardin…",
+      "error": "Indiquez un numéro où vous joindre.",
+      "errorLabel": "Exemple avec erreur",
+      "link": "Voir les champs"
+    }
+  }
+}

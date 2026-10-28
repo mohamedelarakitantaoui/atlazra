@@ -1,14 +1,13 @@
 ---
 import { locales, localizedPath, type Locale } from '../i18n/routing';
-import { content } from '../i18n/content';
+import { t } from '../i18n/content';
 interface Props {
   locale: Locale;
 }
 const { locale } = Astro.props;
-const labels = { fr: 'FR', ar: 'ع', en: 'EN' };
 ---
 
-<nav class="lang" aria-label={content[locale].language} data-language-switch>
+<nav class="lang" aria-label={t(locale, 'nav.language')} data-language-switch>
   {
     locales.map((target) => (
       <a
@@ -17,7 +16,7 @@ const labels = { fr: 'FR', ar: 'ع', en: 'EN' };
         hreflang={target}
         aria-current={locale === target ? 'page' : undefined}
       >
-        {labels[target]}
+        {t(locale, `nav.locales.${target}`)}
       </a>
     ))
   }

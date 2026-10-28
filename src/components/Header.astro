@@ -2,41 +2,44 @@
 import Logo from './ui/Logo.astro';
 import Button from './ui/Button.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
-import { content } from '../i18n/content';
+import { t } from '../i18n/content';
 import type { Locale } from '../i18n/routing';
 interface Props {
   locale: Locale;
 }
 const { locale } = Astro.props;
-const t = content[locale];
 ---
 
 <header>
   <div class="wrap bar">
-    <a class="brand" href={`/${locale}/`} aria-label={t.top}
+    <a class="brand" href={`/${locale}/`} aria-label={t(locale, 'nav.home')}
       ><Logo decorative /></a
     >
     <nav
       class="main-nav"
       id="main-nav"
       data-open="false"
-      aria-label={t.navigation}
+      aria-label={t(locale, 'nav.label')}
     >
       <ul>
-        <li><a href={`/${locale}/#services`}>{t.services}</a></li>
-        <li><a href={`/${locale}/#etapes`}>{t.process}</a></li>
-        <li><a href={`/${locale}/#projets`}>{t.projects}</a></li>
-        <li><a href={`/${locale}/contact/`}>{t.contact}</a></li>
+        <li>
+          <a href={`/${locale}/#services`}>{t(locale, 'nav.services')}</a>
+        </li>
+        <li><a href={`/${locale}/#etapes`}>{t(locale, 'nav.process')}</a></li>
+        <li><a href={`/${locale}/#projets`}>{t(locale, 'nav.projects')}</a></li>
+        <li><a href={`/${locale}/contact/`}>{t(locale, 'nav.contact')}</a></li>
       </ul>
     </nav>
     <LanguageSwitcher {locale} />
-    <Button class="header-cta" href={`/${locale}/contact/`}>{t.cta}</Button>
+    <Button class="header-cta" href={`/${locale}/contact/`}
+      >{t(locale, 'nav.cta')}</Button
+    >
     <button
       class="menu-btn"
       type="button"
       aria-expanded="false"
       aria-controls="main-nav"
-      aria-label={t.menu}><span></span></button
+      aria-label={t(locale, 'nav.menu')}><span></span></button
     >
   </div>
 </header>

@@ -1,3 +1,84 @@
 {
-  "copyright": "© 2026 Atlazra Design · دار نزار، الرباط – سلا"
+  "nav": {
+    "services": "خدماتنا",
+    "process": "كيف نعمل",
+    "projects": "إنجازاتنا",
+    "contact": "اتصل بنا",
+    "cta": "اطلب زيارة",
+    "label": "التنقل الرئيسي",
+    "language": "اللغة",
+    "menu": "القائمة",
+    "home": "أطلزرا ديزاين، الرئيسية",
+    "locales": {
+      "fr": "FR",
+      "ar": "ع",
+      "en": "EN"
+    }
+  },
+  "footer": {
+    "brand": "Atlazra Design",
+    "copyright": "© 2026 Atlazra Design · دار نزار، الرباط – سلا"
+  },
+  "home": {
+    "title": "فنّ المساحات الخضراء",
+    "intro": "نرسم حديقتك بالأبعاد الثلاثة، تعدّلها حتى تشبهك، ثم تنجزها فرقنا.",
+    "servicesTitle": "من المخطط إلى الحديقة",
+    "servicesText": "محاور واحد للتصميم والغرس والأشغال الخارجية.",
+    "processTitle": "كيف يسير المشروع",
+    "processText": "أربع مراحل، من الزيارة الأولى إلى تسليم الحديقة.",
+    "projectsText": "ستُنشر هنا صور أوراشنا."
+  },
+  "contact": {
+    "title": "لنتحدث عن حديقتك",
+    "intro": "صف أرضك في بضعة أسطر، وسنتصل بك لتحديد موعد الزيارة.",
+    "address": "العنوان",
+    "region": "الرباط – سلا",
+    "phone": "الهاتف وواتساب",
+    "email": "البريد الإلكتروني",
+    "hours": "ساعات العمل",
+    "pending": "يُضاف لاحقاً",
+    "map": "افتح في خرائط Google",
+    "location": "Dar Nizar, الرباط – سلا",
+    "todos": {
+      "phone": "TODO(client): Phone / WhatsApp number.",
+      "email": "TODO(client): Email address.",
+      "hours": "TODO(client): Opening hours.",
+      "address": "TODO(client): Confirm Dar Nizar label; the map pin is named Top Dar Fleur."
+    }
+  },
+  "pages": {
+    "ui": {
+      "title": "عناصر الواجهة",
+      "intro": "المرحلة الأولى · عناصر أطلزرا ديزاين",
+      "language": "اللغة",
+      "logos": "الشعار",
+      "full": "كامل",
+      "mark": "الرمز",
+      "wordmark": "الاسم",
+      "buttons": "الأزرار والوسوم",
+      "primary": "اطلب زيارة",
+      "quiet": "خدماتنا",
+      "chip": "حدائق الفيلات",
+      "selected": "مخطط بالأبعاد",
+      "controls": "الاختيار",
+      "model": "عرض المجسّم",
+      "current": "الأرض الحالية",
+      "project": "مشروع أطلزرا",
+      "controlsNote": "استخدم مفاتيح الأسهم لتغيير الاختيار.",
+      "accordion": "التفاصيل القابلة للفتح",
+      "design": "تصميم ثلاثي الأبعاد",
+      "summary": "ترى الحديقة قبل الأشغال",
+      "detail": "مخطط بالأبعاد ومجسّم ثلاثي الأبعاد: أشجار، ممرات، إضاءة وأثاث. تطلب تعديلات على المجسّم، وعرض السعر يتبع المخطط الذي وافقت عليه.",
+      "more": "اختيار المواد",
+      "moreDetail": "تطلب تعديلات على المجسّم.",
+      "fields": "حقول الإدخال",
+      "name": "الاسم",
+      "phone": "الهاتف",
+      "projectLabel": "مشروعك",
+      "placeholder": "المساحة، المدينة، ما تودّ أن يكون في الحديقة…",
+      "error": "أدخل رقم هاتف يمكننا الاتصال به.",
+      "errorLabel": "مثال مع خطأ",
+      "link": "عرض الحقول"
+    }
+  }
 }

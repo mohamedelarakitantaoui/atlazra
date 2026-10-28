@@ -1,38 +1,27 @@
 ---
 import Logo from './ui/Logo.astro';
-import { content } from '../i18n/content';
+import { t } from '../i18n/content';
 import type { Locale } from '../i18n/routing';
-import ar from '../i18n/ar.json';
 interface Props {
   locale: Locale;
 }
 const { locale } = Astro.props;
-const [copyrightStart, copyrightEnd] = ar.copyright.split('Atlazra Design');
+const brand = t(locale, 'footer.brand');
+const [copyrightStart, copyrightEnd] = t(locale, 'footer.copyright')
+  .replace('{year}', String(new Date().getUTCFullYear()))
+  .split(brand);
 ---
 
 <footer>
   <div class="wrap foot">
     <div class="signature">
-      <a class="brand" href={`/${locale}/`} aria-label={content[locale].top}
+      <a class="brand" href={`/${locale}/`} aria-label={t(locale, 'nav.home')}
         ><Logo decorative /></a
       >
-      <small>{content[locale].home}</small>
+      <small>{t(locale, 'home.title')}</small>
     </div>
     <small class="copyright"
-      >{
-        locale === 'ar' ? (
-          <>
-            {copyrightStart}
-            <bdi>Atlazra Design</bdi>
-            {copyrightEnd}
-          </>
-        ) : (
-          <>
-            © {new Date().getUTCFullYear()} Atlazra Design · Dar Nizar,{' '}
-            {content[locale].region}
-          </>
-        )
-      }</small
+      >{copyrightStart}<bdi>{brand}</bdi>{copyrightEnd}</small
     >
   </div>
 </footer>

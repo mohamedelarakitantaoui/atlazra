@@ -1,98 +1,27 @@
-// Copy: reference/index.html markup (FR), T.en / T.ar (lines 383–406).
-export const content = {
-  fr: {
-    home: "L'art des espaces verts",
-    intro:
-      "Nous dessinons votre jardin en 3D, vous le modifiez jusqu'à ce qu'il vous ressemble, puis nos équipes le réalisent.",
-    services: 'Services',
-    process: 'Comment ça marche',
-    projects: 'Réalisations',
-    contact: 'Contact',
-    cta: 'Demander une visite',
-    servicesTitle: 'Du plan au jardin fini',
-    servicesText:
-      'Un seul interlocuteur pour la conception, les plantations et les ouvrages extérieurs.',
-    processTitle: 'Comment se passe un projet',
-    processText:
-      'Quatre étapes, de la première visite à la remise des clés du jardin.',
-    projectsText: 'Les photos de nos chantiers seront publiées ici.',
-    contactTitle: 'Parlons de votre jardin',
-    contactText:
-      'Décrivez votre terrain en quelques lignes. Nous vous rappelons pour fixer une visite.',
-    address: 'Adresse',
-    region: 'Rabat – Salé',
-    phone: 'Téléphone et WhatsApp',
-    email: 'Email',
-    hours: 'Horaires',
-    pending: 'À compléter',
-    map: 'Ouvrir dans Google Maps',
-    navigation: 'Navigation principale',
-    language: 'Langue',
-    menu: 'Menu',
-    top: 'Atlazra Design, accueil',
-  },
-  ar: {
-    home: 'فنّ المساحات الخضراء',
-    intro: 'نرسم حديقتك بالأبعاد الثلاثة، تعدّلها حتى تشبهك، ثم تنجزها فرقنا.',
-    services: 'خدماتنا',
-    process: 'كيف نعمل',
-    projects: 'إنجازاتنا',
-    contact: 'اتصل بنا',
-    cta: 'اطلب زيارة',
-    servicesTitle: 'من المخطط إلى الحديقة',
-    servicesText: 'محاور واحد للتصميم والغرس والأشغال الخارجية.',
-    processTitle: 'كيف يسير المشروع',
-    processText: 'أربع مراحل، من الزيارة الأولى إلى تسليم الحديقة.',
-    projectsText: 'ستُنشر هنا صور أوراشنا.',
-    contactTitle: 'لنتحدث عن حديقتك',
-    contactText: 'صف أرضك في بضعة أسطر، وسنتصل بك لتحديد موعد الزيارة.',
-    address: 'العنوان',
-    region: 'الرباط – سلا',
-    phone: 'الهاتف وواتساب',
-    email: 'البريد الإلكتروني',
-    hours: 'ساعات العمل',
-    pending: 'يُضاف لاحقاً',
-    map: 'افتح في خرائط Google',
-    navigation: 'التنقل الرئيسي',
-    language: 'اللغة',
-    menu: 'القائمة',
-    top: 'أطلزرا ديزاين، الرئيسية',
-  },
-  en: {
-    home: 'The art of green spaces',
-    intro:
-      'We design your garden in 3D, you change it until it feels like yours, then our teams build it.',
-    services: 'Services',
-    process: 'How it works',
-    projects: 'Projects',
-    contact: 'Contact',
-    cta: 'Book a site visit',
-    servicesTitle: 'From plan to finished garden',
-    servicesText: 'One contact for design, planting and outdoor construction.',
-    processTitle: 'How a project runs',
-    processText: 'Four steps, from the first visit to handing over the garden.',
-    projectsText: 'Photos of our sites will be published here.',
-    contactTitle: "Let's talk about your garden",
-    contactText:
-      "Describe your land in a few lines. We'll call you back to arrange a visit.",
-    address: 'Address',
-    region: 'Rabat – Salé',
-    phone: 'Phone and WhatsApp',
-    email: 'Email',
-    hours: 'Opening hours',
-    pending: 'To be added',
-    map: 'Open in Google Maps',
-    navigation: 'Main navigation',
-    language: 'Language',
-    menu: 'Menu',
-    top: 'Atlazra Design, home',
-  },
-};
+import fr from './fr.json';
+import ar from './ar.json';
+import en from './en.json';
+import type { Locale } from './routing';
 
-export const clientTodos = {
-  phone: 'TODO(client): Phone / WhatsApp number.',
-  email: 'TODO(client): Email address.',
-  hours: 'TODO(client): Opening hours.',
-  address:
-    'TODO(client): Confirm Dar Nizar label; the map pin is named Top Dar Fleur.',
+type Schema<T> = {
+  [K in keyof T]: T[K] extends string ? string : Schema<T[K]>;
 };
+// All three schemas participate: a missing key in ANY locale is a type error.
+const dictionaries = { fr, ar, en } satisfies Record<
+  Locale,
+  Schema<typeof fr> & Schema<typeof ar> & Schema<typeof en>
+>;
+type Paths<T> = {
+  [K in keyof T & string]: T[K] extends string ? K : `${K}.${Paths<T[K]>}`;
+}[keyof T & string];
+export type TranslationKey = Paths<typeof fr>;
+
+export function t(lang: Locale, key: TranslationKey): string {
+  let value: unknown = dictionaries[lang];
+  for (const part of key.split('.')) {
+    value = (value as Record<string, unknown>)[part];
+  }
+  if (typeof value !== 'string')
+    throw new Error(`Missing translation: ${lang}.${key}`);
+  return value;
+}

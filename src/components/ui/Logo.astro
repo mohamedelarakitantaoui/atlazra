@@ -1,4 +1,5 @@
 ---
+import { t } from '../../i18n/content';
 import full from '../../../public/brand/atlazra-logo.svg?raw';
 import mark from '../../../public/brand/atlazra-mark.svg?raw';
 import wordmark from '../../../public/brand/atlazra-wordmark.svg?raw';
@@ -10,7 +11,7 @@ interface Props {
 }
 const {
   variant = 'wordmark',
-  label = 'Atlazra Design',
+  label = t('fr', 'footer.brand'),
   decorative = false,
 } = Astro.props;
 const artwork = { full, mark, wordmark }[variant];

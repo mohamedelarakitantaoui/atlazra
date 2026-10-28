@@ -1,0 +1,84 @@
+{
+  "nav": {
+    "services": "Services",
+    "process": "How it works",
+    "projects": "Projects",
+    "contact": "Contact",
+    "cta": "Book a site visit",
+    "label": "Main navigation",
+    "language": "Language",
+    "menu": "Menu",
+    "home": "Atlazra Design, home",
+    "locales": {
+      "fr": "FR",
+      "ar": "ع",
+      "en": "EN"
+    }
+  },
+  "footer": {
+    "brand": "Atlazra Design",
+    "copyright": "© {year} Atlazra Design · Dar Nizar, Rabat – Salé"
+  },
+  "home": {
+    "title": "The art of green spaces",
+    "intro": "We design your garden in 3D, you change it until it feels like yours, then our teams build it.",
+    "servicesTitle": "From plan to finished garden",
+    "servicesText": "One contact for design, planting and outdoor construction.",
+    "processTitle": "How a project runs",
+    "processText": "Four steps, from the first visit to handing over the garden.",
+    "projectsText": "Photos of our sites will be published here."
+  },
+  "contact": {
+    "title": "Let's talk about your garden",
+    "intro": "Describe your land in a few lines. We'll call you back to arrange a visit.",
+    "address": "Address",
+    "region": "Rabat – Salé",
+    "phone": "Phone and WhatsApp",
+    "email": "Email",
+    "hours": "Opening hours",
+    "pending": "To be added",
+    "map": "Open in Google Maps",
+    "location": "Dar Nizar, Rabat – Salé",
+    "todos": {
+      "phone": "TODO(client): Phone / WhatsApp number.",
+      "email": "TODO(client): Email address.",
+      "hours": "TODO(client): Opening hours.",
+      "address": "TODO(client): Confirm Dar Nizar label; the map pin is named Top Dar Fleur."
+    }
+  },
+  "pages": {
+    "ui": {
+      "title": "Interface components",
+      "intro": "Phase 1 · Atlazra Design primitives",
+      "language": "Language",
+      "logos": "Logo",
+      "full": "Full",
+      "mark": "Mark",
+      "wordmark": "Wordmark",
+      "buttons": "Buttons and tags",
+      "primary": "Book a site visit",
+      "quiet": "Our services",
+      "chip": "Villa gardens",
+      "selected": "Dimensioned 2D plan",
+      "controls": "Selection",
+      "model": "Model display",
+      "current": "Current site",
+      "project": "Atlazra project",
+      "controlsNote": "Use the arrow keys to change the selection.",
+      "accordion": "Accordion",
+      "design": "3D design",
+      "summary": "See the garden before work starts",
+      "detail": "A dimensioned plan and a 3D model: trees, paths, lighting, furniture. You ask for changes on the model, and the quote follows the plan you approved.",
+      "more": "Material selection",
+      "moreDetail": "You ask for changes on the model.",
+      "fields": "Input fields",
+      "name": "Name",
+      "phone": "Phone",
+      "projectLabel": "Your project",
+      "placeholder": "Size, city, what you would like in the garden…",
+      "error": "Enter a phone number we can call.",
+      "errorLabel": "Example with an error",
+      "link": "View fields"
+    }
+  }
+}
