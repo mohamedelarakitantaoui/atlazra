@@ -1,0 +1,71 @@
+---
+import Logo from './ui/Logo.astro';
+import { content } from '../i18n/content';
+import type { Locale } from '../i18n/routing';
+import ar from '../i18n/ar.json';
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const [copyrightStart, copyrightEnd] = ar.copyright.split('Atlazra Design');
+---
+
+<footer>
+  <div class="wrap foot">
+    <div class="signature">
+      <a class="brand" href={`/${locale}/`} aria-label={content[locale].top}
+        ><Logo decorative /></a
+      >
+      <small>{content[locale].home}</small>
+    </div>
+    <small class="copyright"
+      >{
+        locale === 'ar' ? (
+          <>
+            {copyrightStart}
+            <bdi>Atlazra Design</bdi>
+            {copyrightEnd}
+          </>
+        ) : (
+          <>
+            © {new Date().getUTCFullYear()} Atlazra Design · Dar Nizar,{' '}
+            {content[locale].region}
+          </>
+        )
+      }</small
+    >
+  </div>
+</footer>
+
+<style>
+  /* Reference footer, lines 190–193, markup 372–376. */
+  footer {
+    padding-block: 48px 40px;
+    border-top: 1px solid var(--rule);
+  }
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 40px;
+    justify-content: space-between;
+    align-items: end;
+  }
+  .signature {
+    display: grid;
+    gap: 10px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    color: var(--forest);
+    text-decoration: none;
+    min-height: 44px;
+  }
+  .foot .brand :global(svg) {
+    height: 22px;
+  }
+  small {
+    color: var(--ink-2);
+    font-size: 0.85rem;
+  }
+</style>

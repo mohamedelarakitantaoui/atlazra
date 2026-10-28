@@ -1,0 +1,71 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+type Shared = { variant?: 'primary' | 'quiet'; class?: string };
+type Props = Shared &
+  (
+    | ({ href: string } & HTMLAttributes<'a'>)
+    | ({ href?: never } & HTMLAttributes<'button'>)
+  );
+const { variant = 'primary', class: className, ...attributes } = Astro.props;
+---
+
+{
+  typeof attributes.href === 'string' ? (
+    <a
+      {...(attributes as HTMLAttributes<'a'>)}
+      class:list={['btn', `btn-${variant}`, className]}
+    >
+      <slot />
+    </a>
+  ) : (
+    <button
+      type="button"
+      {...(attributes as HTMLAttributes<'button'>)}
+      class:list={['btn', `btn-${variant}`, className]}
+    >
+      <slot />
+    </button>
+  )
+}
+
+<style>
+  /* Reference: .btn and variants, lines 41–47. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 46px;
+    padding: 0 22px;
+    border-radius: var(--radius-pill);
+    border: 0;
+    font: 600 0.975rem var(--font);
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      transform var(--dur-press) ease-out,
+      background-color var(--dur) ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  :global(html[dir='rtl']) .btn {
+    font-family: var(--font-ar);
+  }
+  .btn:active {
+    transform: scale(0.97);
+  }
+  .btn-primary {
+    background: var(--forest);
+    color: var(--paper);
+  }
+  .btn-primary:hover {
+    background: var(--forest-press);
+  }
+  .btn-quiet {
+    background: var(--mist);
+    color: var(--ink);
+  }
+  .btn-quiet:hover {
+    background: var(--mist-hover);
+  }
+</style>

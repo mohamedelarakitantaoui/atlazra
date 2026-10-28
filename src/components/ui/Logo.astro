@@ -1,0 +1,46 @@
+---
+import full from '../../../public/brand/atlazra-logo.svg?raw';
+import mark from '../../../public/brand/atlazra-mark.svg?raw';
+import wordmark from '../../../public/brand/atlazra-wordmark.svg?raw';
+
+interface Props {
+  variant?: 'full' | 'mark' | 'wordmark';
+  label?: string;
+  decorative?: boolean;
+}
+const {
+  variant = 'wordmark',
+  label = 'Atlazra Design',
+  decorative = false,
+} = Astro.props;
+const artwork = { full, mark, wordmark }[variant];
+---
+
+<span
+  class:list={['logo', `logo-${variant}`]}
+  role={decorative ? undefined : 'img'}
+  aria-label={decorative ? undefined : label}
+  aria-hidden={decorative ? 'true' : undefined}
+>
+  <span aria-hidden="true" set:html={artwork} />
+</span>
+
+<style>
+  /* Reference: .brand svg (57), .mark (81–82). Full lockup uses the same 58px mark height. */
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    color: var(--forest);
+    max-width: 100%;
+  }
+  .logo :global(svg) {
+    display: block;
+    max-width: 100%;
+    width: auto;
+    height: 19px;
+  }
+  .logo-mark :global(svg),
+  .logo-full :global(svg) {
+    height: 58px;
+  }
+</style>

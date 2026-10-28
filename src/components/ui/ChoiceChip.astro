@@ -1,0 +1,57 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+interface Props extends Omit<
+  HTMLAttributes<'input'>,
+  'type' | 'id' | 'name' | 'value' | 'children'
+> {
+  id: string;
+  name: string;
+  value: string;
+}
+const { id, name, value, ...attributes } = Astro.props;
+---
+
+<span class="choice-chip">
+  <input {...attributes} type="radio" id={id} name={name} value={value} />
+  <label for={id}><slot /></label>
+</span>
+
+<style>
+  /* Reference: .chipset input / label / checked / focus, lines 181–185. */
+  .choice-chip {
+    position: relative;
+    display: inline-flex;
+  }
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+  label {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 9px 14px;
+    border-radius: var(--radius-pill);
+    background: var(--mist);
+    cursor: pointer;
+    transition:
+      background-color var(--dur-fast) ease,
+      color var(--dur-fast) ease,
+      transform var(--dur-press) ease-out;
+  }
+  label:active {
+    transform: scale(0.97);
+  }
+  input:checked + label {
+    background: var(--forest);
+    color: var(--paper);
+  }
+  input:focus-visible + label {
+    outline: 2px solid var(--forest);
+    outline-offset: 2px;
+  }
+</style>

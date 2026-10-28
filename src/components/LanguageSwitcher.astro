@@ -1,0 +1,70 @@
+---
+import { locales, localizedPath, type Locale } from '../i18n/routing';
+import { content } from '../i18n/content';
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const labels = { fr: 'FR', ar: 'ع', en: 'EN' };
+---
+
+<nav class="lang" aria-label={content[locale].language} data-language-switch>
+  {
+    locales.map((target) => (
+      <a
+        href={localizedPath(Astro.url.pathname + Astro.url.search, target)}
+        lang={target}
+        hreflang={target}
+        aria-current={locale === target ? 'page' : undefined}
+      >
+        {labels[target]}
+      </a>
+    ))
+  }
+</nav>
+
+<script>
+  import { localizedPath, type Locale } from '../i18n/routing';
+  // Hashes are not sent to the server; preserve them as well as query strings.
+  const update = () =>
+    document
+      .querySelectorAll<HTMLAnchorElement>('[data-language-switch] a[lang]')
+      .forEach((link) => {
+        link.href = localizedPath(
+          location.pathname + location.search + location.hash,
+          link.lang as Locale,
+        );
+      });
+  update();
+  addEventListener('hashchange', update);
+</script>
+
+<style>
+  /* Reference .lang, lines 61–63; 44px hit areas follow AGENTS.md. */
+  .lang {
+    display: flex;
+    background: var(--mist);
+    border-radius: var(--radius-pill);
+    padding: 3px;
+    position: relative;
+    flex: none;
+  }
+  a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    font: 600 0.78rem var(--font);
+    color: var(--ink-2);
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+  }
+  a[aria-current='page'] {
+    color: var(--ink);
+    background: var(--paper);
+    box-shadow: var(--shadow-thumb);
+  }
+</style>

@@ -1,0 +1,61 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Button from '../../components/ui/Button.astro';
+import { locales, type Locale } from '../../i18n/routing';
+import { content } from '../../i18n/content';
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+const locale = Astro.params.lang as Locale;
+const t = content[locale];
+---
+
+<SiteLayout {locale} title={t.home} description={t.intro}>
+  <div class="wrap introduction">
+    <h1>{t.home}</h1>
+    <p>{t.intro}</p>
+    <Button href={`/${locale}/contact/`}>{t.cta}</Button>
+  </div>
+  <div class="wrap overview">
+    <section id="services">
+      <h2>{t.servicesTitle}</h2><p>{t.servicesText}</p>
+    </section>
+    <section id="etapes">
+      <h2>{t.processTitle}</h2><p>{t.processText}</p>
+    </section>
+    <section id="projets"><h2>{t.projects}</h2><p>{t.projectsText}</p></section>
+  </div>
+</SiteLayout>
+
+<style>
+  .introduction {
+    padding-block: clamp(36px, 6vw, 72px) clamp(48px, 7vw, 96px);
+    display: grid;
+    justify-items: start;
+    gap: 22px;
+  }
+  h1 {
+    max-width: 14ch;
+  }
+  .introduction p {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 34ch;
+  }
+  .overview {
+    display: grid;
+    gap: var(--space-12);
+    padding-block-end: var(--space-16);
+  }
+  section {
+    display: grid;
+    gap: 14px;
+    scroll-margin-top: 96px;
+    max-width: 640px;
+  }
+  section p {
+    color: var(--ink-2);
+    font-size: 1.125rem;
+  }
+</style>

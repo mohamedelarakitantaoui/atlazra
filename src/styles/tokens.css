@@ -1,0 +1,54 @@
+/* Reference: reference/index.html :root (lines 9–22). */
+:root {
+  --paper: #ffffff;
+  --mist: #f2f3f0;
+  --ink: #17201b;
+  --ink-2: #56615a;
+  --forest: #123d2c;
+  --forest-press: #0c2e21;
+  --bronze: #9a7440;
+  --rule: rgba(23, 32, 27, 0.1);
+  --font:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-ar:
+    'IBM Plex Sans Arabic', 'Geeza Pro', 'Noto Sans Arabic', Tahoma, sans-serif;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --radius-l: 28px;
+  --radius-m: 18px;
+
+  /* Semantic aliases approved for Phase 1; original selectors are noted. */
+  --mist-hover: #e7e9e4; /* .btn-quiet:hover */
+  --live: #3f8f5b; /* .where i */
+  --live-ring: rgba(63, 143, 91, 0.15); /* .where i */
+  --danger: #b3261e; /* .field[data-bad=true], .err */
+  --success: #2e7a4b; /* .sent svg */
+  --success-bg: #eaf3ec; /* .sent */
+  --glass-header: rgba(255, 255, 255, 0.72); /* header */
+  --glass-control: rgba(255, 255, 255, 0.78); /* .seg */
+  --shadow-thumb: 0 1px 3px rgba(23, 32, 27, 0.12); /* .lang selected */
+  --shadow-float:
+    0 1px 2px rgba(23, 32, 27, 0.06), 0 6px 20px rgba(23, 32, 27, 0.08); /* .seg */
+  --shadow-card:
+    0 1px 2px rgba(23, 32, 27, 0.04), 0 12px 40px rgba(23, 32, 27, 0.06); /* form */
+  --radius-pill: 999px;
+  --radius-s: 12px;
+  --radius-icon: 14px;
+  --dur-press: 100ms;
+  --dur-fast: 150ms;
+  --dur: 200ms;
+  --dur-move: 250ms;
+  --dur-panel: 300ms;
+
+  /* Approved spacing scale; ported component measurements stay unchanged. */
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-6: 1.5rem; /* 24px */
+  --space-8: 2rem; /* 32px */
+  --space-12: 3rem; /* 48px */
+  --space-16: 4rem; /* 64px */
+  --space-24: 6rem; /* 96px */
+  --space-32: 8rem; /* 128px */
+}

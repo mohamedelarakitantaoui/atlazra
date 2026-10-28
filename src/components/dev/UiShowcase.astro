@@ -1,0 +1,358 @@
+---
+import '../../styles/base.css';
+import Logo from '../../components/ui/Logo.astro';
+import Button from '../../components/ui/Button.astro';
+import SegmentedControl from '../../components/ui/SegmentedControl.astro';
+import AccordionRow from '../../components/ui/AccordionRow.astro';
+import Chip from '../../components/ui/Chip.astro';
+import Field from '../../components/ui/Field.astro';
+import ChoiceChip from '../ui/ChoiceChip.astro';
+import LanguageSwitcher from '../LanguageSwitcher.astro';
+import type { Locale } from '../../i18n/routing';
+
+interface Props {
+  lang?: Locale;
+}
+const { lang = 'fr' } = Astro.props;
+const copy = {
+  fr: {
+    title: 'Composants d’interface',
+    intro: 'Phase 1 · Primitives Atlazra Design',
+    language: 'Langue',
+    logos: 'Logo',
+    full: 'Complet',
+    mark: 'Symbole',
+    wordmark: 'Signature',
+    buttons: 'Boutons et étiquettes',
+    primary: 'Demander une visite',
+    quiet: 'Nos services',
+    chip: 'Jardins de villa',
+    selected: 'Plan 2D coté',
+    controls: 'Sélection',
+    model: 'Affichage de la maquette',
+    current: 'Terrain actuel',
+    project: 'Projet Atlazra',
+    controlsNote: 'Utilisez les flèches du clavier pour changer la sélection.',
+    accordion: 'Accordéon',
+    design: 'Conception 3D',
+    summary: 'Vous voyez le jardin avant les travaux',
+    detail:
+      'Plan coté et maquette 3D : arbres, allées, éclairage, mobilier. Vous demandez des changements sur la maquette, et le devis suit le plan que vous avez validé.',
+    more: 'Choix des matériaux',
+    moreDetail: 'Vous demandez des modifications sur la maquette.',
+    fields: 'Champs de saisie',
+    name: 'Nom',
+    phone: 'Téléphone',
+    projectLabel: 'Votre projet',
+    placeholder: 'Surface, ville, ce que vous aimeriez avoir dans le jardin…',
+    error: 'Indiquez un numéro où vous joindre.',
+    errorLabel: 'Exemple avec erreur',
+    link: 'Voir les champs',
+  },
+  en: {
+    title: 'Interface components',
+    intro: 'Phase 1 · Atlazra Design primitives',
+    language: 'Language',
+    logos: 'Logo',
+    full: 'Full',
+    mark: 'Mark',
+    wordmark: 'Wordmark',
+    buttons: 'Buttons and tags',
+    primary: 'Book a site visit',
+    quiet: 'Our services',
+    chip: 'Villa gardens',
+    selected: 'Dimensioned 2D plan',
+    controls: 'Selection',
+    model: 'Model display',
+    current: 'Current site',
+    project: 'Atlazra project',
+    controlsNote: 'Use the arrow keys to change the selection.',
+    accordion: 'Accordion',
+    design: '3D design',
+    summary: 'See the garden before work starts',
+    detail:
+      'A dimensioned plan and a 3D model: trees, paths, lighting, furniture. You ask for changes on the model, and the quote follows the plan you approved.',
+    more: 'Material selection',
+    moreDetail: 'You ask for changes on the model.',
+    fields: 'Input fields',
+    name: 'Name',
+    phone: 'Phone',
+    projectLabel: 'Your project',
+    placeholder: 'Size, city, what you would like in the garden…',
+    error: 'Enter a phone number we can call.',
+    errorLabel: 'Example with an error',
+    link: 'View fields',
+  },
+  ar: {
+    title: 'عناصر الواجهة',
+    intro: 'المرحلة الأولى · عناصر أطلزرا ديزاين',
+    language: 'اللغة',
+    logos: 'الشعار',
+    full: 'كامل',
+    mark: 'الرمز',
+    wordmark: 'الاسم',
+    buttons: 'الأزرار والوسوم',
+    primary: 'اطلب زيارة',
+    quiet: 'خدماتنا',
+    chip: 'حدائق الفيلات',
+    selected: 'مخطط بالأبعاد',
+    controls: 'الاختيار',
+    model: 'عرض المجسّم',
+    current: 'الأرض الحالية',
+    project: 'مشروع أطلزرا',
+    controlsNote: 'استخدم مفاتيح الأسهم لتغيير الاختيار.',
+    accordion: 'التفاصيل القابلة للفتح',
+    design: 'تصميم ثلاثي الأبعاد',
+    summary: 'ترى الحديقة قبل الأشغال',
+    detail:
+      'مخطط بالأبعاد ومجسّم ثلاثي الأبعاد: أشجار، ممرات، إضاءة وأثاث. تطلب تعديلات على المجسّم، وعرض السعر يتبع المخطط الذي وافقت عليه.',
+    more: 'اختيار المواد',
+    moreDetail: 'تطلب تعديلات على المجسّم.',
+    fields: 'حقول الإدخال',
+    name: 'الاسم',
+    phone: 'الهاتف',
+    projectLabel: 'مشروعك',
+    placeholder: 'المساحة، المدينة، ما تودّ أن يكون في الحديقة…',
+    error: 'أدخل رقم هاتف يمكننا الاتصال به.',
+    errorLabel: 'مثال مع خطأ',
+    link: 'عرض الحقول',
+  },
+}[lang];
+---
+
+<!doctype html>
+<html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{copy.title} — Atlazra Design</title>
+  </head>
+  <body>
+    <main class="wrap showcase">
+      <div class="intro">
+        <p class="muted">{copy.intro}</p>
+        <h1>{copy.title}</h1>
+        <div class="languages"><LanguageSwitcher locale={lang} /></div>
+      </div>
+
+      <div class="samples">
+        <section class="sample" aria-labelledby="logos">
+          <h2 id="logos">{copy.logos}</h2>
+          <div class="logo-list">
+            <figure>
+              <Logo variant="full" /><figcaption>{copy.full}</figcaption>
+            </figure>
+            <figure>
+              <Logo variant="mark" /><figcaption>{copy.mark}</figcaption>
+            </figure>
+            <figure>
+              <Logo variant="wordmark" /><figcaption>
+                {copy.wordmark}
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="sample" aria-labelledby="buttons">
+          <h2 id="buttons">{copy.buttons}</h2>
+          <div class="inline">
+            <Button>{copy.primary}</Button><Button
+              variant="quiet"
+              href="#fields">{copy.quiet}</Button
+            >
+          </div>
+          <div class="chip-surface inline">
+            <Chip>{copy.chip}</Chip><Chip>{copy.selected}</Chip>
+          </div>
+          <fieldset class="choices">
+            <legend>{copy.controls}</legend>
+            <div class="inline">
+              <ChoiceChip
+                id="choice-villa"
+                name="demo-type"
+                value="villa"
+                checked>{copy.chip}</ChoiceChip
+              >
+              <ChoiceChip id="choice-plan" name="demo-type" value="plan"
+                >{copy.selected}</ChoiceChip
+              >
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="sample" aria-labelledby="controls">
+          <h2 id="controls">{copy.controls}</h2>
+          <div class="control-surface">
+            <SegmentedControl
+              label={copy.model}
+              options={[
+                { value: 'current', label: copy.current },
+                { value: 'project', label: copy.project },
+              ]}
+              value="project"
+            />
+          </div>
+          <p class="muted">{copy.controlsNote}</p>
+        </section>
+
+        <section class="sample" aria-labelledby="accordion">
+          <h2 id="accordion">{copy.accordion}</h2>
+          <div class="rows">
+            <AccordionRow
+              id="design"
+              title={copy.design}
+              summary={copy.summary}
+              open
+            >
+              <p>{copy.detail}</p>
+              <a class="link" href="#fields">{copy.link}</a>
+            </AccordionRow>
+            <AccordionRow id="materials" title={copy.more}>
+              <p>{copy.moreDetail}</p>
+              <a class="link" href="#fields">{copy.link}</a>
+            </AccordionRow>
+          </div>
+        </section>
+
+        <section
+          class="sample fields"
+          id="fields"
+          aria-labelledby="fields-title"
+        >
+          <h2 id="fields-title">{copy.fields}</h2>
+          <div class="field-grid">
+            <Field
+              id="demo-name"
+              name="name"
+              label={copy.name}
+              autocomplete="name"
+              required
+            />
+            <Field
+              id="demo-phone"
+              name="phone"
+              label={`${copy.phone} · ${copy.errorLabel}`}
+              type="tel"
+              autocomplete="tel"
+              error={copy.error}
+              required
+            />
+            <div class="message">
+              <Field
+                id="demo-message"
+                name="message"
+                label={copy.projectLabel}
+                as="textarea"
+                placeholder={copy.placeholder}
+              />
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>
+
+<style>
+  /* Showcase-only layout uses the approved spacing scale. No production sections. */
+  .showcase {
+    padding-block: var(--space-12) var(--space-16);
+  }
+  .intro {
+    display: grid;
+    gap: var(--space-4);
+    margin-block-end: var(--space-12);
+  }
+  .languages {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+  .samples {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-12) var(--space-12);
+    align-items: start;
+  }
+  .sample {
+    min-width: 0;
+    display: grid;
+    gap: var(--space-6);
+    border-top: 1px solid var(--rule);
+    padding-block-start: var(--space-6);
+  }
+  .logo-list,
+  .inline {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+  .logo-list {
+    gap: var(--space-8);
+  }
+  figure {
+    margin: 0;
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: var(--space-3);
+  }
+  figcaption {
+    color: var(--ink-2);
+    font-size: 0.85rem;
+  }
+  .chip-surface {
+    background: var(--mist);
+    padding: var(--space-4);
+    border-radius: var(--radius-m);
+  }
+  .control-surface {
+    background: var(--mist);
+    border-radius: var(--radius-m);
+    padding: var(--space-6);
+  }
+  .rows {
+    border-top: 1px solid var(--rule);
+  }
+  .fields {
+    grid-column: 1 / -1;
+  }
+  .field-grid {
+    display: grid;
+    align-items: start;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+  .message {
+    grid-column: 1 / -1;
+  }
+  .choices {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+  .choices legend {
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-block-end: 6px;
+  }
+  @media (max-width: 860px) {
+    .samples {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 540px) {
+    .field-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .control-surface {
+      padding: var(--space-4);
+    }
+  }
+</style>

@@ -1,0 +1,112 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+interface Props extends Omit<
+  HTMLAttributes<'input'>,
+  'id' | 'children' | 'value'
+> {
+  id: string;
+  label: string;
+  as?: 'input' | 'textarea';
+  value?: string;
+  error?: string;
+  rows?: number;
+}
+const {
+  id,
+  label,
+  as = 'input',
+  value,
+  error,
+  rows,
+  'aria-describedby': describedBy,
+  ...attributes
+} = Astro.props;
+const description =
+  [describedBy, error ? `${id}-error` : undefined].filter(Boolean).join(' ') ||
+  undefined;
+---
+
+<div class="field" data-bad={Boolean(error)}>
+  <label for={id}>{label}</label>
+  {
+    as === 'textarea' ? (
+      <textarea
+        {...(attributes as HTMLAttributes<'textarea'>)}
+        id={id}
+        rows={rows}
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={description}
+        set:text={value ?? ''}
+      />
+    ) : (
+      <input
+        {...attributes}
+        id={id}
+        value={value}
+        dir={
+          attributes.type === 'tel' || attributes.type === 'email'
+            ? 'ltr'
+            : attributes.dir
+        }
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={description}
+      />
+    )
+  }
+  <span class="err" id={`${id}-error`}>{error}</span>
+</div>
+
+<style>
+  /* Reference: .field / inputs / .err, lines 172–179. */
+  .field {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    align-content: start;
+  }
+  label {
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  input,
+  textarea {
+    font: inherit;
+    font-size: 1rem;
+    color: var(--ink);
+    background: var(--mist);
+    border: 1px solid transparent;
+    border-radius: var(--radius-s);
+    padding: 12px 14px;
+    min-height: 48px;
+    width: 100%;
+    transition:
+      border-color var(--dur-fast) ease,
+      background-color var(--dur-fast) ease;
+  }
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+  input:focus,
+  textarea:focus {
+    outline: none;
+    background: var(--paper);
+    border-color: var(--forest);
+  }
+  .field[data-bad='true'] :is(input, textarea) {
+    border-color: var(--danger);
+    background: var(--paper);
+  }
+  .err {
+    font-size: 0.82rem;
+    color: var(--danger);
+    min-height: 0;
+  }
+  .err:empty {
+    display: none;
+  }
+  /* Keep phone/email characters LTR while aligning to the RTL page's trailing edge. */
+  :global(html[dir='rtl']) input:is([type='tel'], [type='email']) {
+    text-align: end;
+  }
+</style>

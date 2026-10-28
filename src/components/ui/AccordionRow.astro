@@ -1,0 +1,197 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  summary?: string;
+  open?: boolean;
+}
+const { id, title, summary, open = false } = Astro.props;
+---
+
+<ui-accordion class="row" data-open={open}>
+  <h3>
+    <button
+      type="button"
+      id={`${id}-trigger`}
+      aria-expanded={open}
+      aria-controls={`${id}-panel`}
+    >
+      <span class="ico" aria-hidden="true"
+        ><slot name="icon"
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linejoin="round"
+            ><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9Z"></path><path
+              d="M4 7.5 12 12l8-4.5M12 12v9"></path></svg
+          ></slot
+        ></span
+      >
+      <span
+        ><span class="title">{title}</span>{
+          summary && <span class="sum">{summary}</span>
+        }</span
+      >
+      <span class="plus" aria-hidden="true"></span>
+    </button>
+  </h3>
+  <div
+    class="more"
+    id={`${id}-panel`}
+    role="region"
+    aria-labelledby={`${id}-trigger`}
+    aria-hidden={!open}
+    inert={!open}
+  >
+    <div><div class="more-in"><slot /></div></div>
+  </div>
+</ui-accordion>
+
+<script>
+  class AccordionRow extends HTMLElement {
+    connectedCallback() {
+      const button = this.querySelector('button');
+      const panel = this.querySelector<HTMLElement>('.more');
+      if (!button || !panel || this.dataset.ready) return;
+      this.dataset.ready = 'true';
+      button.addEventListener('click', () => {
+        const open = button.getAttribute('aria-expanded') !== 'true';
+        this.dataset.open = String(open);
+        button.setAttribute('aria-expanded', String(open));
+        panel.setAttribute('aria-hidden', String(!open));
+        panel.inert = !open;
+      });
+    }
+  }
+  if (!customElements.get('ui-accordion'))
+    customElements.define('ui-accordion', AccordionRow);
+</script>
+
+<style>
+  /* Reference: .row / .ico / .plus / .more, lines 114–134. */
+  .row {
+    display: block;
+    border-bottom: 1px solid var(--rule);
+  }
+  h3 {
+    font-size: 1.35rem;
+  }
+  button {
+    all: unset;
+    box-sizing: border-box;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) 28px;
+    gap: 16px;
+    align-items: center;
+    padding-block: 22px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:focus-visible {
+    outline: 2px solid var(--forest);
+    outline-offset: 4px;
+    border-radius: 8px;
+  }
+  .ico {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-icon);
+    background: var(--mist);
+    display: grid;
+    place-items: center;
+    color: var(--forest);
+  }
+  .ico :global(svg) {
+    width: 26px;
+    height: 26px;
+  }
+  .title {
+    display: block;
+  }
+  .sum {
+    display: block;
+    color: var(--ink-2);
+    font: 400 0.98rem/1.55 var(--font);
+    letter-spacing: -0.003em;
+    margin-top: 2px;
+  }
+  :global(html[dir='rtl']) .sum {
+    font-family: var(--font-ar);
+    letter-spacing: 0;
+  }
+  .plus {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--mist);
+    position: relative;
+    transition:
+      transform var(--dur-move) var(--ease-out),
+      background-color var(--dur) ease;
+  }
+  .plus::before,
+  .plus::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 50%;
+    top: 50%;
+    width: 11px;
+    height: 1.6px;
+    background: var(--ink);
+    transform: translate(-50%, -50%);
+  }
+  :global(html[dir='rtl']) .plus::before,
+  :global(html[dir='rtl']) .plus::after {
+    transform: translate(50%, -50%);
+  }
+  .plus::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+    transition: transform var(--dur-move) var(--ease-out);
+  }
+  :global(html[dir='rtl']) .plus::after {
+    transform: translate(50%, -50%) rotate(90deg);
+  }
+  .row[data-open='true'] .plus {
+    background: var(--forest);
+  }
+  .row[data-open='true'] .plus::before,
+  .row[data-open='true'] .plus::after {
+    background: var(--paper);
+  }
+  .row[data-open='true'] .plus::after {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  :global(html[dir='rtl']) .row[data-open='true'] .plus::after {
+    transform: translate(50%, -50%) rotate(0deg);
+  }
+  .more {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--dur-panel) var(--ease-out);
+  }
+  .row[data-open='true'] .more {
+    grid-template-rows: 1fr;
+  }
+  .more > div {
+    overflow: hidden;
+    min-height: 0;
+  }
+  .more-in {
+    padding-block: 0 26px;
+    padding-inline: 68px 0;
+    display: grid;
+    gap: 14px;
+  }
+  .more-in :global(p) {
+    color: var(--ink-2);
+    max-width: 58ch;
+  }
+  @media (max-width: 520px) {
+    .more-in {
+      padding-inline: 0;
+    }
+  }
+</style>
