@@ -1,6 +1,6 @@
-import fr from './fr.json';
-import ar from './ar.json';
-import en from './en.json';
+import fr from './fr.json' with { type: 'json' };
+import ar from './ar.json' with { type: 'json' };
+import en from './en.json' with { type: 'json' };
 import type { Locale } from './routing';
 
 type Schema<T> = {

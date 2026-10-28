@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
-import fr from '../src/i18n/fr.json';
-import ar from '../src/i18n/ar.json';
-import en from '../src/i18n/en.json';
+import fr from '../src/i18n/fr.json' with { type: 'json' };
+import ar from '../src/i18n/ar.json' with { type: 'json' };
+import en from '../src/i18n/en.json' with { type: 'json' };
 
 function keys(value: object, prefix = ''): string[] {
   return Object.entries(value)
