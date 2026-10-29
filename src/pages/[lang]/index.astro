@@ -1,6 +1,10 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import Button from '../../components/ui/Button.astro';
+import Logo from '../../components/ui/Logo.astro';
+import AccordionRow from '../../components/ui/AccordionRow.astro';
+import Chip from '../../components/ui/Chip.astro';
+import SegmentedControl from '../../components/ui/SegmentedControl.astro';
 import { locales, type Locale } from '../../i18n/routing';
 import { t } from '../../i18n/content';
 export function getStaticPaths() {
@@ -14,59 +18,698 @@ const locale = Astro.params.lang as Locale;
   title={t(locale, 'home.title')}
   description={t(locale, 'home.intro')}
 >
-  <div class="wrap introduction">
-    <h1>{t(locale, 'home.title')}</h1>
-    <p>{t(locale, 'home.intro')}</p>
-    <Button href={`/${locale}/contact/`}>{t(locale, 'nav.cta')}</Button>
-  </div>
-  <div class="wrap overview">
-    <section id="services">
-      <h2>{t(locale, 'home.servicesTitle')}</h2><p>
-        {t(locale, 'home.servicesText')}
-      </p>
-    </section>
-    <section id="etapes">
-      <h2>{t(locale, 'home.processTitle')}</h2><p>
-        {t(locale, 'home.processText')}
-      </p>
-    </section>
-    <section id="projets">
-      <h2>{t(locale, 'nav.projects')}</h2><p>
-        {t(locale, 'home.projectsText')}
-      </p>
-    </section>
-  </div>
-</SiteLayout>
+  <section
+    id="hero"
+    aria-labelledby="hero-title"
+    class="hero"
+    style="padding-top:clamp(36px,6vw,72px)"
+  >
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <div class="mark"><Logo variant="mark" decorative /></div>
+        <h1 id="hero-title">{t(locale, 'home.reference.h1')}</h1>
+        <p>{t(locale, 'home.reference.hp')}</p>
+        <div class="actions">
+          <Button variant="primary" href={`/${locale}/contact/`}
+            >{t(locale, 'home.reference.cta')}</Button
+          >
+          <Button variant="quiet" href="#services"
+            >{t(locale, 'home.reference.cta2')}</Button
+          >
+        </div>
+        <p class="where">
+          <i aria-hidden="true"></i><span
+            >{t(locale, 'home.reference.where')}</span
+          >
+        </p>
+      </div>
+      <div>
+        <div class="stage" id="stage" dir="ltr">
+          <p class="fallback">{t(locale, 'home.modelPending')}</p><div
+            class="model-control"
+          >
+            <SegmentedControl
+              disabled
+              label={t(locale, 'home.modelLabel')}
+              value="project"
+              options={[
+                { value: 'current', label: t(locale, 'home.reference.s0') },
+                { value: 'project', label: t(locale, 'home.reference.s1') },
+              ]}
+            />
+          </div>
+        </div><p class="caption">{t(locale, 'home.reference.cap')}</p>
+      </div>
+    </div>
+  </section>
 
+  <section id="services" aria-labelledby="services-title" class="tint">
+    <div class="wrap svc-grid">
+      <div class="sec-head">
+        <h2 id="services-title">{t(locale, 'home.reference.sh')}</h2>
+        <p>{t(locale, 'home.reference.sp')}</p>
+      </div>
+      <div class="rows">
+        <AccordionRow
+          id="a1"
+          open={true}
+          title={t(locale, 'home.reference.a1')}
+          summary={t(locale, 'home.reference.a1s')}
+          ><svg
+            slot="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            ><path d="M12 21V11"></path><path
+              d="M12 13c-4 0-6-3-6-7 4 0 6 3 6 7Z"></path><path
+              d="M12 11c0-4 2-7 6-7 0 4-2 7-6 7Z"></path><path d="M5 21h14"
+            ></path></svg
+          ><p>{t(locale, 'home.reference.a1p')}</p><ul class="chips">
+            <li><Chip>{t(locale, 'home.reference.a1a')}</Chip></li><li>
+              <Chip>{t(locale, 'home.reference.a1b')}</Chip>
+            </li><li><Chip>{t(locale, 'home.reference.a1c')}</Chip></li>
+          </ul></AccordionRow
+        >
+        <AccordionRow
+          id="a2"
+          open={false}
+          title={t(locale, 'home.reference.a2')}
+          summary={t(locale, 'home.reference.a2s')}
+          ><svg
+            slot="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linejoin="round"
+            ><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9Z"></path><path
+              d="M4 7.5 12 12l8-4.5M12 12v9"></path></svg
+          ><p>{t(locale, 'home.reference.a2p')}</p><ul class="chips">
+            <li><Chip>{t(locale, 'home.reference.a2a')}</Chip></li><li>
+              <Chip>{t(locale, 'home.reference.a2b')}</Chip>
+            </li><li><Chip>{t(locale, 'home.reference.a2c')}</Chip></li>
+          </ul></AccordionRow
+        >
+        <AccordionRow
+          id="a3"
+          open={false}
+          title={t(locale, 'home.reference.a3')}
+          summary={t(locale, 'home.reference.a3s')}
+          ><svg
+            slot="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            ><path d="M3 9h18M5 9v12M19 9v12M3 21h18M7 9l5-5 5 5"></path></svg
+          ><p>{t(locale, 'home.reference.a3p')}</p><ul class="chips">
+            <li><Chip>{t(locale, 'home.reference.a3a')}</Chip></li><li>
+              <Chip>{t(locale, 'home.reference.a3b')}</Chip>
+            </li><li><Chip>{t(locale, 'home.reference.a3c')}</Chip></li>
+          </ul></AccordionRow
+        >
+      </div>
+    </div>
+  </section>
+
+  <section
+    id="etapes"
+    aria-labelledby="etapes-title"
+    class="tint"
+    style="padding-top:0"
+  >
+    <div class="wrap steps-head">
+      <div class="sec-head">
+        <h2 id="etapes-title">{t(locale, 'home.reference.eh')}</h2>
+        <p>{t(locale, 'home.reference.ep')}</p>
+      </div>
+      <div class="arrows">
+        <button
+          type="button"
+          id="prev"
+          disabled
+          aria-label={t(locale, 'home.previous')}
+          ><svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"><path d="M15 18 9 12l6-6"></path></svg
+          ></button
+        >
+        <button type="button" id="next" aria-label={t(locale, 'home.next')}
+          ><svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg
+          ></button
+        >
+      </div>
+    </div>
+    <div
+      class="track"
+      id="track"
+      role="region"
+      tabindex="0"
+      aria-label={t(locale, 'home.stepsLabel')}
+    >
+      <article class="step">
+        <span class="n">{t(locale, 'home.reference.e1n')}</span>
+        <svg
+          viewBox="0 0 200 96"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          aria-hidden="true"
+          ><rect
+            x="20"
+            y="18"
+            width="160"
+            height="62"
+            rx="3"
+            stroke-dasharray="4 4"></rect><path d="M20 90h160M20 86v8M180 86v8"
+          ></path><circle cx="62" cy="48" r="3"></circle><circle
+            cx="140"
+            cy="38"
+            r="3"></circle><circle cx="118" cy="66" r="3"></circle></svg
+        >
+        <h3>{t(locale, 'home.reference.e1')}</h3><p>
+          {t(locale, 'home.reference.e1p')}
+        </p>
+      </article>
+      <article class="step">
+        <span class="n">{t(locale, 'home.reference.e2n')}</span>
+        <svg
+          viewBox="0 0 200 96"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          aria-hidden="true"
+          ><path d="M100 10 170 40 100 70 30 40Z"></path><path
+            d="M30 40v22l70 30 70-30V40"></path><circle cx="76" cy="38" r="9"
+          ></circle><circle cx="122" cy="46" r="7"></circle></svg
+        >
+        <h3>{t(locale, 'home.reference.e2')}</h3><p>
+          {t(locale, 'home.reference.e2p')}
+        </p>
+      </article>
+      <article class="step">
+        <span class="n">{t(locale, 'home.reference.e3n')}</span>
+        <svg
+          viewBox="0 0 200 96"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          aria-hidden="true"
+          ><rect x="50" y="10" width="100" height="76" rx="6"></rect><path
+            d="M66 32h68M66 46h68M66 60h40"></path><path d="m120 66 8 8 16-18"
+          ></path></svg
+        >
+        <h3>{t(locale, 'home.reference.e3')}</h3><p>
+          {t(locale, 'home.reference.e3p')}
+        </p>
+      </article>
+      <article class="step">
+        <span class="n">{t(locale, 'home.reference.e4n')}</span>
+        <svg
+          viewBox="0 0 200 96"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          aria-hidden="true"
+          ><path d="M20 84h160"></path><path d="M58 84V52"></path><circle
+            cx="58"
+            cy="40"
+            r="16"></circle><path d="M140 84V58"></path><circle
+            cx="140"
+            cy="48"
+            r="12"></circle><path d="M88 84c4-14 20-14 24 0"></path></svg
+        >
+        <h3>{t(locale, 'home.reference.e4')}</h3><p>
+          {t(locale, 'home.reference.e4p')}
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section id="projets" aria-labelledby="projets-title">
+    <div class="wrap proj">
+      <div>
+        <div class="sec-head">
+          <h2 id="projets-title">{t(locale, 'home.reference.ph')}</h2>
+          <p>{t(locale, 'home.reference.pp')}</p>
+        </div>
+        <ul>
+          <li>
+            <span>{t(locale, 'home.reference.p1')}</span><span
+              >{t(locale, 'home.reference.p1v')}</span
+            >
+          </li>
+          <li>
+            <span>{t(locale, 'home.reference.p2')}</span><span
+              >{t(locale, 'home.reference.p2v')}</span
+            >
+          </li>
+          <li>
+            <span>{t(locale, 'home.reference.p3')}</span><span
+              >{t(locale, 'home.reference.p3v')}</span
+            >
+          </li>
+          <li>
+            <span>{t(locale, 'home.reference.p4')}</span><span
+              >{t(locale, 'home.reference.p4v')}</span
+            >
+          </li>
+        </ul>
+      </div><div
+        class="pending"
+        data-client-todo={t(locale, 'home.todos.photos')}
+      >
+        <div>
+          <Logo variant="mark" decorative /><p>
+            {t(locale, 'home.reference.pend')}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" aria-labelledby="contact-title" class="tint">
+    <div class="wrap contact">
+      <div>
+        <div class="sec-head">
+          <h2 id="contact-title">{t(locale, 'home.reference.ch')}</h2>
+          <p>{t(locale, 'home.reference.cp')}</p>
+        </div>
+        <dl>
+          <div>
+            <dt>{t(locale, 'home.reference.d1')}</dt><dd>
+              {t(locale, 'contact.location')}<br /><a
+                class="link"
+                href="https://maps.app.goo.gl/6f43CHxzyrMHoT4f9"
+                target="_blank"
+                rel="noopener">{t(locale, 'home.reference.map')}</a
+              >
+            </dd>
+          </div>
+          <div>
+            <dt>{t(locale, 'home.reference.d2')}</dt><dd
+              class="todo"
+              data-client-todo={t(locale, 'contact.todos.phone')}
+            >
+              {t(locale, 'home.reference.todo')}
+            </dd>
+          </div>
+          <div>
+            <dt>{t(locale, 'contact.email')}</dt><dd
+              class="todo"
+              data-client-todo={t(locale, 'contact.todos.email')}
+            >
+              {t(locale, 'home.reference.todo')}
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <div class="contact-action">
+        <Button href={`/${locale}/contact/`}
+          >{t(locale, 'home.reference.cta')}</Button
+        >
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+<script>
+  const track = document.querySelector<HTMLElement>('#track');
+  const prev = document.querySelector<HTMLButtonElement>('#prev');
+  const next = document.querySelector<HTMLButtonElement>('#next');
+  if (track && prev && next) {
+    const update = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      const position = Math.abs(track.scrollLeft);
+      prev.disabled = position < 4;
+      next.disabled = position >= max - 4;
+    };
+    const move = (direction: number) => {
+      const step = track.querySelector('.step');
+      if (!step) return;
+      const sign = getComputedStyle(track).direction === 'rtl' ? -1 : 1;
+      track.scrollBy({
+        left: direction * sign * (step.getBoundingClientRect().width + 16),
+        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'instant'
+          : 'smooth',
+      });
+    };
+    prev.addEventListener('click', () => move(-1));
+    next.addEventListener('click', () => move(1));
+    track.addEventListener('scroll', update, { passive: true });
+    new ResizeObserver(update).observe(track);
+    update();
+  }
+</script>
 <style>
-  .introduction {
+  /* hero */
+  .hero {
     padding-block: clamp(36px, 6vw, 72px) clamp(48px, 7vw, 96px);
+  }
+  .hero-grid {
     display: grid;
-    justify-items: start;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(28px, 4vw, 56px);
+    align-items: center;
+  }
+  @media (max-width: 920px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .hero-copy {
+    display: grid;
     gap: 22px;
+    align-content: center;
   }
-  h1 {
-    max-width: 14ch;
+  .mark {
+    width: 58px;
+    color: var(--forest);
   }
-  .introduction p {
+  .mark svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .hero-copy p {
     font-size: 1.2rem;
     line-height: 1.5;
     color: var(--ink-2);
     max-width: 34ch;
   }
-  .overview {
-    display: grid;
-    gap: var(--space-12);
-    padding-block-end: var(--space-16);
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
   }
+  .hero-copy .where {
+    font-size: 0.9rem;
+    color: var(--ink-2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .where i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--live);
+    box-shadow: 0 0 0 4px var(--live-ring);
+  }
+
+  /* the model */
+  .stage {
+    position: relative;
+    border-radius: var(--radius-l);
+    background: var(--mist);
+    overflow: hidden;
+    aspect-ratio: 5/4;
+    max-width: 100%;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .stage .fallback {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 24px;
+    color: var(--ink-2);
+    font-size: 0.95rem;
+  }
+  .caption {
+    margin-block-start: 12px;
+    font-size: 0.85rem;
+    color: var(--ink-2);
+  }
+
+  /* sections */
   section {
+    padding-block: clamp(64px, 9vw, 120px);
+  }
+  .tint {
+    background: var(--mist);
+  }
+  .sec-head {
     display: grid;
     gap: 14px;
-    scroll-margin-top: 96px;
     max-width: 640px;
+    margin-bottom: clamp(32px, 4vw, 52px);
   }
-  section p {
-    color: var(--ink-2);
+  .sec-head p {
     font-size: 1.125rem;
+    color: var(--ink-2);
+  }
+
+  /* services: common path first, detail one level deeper */
+  .svc-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: clamp(28px, 5vw, 80px);
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .svc-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .svc-grid .sec-head {
+    position: sticky;
+    inset-block-start: 96px;
+    margin-bottom: 0;
+  }
+  @media (max-width: 860px) {
+    .svc-grid .sec-head {
+      position: static;
+    }
+  }
+  .rows {
+    border-top: 1px solid var(--rule);
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .svc-grid :global(.ico) {
+    background: var(--paper);
+  }
+  /* process: native scroll-snap gives real momentum on touch */
+  .steps-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: clamp(28px, 4vw, 44px);
+  }
+  .steps-head .sec-head {
+    margin-bottom: 0;
+  }
+  .arrows {
+    display: flex;
+    gap: 8px;
+  }
+  .arrows button {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition:
+      transform 0.1s ease-out,
+      opacity 0.2s ease;
+  }
+  .arrows button:active {
+    transform: scale(0.94);
+  }
+  .arrows button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  :global(html[dir='rtl']) .arrows svg {
+    transform: scaleX(-1);
+  }
+  .track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(340px, 82%);
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: max(20px, calc((100vw - 1160px) / 2 + 20px));
+    padding-inline: max(20px, calc((100vw - 1160px) / 2 + 20px));
+    padding-block-end: 6px;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .track::-webkit-scrollbar {
+    display: none;
+  }
+  .step {
+    scroll-snap-align: start;
+    background: var(--paper);
+    border-radius: var(--radius-m);
+    padding: 26px;
+    display: grid;
+    gap: 14px;
+    align-content: start;
+    min-height: 280px;
+  }
+  .step .n {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--bronze);
+  }
+  .step svg {
+    width: 100%;
+    height: 96px;
+    color: var(--forest);
+  }
+  .step p {
+    color: var(--ink-2);
+    font-size: 0.98rem;
+  }
+
+  /* projects */
+  .proj {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(28px, 5vw, 72px);
+    align-items: center;
+  }
+  @media (max-width: 860px) {
+    .proj {
+      grid-template-columns: 1fr;
+    }
+  }
+  .proj ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .proj li {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .proj li span:last-child {
+    color: var(--ink-2);
+    text-align: end;
+  }
+  .pending {
+    border-radius: var(--radius-l);
+    background: var(--mist);
+    aspect-ratio: 4/3;
+    max-width: 100%;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 24px;
+    color: var(--ink-2);
+    font-size: 0.95rem;
+  }
+  .pending svg {
+    width: 64px;
+    color: var(--forest);
+    opacity: 0.35;
+    margin: 0 auto 12px;
+    display: block;
+  }
+
+  /* contact */
+  .contact {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(28px, 5vw, 80px);
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .contact {
+      grid-template-columns: 1fr;
+    }
+  }
+  dl {
+    margin: 0;
+    display: grid;
+    gap: 18px;
+  }
+  dt {
+    font-size: 0.82rem;
+    color: var(--ink-2);
+    margin-bottom: 2px;
+  }
+  dd {
+    margin: 0;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+  .todo {
+    color: var(--ink-2);
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .mark :global(svg) {
+    width: 58px;
+    height: auto;
+  }
+  .pending :global(.logo) {
+    opacity: 0.35;
+    margin: 0 auto 12px;
+  }
+  .model-control {
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-end: 16px;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 100%;
+  }
+  .model-control :global(button) {
+    cursor: default;
+  }
+  .stage .fallback {
+    padding-block-end: 88px;
+  }
+  .contact-action {
+    align-self: center;
+    justify-self: start;
+  }
+  #etapes {
+    padding-block-start: 0;
+  }
+  section {
+    scroll-margin-top: 96px;
   }
 </style>

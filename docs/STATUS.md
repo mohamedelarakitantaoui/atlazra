@@ -1,6 +1,6 @@
 # Atlazra Design — project status
 
-Updated: 2026-10-28. Read this file at the start of every future session, after
+Updated: 2026-10-29. Read this file at the start of every future session, after
 `AGENTS.md` and before implementation. Update it at the end of every phase with
 what was built, decisions, verification results and open TODOs.
 
@@ -14,7 +14,7 @@ what was built, decisions, verification results and open TODOs.
   footer correction and completion work below are implemented and locally verified.
   Decisions: FR/AR/EN routes with `prefixDefaultLocale`, an edge middleware
   redirect on `/`, path-preserving language switching, sitemap, header and footer.
-- Phase 3 — not started. Wait for the user to paste its prompt.
+- Phase 3 — home page: implemented and locally verified; see completion below.
 
 ## Phase 2 completion
 
@@ -55,9 +55,47 @@ what was built, decisions, verification results and open TODOs.
   Deployment and Lighthouse were not tested in this completion pass.
 - No Phase 3 work was performed. Stop here until its prompt is supplied.
 
+## Phase 3 completion
+
+- Ported the five home sections into `src/pages/[lang]/index.astro` in reference
+  order: hero, services, four project steps, réalisations teaser and contact
+  teaser. Reused Button, Logo, AccordionRow, Chip and SegmentedControl primitives.
+- Kept the reference copy, SVG service/step illustrations, spacing and
+  breakpoints. Home copy is in FR/AR/EN JSON under `home.reference`, accessed
+  through typed `t()` calls; additional placeholder and accessible control labels
+  are localized as well. No tokens were added.
+- Services start with the first accordion open. Their heading is sticky above
+  860 px and static at/below 860 px. Steps use native scroll snap and momentum,
+  mirrored arrows, RTL-aware scrolling and disabled end controls; reduced motion
+  uses instant button scrolling.
+- The model remains a static 5:4 mist placeholder with the reference radius,
+  caption and a disabled segmented control. Added an optional disabled prop to
+  the existing primitive. No three.js is loaded; Phase 4 replaces this slot.
+- Projects show the four reference project types and the honest photo placeholder.
+  Client TODOs remain in locale content; missing contact information renders in
+  neutral secondary text. Contact includes the address, supplied Google Maps link
+  and CTA to the localized contact page, without the reference demo form.
+- Verification: `pnpm lint`, `pnpm check`, `pnpm build` and
+  `pnpm test --workers=2` passed. Astro check: zero errors/warnings/hints.
+  All 61 Playwright tests passed, including new FR/AR/EN checks for server-rendered
+  sections, translated headings, accordion behavior, inert model controls,
+  projects/contact, RTL step navigation/end states and 360–1440 px overflow and
+  sticky breakpoints. Scroll tests await the snapped position before continuing.
+- Captured and visually inspected the full-page home screenshots in
+  `test-results/site-home-fr-390-chromium/home-fr-390.png`,
+  `test-results/site-home-fr-1440-chromium/home-fr-1440.png`,
+  `test-results/site-home-ar-390-chromium/home-ar-390.png` and
+  `test-results/site-home-ar-1440-chromium/home-ar-1440.png`.
+  Generated screenshots remain ignored by Git.
+- Environment: Astro telemetry disabled; build, final check and browser tests
+  required elevated tool access because sandboxed esbuild could not read parent
+  directories. Build retains the local Node 24 / Vercel Node 22 warning.
+  Deployment, Lighthouse and physical-device testing were not performed.
+- Stop after Phase 3. Phase 4 has not been started.
+
 ## Open TODOs
 
 - Client: phone/WhatsApp, email, opening hours, address label confirmation
   (Dar Nizar versus the Top Dar Fleur map pin), confirmed services, real project
   photos and 3D renders, domain and lead recipient email.
-- Phase 3 remains gated on the user's next prompt.
+- Phase 4 remains gated on the user's next prompt.

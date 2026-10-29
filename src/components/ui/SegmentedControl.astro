@@ -3,8 +3,14 @@ interface Props {
   label: string;
   options: { value: string; label: string }[];
   value?: string;
+  disabled?: boolean;
 }
-const { label, options, value = options[0]?.value } = Astro.props;
+const {
+  label,
+  options,
+  value = options[0]?.value,
+  disabled = false,
+} = Astro.props;
 const selected = options.some((option) => option.value === value)
   ? value
   : options[0]?.value;
@@ -16,6 +22,7 @@ const selected = options.some((option) => option.value === value)
     options.map((option) => (
       <button
         type="button"
+        disabled={disabled}
         role="radio"
         aria-checked={option.value === selected}
         tabindex={option.value === selected ? 0 : -1}
@@ -42,6 +49,7 @@ const selected = options.some((option) => option.value === value)
       this.dataset.ready = 'true';
     };
     private select(button: HTMLButtonElement) {
+      if (button.disabled) return;
       if (button.getAttribute('aria-checked') === 'true') return;
       this.buttons.forEach((item) => {
         item.setAttribute('aria-checked', String(item === button));
