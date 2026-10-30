@@ -12,7 +12,11 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: 'pnpm exec astro dev --host 127.0.0.1 --port 4321',
+    command: process.env.PW_BUILT
+      ? 'node --experimental-strip-types scripts/serve-built.ts'
+      : 'pnpm exec astro dev --host 127.0.0.1 --port 4321',
+    env: { PORT: '4321' },
+    timeout: 120000,
     url: 'http://127.0.0.1:4321/fr/',
     reuseExistingServer: !process.env.CI,
   },

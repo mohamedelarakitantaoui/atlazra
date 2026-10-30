@@ -177,5 +177,15 @@
       "title": "Page not found",
       "intro": "This page could not be found. Choose a language to return home."
     }
+  },
+  "garden": {
+    "label": "3D garden model. Drag or use the arrow keys to rotate.",
+    "posterAlt": "Model of a villa garden with trees, a terrace and a pool",
+    "hint": "Drag to rotate",
+    "fallback": "The 3D model can't be displayed on this device.",
+    "controlLabel": "Model display",
+    "current": "Current site",
+    "project": "Atlazra project",
+    "caption": "Example model: a 20 × 14 m villa plot. Every project starts like this."
   }
 }

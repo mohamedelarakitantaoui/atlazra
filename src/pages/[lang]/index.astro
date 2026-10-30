@@ -4,7 +4,7 @@ import Button from '../../components/ui/Button.astro';
 import Logo from '../../components/ui/Logo.astro';
 import AccordionRow from '../../components/ui/AccordionRow.astro';
 import Chip from '../../components/ui/Chip.astro';
-import SegmentedControl from '../../components/ui/SegmentedControl.astro';
+import GardenModel from '../../components/garden/GardenModel.astro';
 import { locales, type Locale } from '../../i18n/routing';
 import { t } from '../../i18n/content';
 export function getStaticPaths() {
@@ -43,23 +43,7 @@ const locale = Astro.params.lang as Locale;
           >
         </p>
       </div>
-      <div>
-        <div class="stage" id="stage" dir="ltr">
-          <p class="fallback">{t(locale, 'home.modelPending')}</p><div
-            class="model-control"
-          >
-            <SegmentedControl
-              disabled
-              label={t(locale, 'home.modelLabel')}
-              value="project"
-              options={[
-                { value: 'current', label: t(locale, 'home.reference.s0') },
-                { value: 'project', label: t(locale, 'home.reference.s1') },
-              ]}
-            />
-          </div>
-        </div><p class="caption">{t(locale, 'home.reference.cap')}</p>
-      </div>
+      <GardenModel {locale} />
     </div>
   </section>
 
@@ -435,34 +419,6 @@ const locale = Astro.params.lang as Locale;
     box-shadow: 0 0 0 4px var(--live-ring);
   }
 
-  /* the model */
-  .stage {
-    position: relative;
-    border-radius: var(--radius-l);
-    background: var(--mist);
-    overflow: hidden;
-    aspect-ratio: 5/4;
-    max-width: 100%;
-    touch-action: pan-y;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  .stage .fallback {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    text-align: center;
-    padding: 24px;
-    color: var(--ink-2);
-    font-size: 0.95rem;
-  }
-  .caption {
-    margin-block-start: 12px;
-    font-size: 0.85rem;
-    color: var(--ink-2);
-  }
-
   /* sections */
   section {
     padding-block: clamp(64px, 9vw, 120px);
@@ -687,20 +643,6 @@ const locale = Astro.params.lang as Locale;
   .pending :global(.logo) {
     opacity: 0.35;
     margin: 0 auto 12px;
-  }
-  .model-control {
-    position: absolute;
-    inset-inline-start: 50%;
-    inset-block-end: 16px;
-    transform: translateX(-50%);
-    width: max-content;
-    max-width: 100%;
-  }
-  .model-control :global(button) {
-    cursor: default;
-  }
-  .stage .fallback {
-    padding-block-end: 88px;
   }
   .contact-action {
     align-self: center;

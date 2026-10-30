@@ -4,27 +4,37 @@ interface Props {
   options: { value: string; label: string }[];
   value?: string;
   disabled?: boolean;
+  mode?: 'radio' | 'pressed';
 }
 const {
   label,
   options,
   value = options[0]?.value,
   disabled = false,
+  mode = 'radio',
 } = Astro.props;
 const selected = options.some((option) => option.value === value)
   ? value
   : options[0]?.value;
 ---
 
-<ui-segmented class="seg" role="radiogroup" aria-label={label}>
+<ui-segmented
+  class="seg"
+  role={mode === 'radio' ? 'radiogroup' : 'group'}
+  aria-label={label}
+  data-mode={mode}
+>
   <span class="thumb" aria-hidden="true"></span>
   {
     options.map((option) => (
       <button
         type="button"
         disabled={disabled}
-        role="radio"
-        aria-checked={option.value === selected}
+        role={mode === 'radio' ? 'radio' : undefined}
+        aria-checked={mode === 'radio' ? option.value === selected : undefined}
+        aria-pressed={
+          mode === 'pressed' ? option.value === selected : undefined
+        }
         tabindex={option.value === selected ? 0 : -1}
         data-value={option.value}
       >
@@ -38,9 +48,12 @@ const selected = options.some((option) => option.value === value)
   class SegmentedControl extends HTMLElement {
     private observer?: ResizeObserver;
     private buttons: HTMLButtonElement[] = [];
+    private get stateAttribute() {
+      return this.dataset.mode === 'pressed' ? 'aria-pressed' : 'aria-checked';
+    }
     private moveThumb = () => {
       const active = this.buttons.find(
-        (button) => button.getAttribute('aria-checked') === 'true',
+        (button) => button.getAttribute(this.stateAttribute) === 'true',
       );
       const thumb = this.querySelector<HTMLElement>('.thumb');
       if (!active || !thumb) return;
@@ -50,9 +63,9 @@ const selected = options.some((option) => option.value === value)
     };
     private select(button: HTMLButtonElement) {
       if (button.disabled) return;
-      if (button.getAttribute('aria-checked') === 'true') return;
+      if (button.getAttribute(this.stateAttribute) === 'true') return;
       this.buttons.forEach((item) => {
-        item.setAttribute('aria-checked', String(item === button));
+        item.setAttribute(this.stateAttribute, String(item === button));
         item.tabIndex = item === button ? 0 : -1;
       });
       this.moveThumb();
@@ -151,10 +164,12 @@ const selected = options.some((option) => option.value === value)
   :global(html[dir='rtl']) button {
     font-family: var(--font-ar);
   }
-  button[aria-checked='true'] {
+  button[aria-checked='true'],
+  button[aria-pressed='true'] {
     color: var(--forest);
   }
-  .seg:not([data-ready='true']) button[aria-checked='true'] {
+  .seg:not([data-ready='true'])
+    button:is([aria-checked='true'], [aria-pressed='true']) {
     background: var(--paper);
     box-shadow: var(--shadow-thumb);
   }

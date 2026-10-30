@@ -1,6 +1,12 @@
 import { expect, test } from '@playwright/test';
 import { locales } from '../src/i18n/routing';
 import { t } from '../src/i18n/content';
+import { HARDWARE_GPU, disableFrameGuard, reportRenderer } from './renderer';
+
+test.beforeEach(async ({ page }) => {
+  await reportRenderer(page, HARDWARE_GPU);
+  await disableFrameGuard(page);
+});
 
 for (const locale of locales) {
   test(`home sections and interactions ${locale}`, async ({
@@ -40,10 +46,18 @@ for (const locale of locales) {
     await rows.nth(1).getByRole('button').click();
     await expect(rows.nth(1).getByRole('region')).toBeVisible();
     await expect(rows.nth(1).locator('.chip')).toHaveCount(3);
-    await expect(page.locator('#stage')).toHaveCSS('direction', 'ltr');
-    for (const button of await page.locator('#stage button').all())
-      await expect(button).toBeDisabled();
-    await expect(page.locator('#stage canvas')).toHaveCount(0);
+    await expect(page.locator('garden-model .stage')).toHaveCSS(
+      'direction',
+      'ltr',
+    );
+    await expect(page.locator('garden-model')).toHaveAttribute(
+      'data-status',
+      'ready',
+      { timeout: 30000 },
+    );
+    for (const button of await page.locator('garden-model button').all())
+      await expect(button).toBeEnabled();
+    await expect(page.locator('garden-model canvas')).toHaveCount(1);
     await expect(page.locator('#projets .pending')).toHaveCount(1);
     await expect(page.locator('#projets li')).toHaveCount(4);
     await expect(page.locator('#contact .btn')).toHaveAttribute(

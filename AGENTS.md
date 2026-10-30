@@ -26,7 +26,9 @@ When porting, keep its tokens, spacing, copy and interactions. Don't "improve" i
 | `--ink` | `#17201b` | text |
 | `--ink-2` | `#56615a` | secondary text (AA on white and mist) |
 | `--forest` | `#123d2c` | logo, primary buttons, focus ring |
-| `--bronze` | `#9a7440` | rare small accent only (step labels) |
+| `--bronze` | `#8b693a` | rare small accent only (step labels) |
+
+`--bronze` was darkened from the reference's `#9a7440` (3.81:1 on mist, 4.25:1 on white) to `#8b693a` (4.51:1 on mist, 5.02:1 on white), the smallest HSL-lightness change that lets the 0.8rem step labels pass AA. Same hue and saturation; `reference/index.html` keeps the old value.
 | `--rule` | `rgba(23,32,27,.10)` | hairlines |
 
 ### Type

@@ -1,0 +1,330 @@
+---
+import SegmentedControl from '../ui/SegmentedControl.astro';
+import { t } from '../../i18n/content';
+import type { Locale } from '../../i18n/routing';
+import { defaultGardenConfig, type GardenConfig } from './config';
+interface Props {
+  locale: Locale;
+  config?: GardenConfig;
+  poster?: string;
+  caption?: string;
+}
+const {
+  locale,
+  config = defaultGardenConfig,
+  poster = '/garden-poster.webp',
+  caption = t(locale, 'garden.caption'),
+} = Astro.props;
+---
+
+<garden-model
+  data-config={JSON.stringify(config)}
+  data-rtl={locale === 'ar'}
+  data-status="waiting"
+>
+  <div class="stage" dir="ltr">
+    <div
+      class="surface"
+      tabindex="0"
+      role="group"
+      aria-label={t(locale, 'garden.label')}
+      aria-busy="true"
+    >
+      <canvas aria-hidden="true"></canvas>
+      <img
+        class="poster"
+        src={poster}
+        alt={t(locale, 'garden.posterAlt')}
+        width="1241"
+        height="993"
+        fetchpriority="high"
+        decoding="async"
+      />
+      <span class="hint" aria-hidden="true">{t(locale, 'garden.hint')}</span>
+    </div>
+    <div class="model-control">
+      <SegmentedControl
+        disabled
+        mode="pressed"
+        label={t(locale, 'garden.controlLabel')}
+        value="project"
+        options={[
+          { value: 'current', label: t(locale, 'garden.current') },
+          { value: 'project', label: t(locale, 'garden.project') },
+        ]}
+      />
+    </div>
+    <p class="fallback" role="status" hidden>{t(locale, 'garden.fallback')}</p>
+  </div>
+  <p class="caption">{caption}</p>
+</garden-model>
+
+<script>
+  import type { GardenScene } from './scene';
+  import type { GardenConfig } from './config';
+
+  // CPU rasterizers (headless Chrome, VMs, no GPU driver) draw each frame in ~100 ms.
+  const SOFTWARE_RENDERER = /swiftshader|llvmpipe|software|basic render/i;
+
+  /** The GPU name, or null when WebGL 2 is unavailable. Frees the probe context. */
+  const rendererName = () => {
+    const gl = document.createElement('canvas').getContext('webgl2');
+    if (!gl) return null;
+    const info = gl.getExtension('WEBGL_debug_renderer_info');
+    const name = String(
+      gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER),
+    );
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+    return name;
+  };
+
+  /** Runs after the page's own load and the first idle period. */
+  const afterLoadIdle = (run: () => void, signal: AbortSignal) => {
+    const idle = () => {
+      if ('requestIdleCallback' in window) requestIdleCallback(run);
+      else setTimeout(run, 1500);
+    };
+    if (document.readyState === 'complete') idle();
+    else addEventListener('load', idle, { once: true, signal });
+  };
+
+  class GardenModel extends HTMLElement {
+    private observer?: IntersectionObserver;
+    private scene?: GardenScene;
+    private events?: AbortController;
+    private generation = 0;
+    get diagnostics() {
+      return this.scene?.snapshot();
+    }
+    connectedCallback() {
+      if (this.events) return;
+      // A detached instance may be inserted again after its WebGL context was freed.
+      if (this.scene) {
+        const canvas = this.querySelector('canvas')!;
+        canvas.replaceWith(canvas.cloneNode());
+        this.scene = undefined;
+      }
+      this.events = new AbortController();
+      const generation = ++this.generation;
+      this.dataset.status = 'waiting';
+      this.querySelector('.fallback')?.setAttribute('hidden', '');
+      this.querySelector('.surface')?.setAttribute('aria-busy', 'true');
+      this.querySelectorAll('button').forEach(
+        (button) => (button.disabled = true),
+      );
+      const fail = () => {
+        if (this.generation !== generation) return;
+        this.scene?.dispose();
+        this.dataset.status = 'fallback';
+        this.querySelector('.surface')?.setAttribute('aria-busy', 'false');
+        this.querySelector('.fallback')?.removeAttribute('hidden');
+        this.querySelectorAll('button').forEach(
+          (button) => (button.disabled = true),
+        );
+      };
+      // A capable device that still renders slowly keeps the poster, silently.
+      const poster = () => {
+        if (this.generation !== generation) return;
+        this.dataset.status = 'poster';
+        this.querySelector('.surface')?.setAttribute('aria-busy', 'false');
+        this.querySelectorAll('button').forEach(
+          (button) => (button.disabled = true),
+        );
+      };
+      const start = () => {
+        if (!this.isConnected || generation !== this.generation) return;
+        const renderer = rendererName();
+        if (renderer === null) return fail();
+        if (SOFTWARE_RENDERER.test(renderer)) return poster();
+        this.dataset.status = 'loading';
+        // Only this path fetches three.js; no preload or eager import.
+        void import('./scene')
+          .then(async ({ createGarden }) => {
+            if (!this.isConnected || generation !== this.generation) return;
+            const surface = this.querySelector<HTMLElement>('.surface')!;
+            const canvas = this.querySelector('canvas')!;
+            const config = JSON.parse(this.dataset.config!) as GardenConfig;
+            this.scene =
+              createGarden(surface, canvas, config, {
+                rtl: this.dataset.rtl === 'true',
+                onFailure: fail,
+                // Override for tests and diagnostics, e.g. data-slow-frame-ms="Infinity".
+                slowFrameMs: Number(this.dataset.slowFrameMs) || undefined,
+                onSlow: (medianMs) => {
+                  console.info(
+                    `Atlazra garden: median intro frame ${medianMs.toFixed(1)} ms, showing the poster instead.`,
+                  );
+                  poster();
+                  // Dispose once the 200 ms cross-fade back to the poster is done.
+                  setTimeout(() => {
+                    if (this.generation === generation) this.scene?.dispose();
+                  }, 200);
+                },
+              }) ?? undefined;
+            if (!this.scene || !(await this.scene.ready)) {
+              fail();
+              return;
+            }
+            if (!this.isConnected || generation !== this.generation) return;
+            if (
+              this.querySelector('[data-value="current"]')?.getAttribute(
+                'aria-pressed',
+              ) === 'true'
+            )
+              this.scene.setState('current');
+            this.dataset.status = 'ready';
+            surface.setAttribute('aria-busy', 'false');
+            this.querySelectorAll('button').forEach(
+              (button) => (button.disabled = false),
+            );
+            this.dispatchEvent(new CustomEvent('garden:ready'));
+          })
+          .catch(fail);
+      };
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          this.observer?.disconnect();
+          // The viewport decides whether to load; page load and idle decide when.
+          afterLoadIdle(start, this.events!.signal);
+        },
+        { rootMargin: '200px' },
+      );
+      this.observer.observe(this);
+      this.addEventListener(
+        'change',
+        (event) => {
+          const value = (event as CustomEvent<{ value: string }>).detail?.value;
+          if (value === 'current' || value === 'project')
+            this.scene?.setState(value);
+        },
+        { signal: this.events.signal },
+      );
+      document.addEventListener('astro:before-swap', () => this.dispose(), {
+        signal: this.events.signal,
+      });
+    }
+    private dispose() {
+      this.generation++;
+      this.observer?.disconnect();
+      this.scene?.dispose();
+      this.events?.abort();
+      this.events = undefined;
+      this.dataset.status = 'disposed';
+      this.querySelectorAll('button').forEach(
+        (button) => (button.disabled = true),
+      );
+    }
+    disconnectedCallback() {
+      this.dispose();
+    }
+  }
+  if (!customElements.get('garden-model'))
+    customElements.define('garden-model', GardenModel);
+</script>
+
+<style>
+  garden-model {
+    display: block;
+    min-width: 0;
+  }
+  .stage {
+    position: relative;
+    aspect-ratio: 5 / 4;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-l);
+    background: var(--mist);
+  }
+  .surface {
+    position: absolute;
+    inset: 0;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .surface:focus-visible {
+    outline-offset: -4px;
+    border-radius: var(--radius-l);
+  }
+  canvas,
+  .poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  canvas {
+    opacity: 0;
+    transition: opacity 200ms var(--ease-out);
+  }
+  .poster {
+    object-fit: cover;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 200ms var(--ease-out);
+  }
+  [data-status='ready'] canvas {
+    opacity: 1;
+  }
+  [data-status='ready'] .poster {
+    opacity: 0;
+  }
+  [data-status='ready'] .surface {
+    cursor: grab;
+  }
+  [data-status='ready'] .surface.dragging {
+    cursor: grabbing;
+  }
+  .hint {
+    position: absolute;
+    inset-block-start: 16px;
+    inset-inline-start: 16px;
+    font-size: 0.8rem;
+    color: var(--ink-2);
+    background: var(--glass-control);
+    padding: 6px 10px;
+    border-radius: var(--radius-pill);
+    opacity: 0;
+    transition: opacity 200ms var(--ease-out);
+    pointer-events: none;
+  }
+  [data-status='ready'] .hint {
+    opacity: 1;
+  }
+  [data-status='ready'] .touched .hint {
+    opacity: 0;
+  }
+  .model-control {
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-end: 16px;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 100%;
+  }
+  .model-control :global(button:disabled) {
+    cursor: default;
+  }
+  .fallback {
+    position: absolute;
+    inset-inline: 16px;
+    inset-block-start: 16px;
+    padding: 8px 12px;
+    border-radius: var(--radius-s);
+    background: var(--paper);
+    color: var(--ink-2);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  .caption {
+    margin-block-start: 12px;
+    font-size: 0.85rem;
+    color: var(--ink-2);
+  }
+  :global(html[dir='rtl']) .hint,
+  :global(html[dir='rtl']) .fallback {
+    direction: rtl;
+  }
+</style>

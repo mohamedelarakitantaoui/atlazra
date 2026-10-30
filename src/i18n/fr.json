@@ -177,5 +177,15 @@
       "title": "Page introuvable",
       "intro": "Cette page est introuvable. Choisissez une langue pour revenir à l’accueil."
     }
+  },
+  "garden": {
+    "label": "Maquette 3D d'un jardin. Glissez ou utilisez les flèches du clavier pour faire pivoter.",
+    "posterAlt": "Maquette d'un jardin de villa avec arbres, terrasse et piscine",
+    "hint": "Glissez pour faire pivoter",
+    "fallback": "La maquette 3D ne peut pas s'afficher sur cet appareil.",
+    "controlLabel": "Affichage de la maquette",
+    "current": "Terrain actuel",
+    "project": "Projet Atlazra",
+    "caption": "Maquette d'exemple : une villa de 20 × 14 m. Chaque projet commence ainsi."
   }
 }
