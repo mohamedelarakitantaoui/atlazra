@@ -64,9 +64,18 @@ test('garden is viewport-lazy, has a poster, and enables controls only after ren
   expect(sceneRequests).toEqual([]);
   const poster = page.locator('garden-model .poster');
   await expect(poster).toHaveCSS('opacity', '1');
-  expect(
-    await poster.evaluate((el) => (el as HTMLImageElement).naturalWidth),
-  ).toBeGreaterThan(1000);
+  // srcset/sizes pick a variant at least as wide as the slot's device pixels.
+  // naturalWidth is density-corrected to `sizes`, so read the file's width.
+  const chosen = await poster.evaluate((el) => {
+    const image = el as HTMLImageElement;
+    return {
+      needed: image.getBoundingClientRect().width * devicePixelRatio,
+      src: image.currentSrc,
+    };
+  });
+  const file = /\/garden-poster-(\d+)\.webp$/.exec(chosen.src);
+  expect(file).not.toBeNull();
+  expect(Number(file![1])).toBeGreaterThanOrEqual(chosen.needed);
   for (const button of await page.locator('garden-model button').all())
     await expect(button).toBeDisabled();
   await page.locator('garden-model').scrollIntoViewIfNeeded();

@@ -4,6 +4,8 @@ import { t } from '../i18n/content';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { locales, localizedPath, type Locale } from '../i18n/routing';
+// Same hashed file as the 600 @font-face in fonts.css: the hero h1's weight.
+import arabicHeading from '../assets/fonts/ibm-plex-sans-arabic-arabic-600.woff2?url';
 interface Props {
   locale: Locale;
   title: string;
@@ -24,6 +26,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     />
     <meta name="description" content={description} />
     <title>{title} — {t(locale, 'footer.brand')}</title>
+    {
+      locale === 'ar' && (
+        <link
+          rel="preload"
+          href={arabicHeading}
+          as="font"
+          type="font/woff2"
+          crossorigin
+        />
+      )
+    }
     <link rel="canonical" href={canonical} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     {

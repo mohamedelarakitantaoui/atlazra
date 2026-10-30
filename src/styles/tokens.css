@@ -12,7 +12,9 @@
     -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui,
     'Helvetica Neue', Arial, sans-serif;
   --font-ar:
-    'IBM Plex Sans Arabic', 'Geeza Pro', 'Noto Sans Arabic', Tahoma, sans-serif;
+    'IBM Plex Sans Arabic', 'IBM Plex Sans Arabic Fallback',
+    'IBM Plex Sans Arabic Fallback Arial', 'Geeza Pro', 'Noto Sans Arabic',
+    Tahoma, sans-serif;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --radius-l: 28px;
   --radius-m: 18px;

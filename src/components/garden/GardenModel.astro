@@ -3,16 +3,15 @@ import SegmentedControl from '../ui/SegmentedControl.astro';
 import { t } from '../../i18n/content';
 import type { Locale } from '../../i18n/routing';
 import { defaultGardenConfig, type GardenConfig } from './config';
+import { posterSizes, posterSrcset } from './poster';
 interface Props {
   locale: Locale;
   config?: GardenConfig;
-  poster?: string;
   caption?: string;
 }
 const {
   locale,
   config = defaultGardenConfig,
-  poster = '/garden-poster.webp',
   caption = t(locale, 'garden.caption'),
 } = Astro.props;
 ---
@@ -33,10 +32,12 @@ const {
       <canvas aria-hidden="true"></canvas>
       <img
         class="poster"
-        src={poster}
+        src="/garden-poster-960.webp"
+        srcset={posterSrcset}
+        sizes={posterSizes}
         alt={t(locale, 'garden.posterAlt')}
-        width="1241"
-        height="993"
+        width="2160"
+        height="1728"
         fetchpriority="high"
         decoding="async"
       />
