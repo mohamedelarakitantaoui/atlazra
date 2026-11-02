@@ -1,0 +1,560 @@
+<title>Atlazra Design</title>
+<meta name="description" content="Paysagiste à Rabat et Salé : votre jardin dessiné en 3D, modifié avec vous, puis réalisé par nos équipes.">
+<link rel="icon" href="data:image/webp;base64,@@MARK@@">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --paper:#FFFFFF;
+  --ink-950:#112F22;--ink-900:#1B4130;--ink-800:#153829;--ink-on-bone:#0F2419;
+  --bone-50:#F6F2E9;--bone-100:#EDE6D6;--line:rgba(15,36,25,.14);--line-dark:rgba(246,242,233,.16);
+  --accent:#C9A26B;--accent-ink:#0A2618;--accent-text:#7A5B2C;
+  --muted-dark:rgba(246,242,233,.76);--muted-bone:#465649;
+  --display:'Big Shoulders Display',Impact,'Arial Narrow',sans-serif;
+  --body:Manrope,system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;
+  --ar:'IBM Plex Sans Arabic',Tahoma,sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --pad:clamp(16px,4.4vw,64px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink-on-bone);font:400 17px/1.6 var(--body);-webkit-font-smoothing:antialiased}
+html[dir=rtl] body{font-family:var(--ar)}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.skip{position:absolute;inset-inline-start:8px;top:-80px;background:var(--accent);color:var(--accent-ink);padding:10px 16px;border-radius:999px;z-index:99}
+.skip:focus{top:8px}
+.wrap{max-width:1440px;margin-inline:auto;padding-inline:var(--pad)}
+.label{font:500 12.5px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+html[dir=rtl] .label{font-family:var(--ar);letter-spacing:0;font-size:14px;font-weight:500}
+.display{font-family:var(--display);font-weight:800;text-transform:uppercase;line-height:.88;letter-spacing:-.005em;margin:0}
+html[dir=rtl] .display{font-family:var(--ar);font-weight:700;line-height:1.15;text-transform:none;letter-spacing:0}
+h2.display{font-size:clamp(46px,6.6vw,104px)}
+.btn{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 24px;border-radius:999px;font-weight:600;font-size:16px;text-decoration:none;transition:transform .15s var(--ease),background-color .2s var(--ease)}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:var(--accent);color:var(--accent-ink)}
+.btn-gold:hover{background:#D6B27D}
+.btn-ghost{border:1px solid var(--line);color:var(--ink-on-bone)}
+.btn-ghost:hover{border-color:var(--accent)}
+.btn-ink{background:var(--ink-900);color:var(--bone-50)}
+.btn-ink:hover{background:var(--ink-800)}
+.leaf{width:14px;height:14px;flex:none}
+
+/* ===== HEADER ===== */
+.head{position:relative;z-index:5;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:18px var(--pad);max-width:1440px;margin-inline:auto}
+.brand{direction:ltr;display:flex;align-items:center;gap:12px;text-decoration:none;justify-self:start}
+.brand img{width:30px}
+.brand span{font:800 22px/1 var(--display);letter-spacing:.32em;color:var(--ink-900)}
+.nav{display:flex;gap:30px;font-size:15px}
+.nav a{text-decoration:none;color:var(--muted-bone);padding:12px 0}
+.nav a:hover{color:var(--ink-on-bone)}
+.tr{justify-self:end;display:flex;align-items:center;gap:14px}
+.lang{display:flex;gap:2px;padding:3px;border-radius:999px;border:1px solid var(--line)}
+.lang button{min-width:44px;height:38px;border:0;border-radius:999px;background:none;color:var(--muted-bone);font:600 13px var(--body);cursor:pointer}
+.lang button[aria-pressed=true]{background:var(--ink-900);color:var(--paper)}
+.lang button[lang=ar]{font-family:var(--ar);font-size:16px}
+.menu-btn{display:none;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--ink-on-bone);font:600 14px var(--body);cursor:pointer}
+html[dir=rtl] .menu-btn{font-family:var(--ar)}
+
+/* ===== HERO (sandwich + poster corners) ===== */
+.hero{position:relative;min-height:max(100svh,760px);display:flex;flex-direction:column;overflow:clip;background:var(--paper)}
+.hero-grid{position:relative;flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.9fr) minmax(0,1fr);grid-template-rows:1fr auto;gap:0 24px;padding:0 var(--pad) 22px;max-width:1440px;margin-inline:auto;width:100%}
+.giant{position:absolute;inset-inline:0;top:2%;z-index:1;display:flex;justify-content:center;align-items:flex-start;pointer-events:none;user-select:none}
+.giant .word{direction:ltr;display:flex;align-items:flex-end;font:900 clamp(84px,20.5vw,330px)/.8 var(--display);letter-spacing:.015em;color:var(--ink-900);white-space:nowrap}
+.giant .word img{height:.78em;width:auto;margin-inline-end:.02em;transform:translateY(-.02em)}
+.stage{grid-column:2;grid-row:1/3;position:relative;z-index:2;min-height:520px}
+.stage .surface{position:absolute;inset:14% -6% 4% -6%;touch-action:pan-y;cursor:grab}
+.stage .surface.dragging{cursor:grabbing}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s var(--ease)}
+.stage .surface.live canvas{opacity:1}
+.stage .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:opacity .4s var(--ease)}
+.stage .surface.live .poster{opacity:0}
+.left{grid-column:1;grid-row:1;align-self:end;position:relative;z-index:3;display:flex;flex-direction:column;gap:18px;padding-bottom:28px}
+.left h1{margin:0;font:600 clamp(26px,2.5vw,36px)/1.15 var(--body);letter-spacing:-.015em}
+html[dir=rtl] .left h1{font-family:var(--ar);font-weight:700;line-height:1.4}
+.left p{margin:0;color:var(--muted-bone);font-size:16px;max-width:34ch}
+.left .ctas{display:flex;flex-wrap:wrap;gap:10px}
+.right{grid-column:3;grid-row:1;align-self:end;position:relative;z-index:3;justify-self:end;padding-bottom:28px}
+.idx{list-style:none;margin:0;padding:0;display:grid;gap:0;min-width:220px}
+.idx li{display:flex;gap:14px;align-items:baseline;padding:11px 0;border-top:1px solid var(--line);font-size:15px}
+.idx li:last-child{border-bottom:1px solid var(--line)}
+.idx b{font:500 12px var(--mono);color:var(--accent-text);letter-spacing:.1em}
+.bl{grid-column:1;grid-row:2;align-self:end;position:relative;z-index:3;display:flex;flex-direction:column;gap:8px}
+.seg{display:inline-flex;gap:2px;padding:3px;border-radius:999px;border:1px solid var(--line);background:var(--paper);width:max-content}
+.seg button{height:42px;padding:0 18px;border:0;border-radius:999px;background:none;color:var(--muted-bone);font:600 14px var(--body);cursor:pointer}
+html[dir=rtl] .seg button{font-family:var(--ar)}
+.seg button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink)}
+.bc{grid-column:2;grid-row:2;align-self:end;justify-self:center;position:relative;z-index:3;color:var(--muted-bone)}
+.br{grid-column:3;grid-row:2;align-self:end;justify-self:end;position:relative;z-index:3;display:flex;align-items:center;gap:10px;color:var(--muted-bone)}
+
+/* ===== 01 PLAN ===== */
+.plan{background-color:var(--bone-50);color:var(--ink-on-bone);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px;background-position:-1px -1px}
+.plan .wrap{padding-block:clamp(72px,10vw,140px);display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,5vw,80px);align-items:start}
+.chap>span+span{direction:ltr;unicode-bidi:isolate}
+.chap{display:flex;justify-content:space-between;align-items:center;gap:16px;color:var(--accent-text);margin-bottom:22px}
+.plan h2{color:var(--ink-on-bone)}
+.callouts{list-style:none;margin:32px 0 0;padding:0;background:var(--bone-50)}
+.callouts li{border-top:1px solid var(--line)}
+.callouts li:last-child{border-bottom:1px solid var(--line)}
+.callouts button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:40px 1fr;gap:12px;padding:13px 4px;cursor:pointer;min-height:48px}
+.callouts button:focus-visible{outline:2px solid var(--accent-text);outline-offset:-2px}
+.callouts .n{font:500 13px var(--mono);color:var(--accent-text);padding-top:3px}
+.callouts strong{display:block;font-weight:700}
+.callouts span.d{color:var(--muted-bone);font-size:15px}
+.callouts li.on{background:var(--bone-100)}
+.note{margin:20px 0 0;color:var(--muted-bone);font-size:15px;max-width:46ch}
+.sheet{position:relative;background:var(--ink-800);border-radius:20px;padding:clamp(14px,2.4vw,32px);box-shadow:0 30px 60px -30px rgba(6,26,17,.5)}
+.sheet .pins{position:absolute;inset:clamp(14px,2.4vw,32px)}
+.pin{position:absolute;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);font:600 13px var(--mono);display:grid;place-items:center;cursor:pointer;box-shadow:0 0 0 4px rgba(10,38,24,.35);transition:transform .2s var(--ease)}
+.pin.on{transform:translate(-50%,-50%) scale(1.25);background:var(--bone-50)}
+.sheet-meta{display:flex;justify-content:space-between;gap:12px;margin-top:14px;color:var(--muted-dark)}
+
+/* ===== 02 BEFORE/AFTER ===== */
+.ba{background:var(--paper)}
+.ba .wrap{padding-block:clamp(72px,10vw,140px)}
+.ba-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:40px}
+.ba-head p{margin:0;max-width:44ch;color:var(--muted-bone)}
+.compare{position:relative;max-width:1040px;margin-inline:auto;border-radius:20px;overflow:hidden;background:var(--ink-950);touch-action:pan-y;user-select:none;cursor:ew-resize}
+.compare img{width:100%}
+.compare .after{position:absolute;inset:0;clip-path:inset(0 0 0 var(--split,50%))}
+html[dir=rtl] .compare .after{clip-path:inset(0 var(--split,50%) 0 0)}
+.compare .handle{position:absolute;top:0;bottom:0;inset-inline-start:var(--split,50%);width:2px;background:var(--accent);transform:translateX(-1px)}
+.compare .knob{position:absolute;top:50%;left:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:var(--accent);display:grid;place-items:center}
+.compare .tagL,.compare .tagR{position:absolute;top:16px;padding:6px 12px;border-radius:999px;background:rgba(17,47,34,.85);color:var(--bone-50)}
+.compare .tagL{inset-inline-start:16px}.compare .tagR{inset-inline-end:16px}
+.compare input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+
+/* ===== 03 SERVICES ===== */
+.svc{background:var(--bone-100);color:var(--ink-on-bone)}
+.svc .wrap{padding-block:clamp(72px,10vw,140px)}
+.svc-head{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:32px;align-items:end;margin-bottom:48px}
+.svc-head .chap{margin:0}
+.rows{list-style:none;margin:0;padding:0}
+.rows li{display:grid;grid-template-columns:72px minmax(0,5fr) minmax(0,6fr) 200px;gap:24px;align-items:center;padding:28px 0;border-top:1px solid var(--line)}
+.rows li:last-child{border-bottom:1px solid var(--line)}
+.rows .n{font:500 13px var(--mono);color:var(--accent-text)}
+.rows h3{font:800 clamp(34px,3.6vw,54px)/.9 var(--display);text-transform:uppercase;margin:0}
+html[dir=rtl] .rows h3{font-family:var(--ar);font-weight:700;line-height:1.2;text-transform:none}
+.rows p{margin:0;color:var(--muted-bone)}
+.rows img{border-radius:14px;aspect-ratio:4/3;object-fit:cover;width:200px}
+.todo{display:inline-block;margin-top:24px;font:500 12px var(--mono);color:var(--accent-text);border:1px dashed var(--accent-text);padding:6px 10px;border-radius:999px}
+
+/* ===== 04 PALETTE ===== */
+.pal{background:var(--paper);position:relative;overflow:clip}
+.pal .wrap{padding-block:clamp(72px,10vw,140px);position:relative}
+.pal-word{position:absolute;inset-inline:0;top:170px;text-align:center;font:900 clamp(100px,19vw,300px)/.8 var(--display);text-transform:uppercase;color:transparent;-webkit-text-stroke:1.5px rgba(201,162,107,.4);pointer-events:none;user-select:none;white-space:nowrap}
+.pal-head{position:relative;display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:32px;align-items:end}
+.pal-head p{margin:0;color:var(--muted-bone)}
+.twine{position:relative;margin-top:72px}
+.twine svg.cord{position:absolute;inset-inline:0;top:0;width:100%;height:60px}
+.tags{list-style:none;margin:0;padding:0;position:relative;z-index:1;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}
+.tag{--r:0deg;position:relative;margin-top:calc(var(--drop,18px));transform:rotate(var(--r));transform-origin:50% -24px;transition:transform .6s var(--ease)}
+.tag:hover{transform:rotate(calc(var(--r) * -1))}
+.tag::before{content:"";position:absolute;left:50%;top:-26px;width:1px;height:26px;background:rgba(201,162,107,.55)}
+.tag .card{background:var(--bone-100);color:var(--ink-on-bone);border-radius:10px 10px 18px 18px;padding:26px 16px 18px;position:relative;clip-path:polygon(18% 0,82% 0,100% 12%,100% 100%,0 100%,0 12%)}
+.tag .card::before{content:"";position:absolute;top:9px;left:50%;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--paper)}
+.tag h3{margin:6px 0 2px;font:800 26px/.95 var(--display);text-transform:uppercase}
+html[dir=rtl] .tag h3{font-family:var(--ar);font-weight:700;font-size:22px;line-height:1.3;text-transform:none}
+.tag .lat{font-style:italic;color:var(--muted-bone);font-size:14px;margin:0 0 12px}
+.tag dl{margin:0;display:grid;gap:4px;border-top:1px solid var(--line);padding-top:10px}
+.tag dt{font:500 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text)}
+.tag dd{margin:0 0 4px;font-size:14px;font-weight:600}
+
+
+/* ===== 05 METHOD ===== */
+.meth{background:var(--bone-50);color:var(--ink-on-bone)}
+.meth .wrap{padding-block:clamp(72px,10vw,140px)}
+.pages{list-style:none;margin:48px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.page{position:relative;background:#FFFDF8;border:1px solid var(--line);border-radius:4px 4px 14px 14px;padding:34px 22px 24px;background-image:linear-gradient(rgba(15,36,25,.07) 1px,transparent 1px);background-size:100% 28px;background-position:0 62px}
+.page:nth-child(2){margin-top:40px}.page:nth-child(3){margin-top:12px}.page:nth-child(4){margin-top:56px}
+.page::before{content:"";position:absolute;top:10px;inset-inline:22px;height:10px;background:radial-gradient(circle,var(--bone-100) 4px,transparent 5px) 0 0/24px 10px repeat-x}
+.page .num{font:900 64px/.9 var(--display);color:var(--accent-text)}
+.page h3{margin:8px 0 8px;font-size:20px;line-height:1.25}
+.page p{margin:0;color:var(--muted-bone);font-size:15.5px}
+.page img{margin-top:16px;border-radius:10px;background:var(--ink-800);aspect-ratio:4/3;object-fit:contain;width:100%}
+
+/* ===== 06 PROJECTS ===== */
+.proj{background:var(--bone-50)}
+.proj .wrap{padding-block:clamp(72px,10vw,140px);display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:48px;align-items:end}
+.types{list-style:none;margin:0;padding:0}
+.types li{display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-top:1px solid var(--line)}
+.types li:last-child{border-bottom:1px solid var(--line)}
+.types span{color:var(--muted-bone)}
+
+/* ===== 07 FAQ ===== */
+.faq{background:var(--bone-100);color:var(--ink-on-bone)}
+.faq .wrap{padding-block:clamp(72px,10vw,120px);display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:48px}
+.faq details{border-top:1px solid var(--line)}
+.faq details:last-child{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:center;padding:20px 0;font-weight:700;font-size:18px;min-height:48px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .pm{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;transition:transform .25s var(--ease)}
+.faq details[open] .pm{transform:rotate(45deg);background:var(--accent);border-color:var(--accent)}
+.faq details p{margin:0 0 20px;color:var(--muted-bone);max-width:60ch}
+
+/* ===== 08 CONTACT + FOOTER ===== */
+.cta{background:var(--accent);color:var(--accent-ink)}
+.cta .wrap{padding-block:clamp(72px,10vw,130px);display:grid;grid-template-columns:minmax(0,7fr) minmax(0,4fr);gap:48px;align-items:end}
+.cta h2{font-size:clamp(56px,8.4vw,136px)}
+.cta dl{margin:0;display:grid;gap:14px}
+.cta dt{font:500 12px var(--mono);letter-spacing:.12em;text-transform:uppercase}
+html[dir=rtl] .cta dt{font-family:var(--ar);letter-spacing:0;font-size:14px}
+.cta dd{margin:0;font-weight:700}
+.cta .pend{font-weight:500;opacity:.85}
+.foot{background:var(--ink-900);color:var(--bone-50)}
+.foot .wrap{padding-block:64px 32px}
+.foot-word{direction:ltr;display:flex;justify-content:center;align-items:flex-end;font:900 clamp(80px,20vw,320px)/.8 var(--display);color:var(--bone-50);white-space:nowrap;margin:24px 0 48px;overflow:clip}
+.foot-word img{height:.78em;width:auto}
+.foot-row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px 32px;padding-top:24px;border-top:1px solid var(--line-dark);color:var(--muted-dark);font-size:14px}
+.foot-row nav{display:flex;gap:24px}
+.foot-row a{color:var(--muted-dark)}
+.marquee{overflow:clip;border-block:1px solid var(--line-dark);padding:14px 0}
+.marquee .track{display:flex;gap:40px;width:max-content;animation:mq 40s linear infinite;font:800 28px/1 var(--display);text-transform:uppercase;color:var(--accent)}
+.marquee:hover .track{animation-play-state:paused}
+@keyframes mq{to{transform:translateX(-50%)}}
+html[dir=rtl] .marquee .track{animation-name:mqr}
+@keyframes mqr{to{transform:translateX(50%)}}
+
+/* reveal */
+.rv{opacity:1}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:1100px){
+  .nav{display:none;position:absolute;top:100%;inset-inline:var(--pad);flex-direction:column;gap:0;padding:8px 20px;background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:0 20px 40px -20px rgba(15,36,25,.3);z-index:20}
+  .nav.open{display:flex}
+  .nav a{padding:14px 0;border-bottom:1px solid var(--line);font-size:17px;color:var(--ink-on-bone)}
+  .nav a:last-child{border-bottom:0}
+  .menu-btn{display:inline-flex;align-items:center}
+  .head{grid-template-columns:1fr auto}
+  .rows li{grid-template-columns:48px minmax(0,1fr) 160px}
+  .rows li p{grid-column:2/3}
+  .rows img{grid-row:1/3;grid-column:3;width:160px}
+  .tags{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:56px}
+  .pages{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:860px){
+  .giant .word{font-size:19.5vw}
+  .pin{width:26px;height:26px;font-size:11px}
+  .hero{min-height:auto}
+  .hero-grid{display:flex;flex-direction:column;gap:20px}
+  .giant{position:relative;top:auto;margin-top:12px}
+  .stage{min-height:0;aspect-ratio:4/3.1;margin-top:clamp(-120px,-14vw,-40px)}
+  .stage .surface{inset:0}
+  .left,.right,.bl,.bc,.br{padding:0;align-self:stretch;justify-self:stretch}
+  .right{order:5}.bl{order:2}.br{display:none}.bc{order:6}
+  .left{order:3}
+  .plan .wrap,.svc-head,.pal-head,.proj .wrap,.faq .wrap,.cta .wrap{grid-template-columns:1fr}
+  .plan .wrap>.sheet{order:-1}
+  .rows li{grid-template-columns:40px minmax(0,1fr);padding:22px 0}
+  .rows img{grid-row:auto;grid-column:2;width:100%;max-width:320px}
+  .tags{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pages{grid-template-columns:1fr}
+  .page:nth-child(n){margin-top:0}
+  .tr .btn{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+}
+</style>
+<a class="skip" href="#main" data-i="skip">Aller au contenu</a>
+
+<header class="hero" aria-label="Atlazra">
+  <div class="head">
+    <a class="brand" href="#" aria-label="Atlazra Design, accueil"><img src="data:image/webp;base64,@@MARK@@" alt="" width="160" height="137"><span>ATLAZRA</span></a>
+    <nav class="nav" id="nav" aria-label="Navigation principale" data-ia="nav">
+      <a href="#plan" data-i="n1">Le plan</a><a href="#services" data-i="n2">Services</a><a href="#palette" data-i="n3">Plantes</a><a href="#methode" data-i="n4">Méthode</a><a href="#contact" data-i="n5">Contact</a>
+    </nav>
+    <div class="tr">
+      <div class="lang" role="group" aria-label="Langue" data-ia="langLabel">
+        <button type="button" data-lang="fr" aria-pressed="true" lang="fr">FR</button>
+        <button type="button" data-lang="ar" aria-pressed="false" lang="ar">ع</button>
+      </div>
+      <a class="btn btn-gold" href="#contact" data-i="cta">Demander une visite</a>
+      <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="nav" data-i="menu">Menu</button>
+    </div>
+  </div>
+
+  <div class="hero-grid">
+    <div class="giant" aria-hidden="true"><div class="word"><img src="data:image/webp;base64,@@MARK@@" alt="" width="160" height="137">TLAZRA</div></div>
+
+    <div class="stage">
+      <div class="surface" id="surface" tabindex="0" role="img" aria-label="Maquette 3D d'un jardin de villa de 20 × 14 m. Glissez ou utilisez les flèches pour la faire pivoter." data-ia="model">
+        <img class="poster" id="poster" src="data:image/webp;base64,@@HERO@@" alt="" width="1200" height="817">
+        <canvas id="garden"></canvas>
+      </div>
+    </div>
+
+    <div class="left">
+      <span class="label" style="color:var(--accent-text)" data-i="kicker">Paysagiste · Rabat, Salé et environs</span>
+      <h1 data-i="h1">Votre jardin dessiné en 3D, avant le premier coup de pelle.</h1>
+      <p data-i="hp">Nous relevons le terrain, nous le modélisons, vous le modifiez avec nous. Le devis suit le plan validé, poste par poste.</p>
+      <div class="ctas"><a class="btn btn-gold" href="#contact" data-i="cta">Demander une visite</a><a class="btn btn-ghost" href="#plan" data-i="cta2">Voir le plan coté</a></div>
+    </div>
+
+    <div class="right">
+      <ol class="idx" aria-label="Les quatre étapes" data-ia="steps">
+        <li><b>01</b><span data-i="s1">Visite du terrain</span></li>
+        <li><b>02</b><span data-i="s2">Maquette 3D</span></li>
+        <li><b>03</b><span data-i="s3">Ajustements et devis</span></li>
+        <li><b>04</b><span data-i="s4">Travaux et remise</span></li>
+      </ol>
+    </div>
+
+    <div class="bl">
+      <div class="seg" role="group" aria-label="État du jardin" data-ia="state">
+        <button type="button" id="st-current" aria-pressed="false" data-i="t0">Terrain actuel</button>
+        <button type="button" id="st-project" aria-pressed="true" data-i="t1">Projet Atlazra</button>
+      </div>
+    </div>
+    <p class="bc label" data-i="towns" style="margin:0">Rabat · Salé · Kénitra · Témara</p>
+    <p class="br label" style="margin:0"><svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 1 1 6l4 5M17 1l4 5-4 5M1 6h20"/></svg><span data-i="drag">Glissez pour pivoter</span></p>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- 01 PLAN -->
+<section class="plan" id="plan" aria-labelledby="plan-h">
+  <div class="wrap">
+    <div>
+      <div class="chap label"><span data-i="pl">01 — Le plan coté</span><span>01 / 06</span></div>
+      <h2 class="display rv" id="plan-h" data-i="ph">Une villa de 20 × 14 m, dessinée dalle par dalle.</h2>
+      <ol class="callouts" id="callouts">
+        <li data-k="pergola"><button type="button"><span class="n">01</span><span><strong data-i="c1">Pergola</strong><span class="d" data-i="c1d">3,2 × 2,2 m, sept lames, sur la terrasse</span></span></button></li>
+        <li data-k="terrace"><button type="button"><span class="n">02</span><span><strong data-i="c2">Terrasse</strong><span class="d" data-i="c2d">9 × 2,6 m, devant le séjour</span></span></button></li>
+        <li data-k="beds"><button type="button"><span class="n">03</span><span><strong data-i="c3">Massifs fleuris</strong><span class="d" data-i="c3d">trois massifs de neuf plants</span></span></button></li>
+        <li data-k="pool"><button type="button"><span class="n">04</span><span><strong data-i="c4">Piscine</strong><span class="d" data-i="c4d">6,4 × 3,2 m avec margelle</span></span></button></li>
+        <li data-k="path"><button type="button"><span class="n">05</span><span><strong data-i="c5">Allée</strong><span class="d" data-i="c5d">sept pas japonais en courbe</span></span></button></li>
+        <li data-k="hedge"><button type="button"><span class="n">06</span><span><strong data-i="c6">Haie brise-vent</strong><span class="d" data-i="c6d">10,5 m le long de la limite ouest</span></span></button></li>
+        <li data-k="tree"><button type="button"><span class="n">07</span><span><strong data-i="c7">Arbres d'ombrage</strong><span class="d" data-i="c7d">cinq sujets aux angles du terrain</span></span></button></li>
+      </ol>
+      <p class="note" data-i="pn">Ce plan suit l'équipe sur le chantier : chaque cote est reprise au mètre ruban.</p>
+    </div>
+    <figure class="sheet" style="margin:0">
+      <img src="data:image/webp;base64,@@PLANP@@" alt="Plan vu de dessus du jardin d'exemple" data-ia="planAlt" width="1200" height="899">
+      <div class="pins" id="pins"></div>
+      <figcaption class="sheet-meta label"><span data-i="pc">Maquette d'exemple · échelle libre</span><span>N ↑</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 02 BEFORE / AFTER -->
+<section class="ba" aria-labelledby="ba-h">
+  <div class="wrap">
+    <div class="ba-head">
+      <div>
+        <div class="chap label" style="color:var(--accent-text)"><span data-i="bl">02 — Avant / après</span></div>
+        <h2 class="display rv" id="ba-h" data-i="bh">Le même terrain, avant et après le plan.</h2>
+      </div>
+      <p data-i="bp">Faites glisser. D'un côté, le terrain tel qu'on le trouve à la visite : piquets, pierres, terre nue. De l'autre, le jardin validé.</p>
+    </div>
+    <div class="compare" id="compare" style="--split:50%">
+      <img src="data:image/webp;base64,@@PLANC@@" alt="Le terrain avant les travaux, vu de dessus" data-ia="beforeAlt" width="1200" height="899">
+      <img class="after" src="data:image/webp;base64,@@PLANP@@" alt="Le même terrain avec le jardin dessiné" data-ia="afterAlt" width="1200" height="899">
+      <div class="handle" aria-hidden="true"><div class="knob"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0A2618" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7 3 12l5 5M16 7l5 5-5 5"/></svg></div></div>
+      <span class="tagL label" data-i="t0">Terrain actuel</span><span class="tagR label" data-i="t1">Projet Atlazra</span>
+      <input type="range" min="0" max="100" value="50" id="split" aria-label="Comparer le terrain actuel et le projet" data-ia="splitLabel">
+    </div>
+  </div>
+</section>
+
+<!-- 03 SERVICES -->
+<section class="svc" id="services" aria-labelledby="svc-h">
+  <div class="wrap">
+    <div class="svc-head">
+      <div class="chap label"><span data-i="sl">03 — Ce que nous faisons</span><span>03 / 06</span></div>
+      <h2 class="display rv" id="svc-h" data-i="sh">Un seul interlocuteur, du relevé à l'arrosage.</h2>
+    </div>
+    <ul class="rows">
+      <li><span class="n">[01]</span><h3 data-i="v1">Conception 3D</h3><p data-i="v1p">Plan 2D coté, maquette 3D, choix des matériaux. Vous demandez des changements sur la maquette avant de signer.</p><img src="data:image/webp;base64,@@PLANP@@" alt="" width="1200" height="899" loading="lazy"></li>
+      <li><span class="n">[02]</span><h3 data-i="v2">Aménagement paysager</h3><p data-i="v2p">Terrassement, plantations, gazon, allées et bordures, pour villas, riads, résidences et bureaux.</p><img src="data:image/webp;base64,@@POOL@@" alt="" width="900" height="900" loading="lazy"></li>
+      <li><span class="n">[03]</span><h3 data-i="v3">Espaces extérieurs</h3><p data-i="v3p">Terrasses, pergolas, bassins, éclairage extérieur et arrosage goutte-à-goutte.</p><img src="data:image/webp;base64,@@PERGOLA@@" alt="" width="900" height="900" loading="lazy"></li>
+    </ul>
+    <span class="todo">TODO(client): confirmer la liste des services</span>
+  </div>
+</section>
+
+<!-- 04 PALETTE -->
+<section class="pal" id="palette" aria-labelledby="pal-h">
+  <div class="wrap">
+    <div class="pal-head">
+      <div>
+        <div class="chap label" style="color:var(--accent-text)"><span data-i="vl">04 — Palette végétale</span><span>04 / 06</span></div>
+        <h2 class="display rv" id="pal-h" data-i="vh">Des plantes qui tiennent face au vent de l'Atlantique.</h2>
+      </div>
+      <p data-i="vp">Embruns, vent d'ouest, étés secs : sur la côte de Rabat, une plante doit supporter les trois. Quelques exemples, choisis avec vous selon le terrain et l'eau disponible.</p>
+    </div>
+    <div class="twine">
+      <div class="pal-word" aria-hidden="true" data-i="pw">Palette</div>
+      <svg class="cord" viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 8 Q 500 46 1000 8" fill="none" stroke="rgba(201,162,107,.6)" stroke-width="1.5"/></svg>
+      <ul class="tags">
+        <li class="tag" style="--r:-3deg;--drop:30px"><div class="card"><span class="label" style="color:var(--accent-text)">01</span><h3 data-i="p1">Olivier</h3><p class="lat">Olea europaea</p><dl><dt data-i="water">Eau</dt><dd data-i="low">Faible</dd><dt data-i="use">Usage</dt><dd data-i="p1u">Arbre d'ombre, plein soleil</dd></dl></div></li>
+        <li class="tag" style="--r:2deg;--drop:44px"><div class="card"><span class="label" style="color:var(--accent-text)">02</span><h3 data-i="p2">Romarin</h3><p class="lat">Salvia rosmarinus</p><dl><dt data-i="water">Eau</dt><dd data-i="low">Faible</dd><dt data-i="use">Usage</dt><dd data-i="p2u">Bordures, supporte les embruns</dd></dl></div></li>
+        <li class="tag" style="--r:-1.5deg;--drop:54px"><div class="card"><span class="label" style="color:var(--accent-text)">03</span><h3 data-i="p3">Pittosporum</h3><p class="lat">Pittosporum tobira</p><dl><dt data-i="water">Eau</dt><dd data-i="mid">Moyenne</dd><dt data-i="use">Usage</dt><dd data-i="p3u">Haie brise-vent</dd></dl></div></li>
+        <li class="tag" style="--r:2.5deg;--drop:54px"><div class="card"><span class="label" style="color:var(--accent-text)">04</span><h3 data-i="p4">Bougainvillier</h3><p class="lat">Bougainvillea</p><dl><dt data-i="water">Eau</dt><dd data-i="low">Faible</dd><dt data-i="use">Usage</dt><dd data-i="p4u">Murs et pergolas au soleil</dd></dl></div></li>
+        <li class="tag" style="--r:-2deg;--drop:44px"><div class="card"><span class="label" style="color:var(--accent-text)">05</span><h3 data-i="p5">Agrumes</h3><p class="lat">Citrus</p><dl><dt data-i="water">Eau</dt><dd data-i="reg">Régulière</dd><dt data-i="use">Usage</dt><dd data-i="p5u">Patios, riads, grands pots</dd></dl></div></li>
+        <li class="tag" style="--r:3deg;--drop:30px"><div class="card"><span class="label" style="color:var(--accent-text)">06</span><h3 data-i="p6">Paspalum</h3><p class="lat">Paspalum vaginatum</p><dl><dt data-i="water">Eau</dt><dd data-i="mid">Moyenne</dd><dt data-i="use">Usage</dt><dd data-i="p6u">Gazon qui tolère le sel</dd></dl></div></li>
+      </ul>
+    </div>
+    <span class="todo" style="margin-top:48px">TODO(client): confirmer les plantes utilisées</span>
+  </div>
+</section>
+
+<!-- 05 METHOD -->
+<section class="meth" id="methode" aria-labelledby="meth-h">
+  <div class="wrap">
+    <div class="chap label"><span data-i="ml">05 — Comment se passe un projet</span><span>05 / 06</span></div>
+    <h2 class="display rv" id="meth-h" data-i="mh">Quatre étapes, de la visite à la remise du jardin.</h2>
+    <ol class="pages">
+      <li class="page"><span class="num">01</span><h3 data-i="m1">Visite du terrain</h3><p data-i="m1p">Mesures, nature du sol, soleil et vent, accès à l'eau. Nous écoutons comment vous voulez vivre dehors.</p><img src="data:image/webp;base64,@@CURRENT@@" alt="" width="1200" height="775" loading="lazy"></li>
+      <li class="page"><span class="num">02</span><h3 data-i="m2">Plan et maquette 3D</h3><p data-i="m2p">Implantation, plantes, matériaux et éclairage, présentés en 3D.</p><img src="data:image/webp;base64,@@PLANP@@" alt="" width="1200" height="899" loading="lazy"></li>
+      <li class="page"><span class="num">03</span><h3 data-i="m3">Ajustements et devis</h3><p data-i="m3p">Vous demandez des modifications sur la maquette. Le devis correspond au plan validé, poste par poste.</p><img src="data:image/webp;base64,@@HERO@@" alt="" width="1200" height="817" loading="lazy"></li>
+      <li class="page"><span class="num">04</span><h3 data-i="m4">Travaux et remise</h3><p data-i="m4p">Nos équipes réalisent le plan, puis nous vous remettons le jardin avec les consignes d'arrosage et d'entretien.</p><img src="data:image/webp;base64,@@LOW@@" alt="" width="1600" height="830" loading="lazy"></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 06 PROJECTS -->
+<section class="proj" aria-labelledby="proj-h">
+  <div class="wrap">
+    <div>
+      <div class="chap label" style="color:var(--accent-text)"><span data-i="rl">06 — Réalisations</span><span>06 / 06</span></div>
+      <h2 class="display rv" id="proj-h" data-i="rh">Les photos de chantier arrivent ici, projet par projet.</h2>
+      <span class="todo">TODO(client): photos réelles des chantiers</span>
+    </div>
+    <ul class="types">
+      <li><strong data-i="r1">Jardins de villa</strong><span data-i="r1v">pelouse, massifs, piscine</span></li>
+      <li><strong data-i="r2">Patios et riads</strong><span data-i="r2v">agrumes, bassins, pots</span></li>
+      <li><strong data-i="r3">Terrasses et toits</strong><span data-i="r3v">bacs plantés, pergolas</span></li>
+      <li><strong data-i="r4">Résidences et entreprises</strong><span data-i="r4v">espaces communs, entrées</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 07 FAQ -->
+<section class="faq" aria-labelledby="faq-h">
+  <div class="wrap">
+    <div>
+      <div class="chap label"><span data-i="ql">Questions fréquentes</span></div>
+      <h2 class="display rv" id="faq-h" data-i="qh">Avant d'appeler.</h2>
+    </div>
+    <div>
+      <details><summary><span data-i="q1">Où intervenez-vous ?</span><span class="pm" aria-hidden="true">+</span></summary><p data-i="a1">À Rabat, Salé, Kénitra et Témara.</p></details>
+      <details><summary><span data-i="q2">Puis-je changer le plan après la maquette ?</span><span class="pm" aria-hidden="true">+</span></summary><p data-i="a2">Oui, c'est le rôle de l'étape 3. Le devis n'est établi que sur le plan que vous avez validé.</p></details>
+      <details><summary><span data-i="q3">Combien d'eau faudra-t-il ?</span><span class="pm" aria-hidden="true">+</span></summary><p data-i="a3">Cela dépend des plantes choisies. Nous dimensionnons un arrosage goutte-à-goutte et indiquons les besoins de chaque massif.</p></details>
+      <details><summary><span data-i="q4">Combien coûte une étude ?</span><span class="pm" aria-hidden="true">+</span></summary><p>TODO(client)</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- 08 CONTACT -->
+<section class="cta" id="contact" aria-labelledby="cta-h">
+  <div class="wrap">
+    <div>
+      <div class="chap label" style="color:var(--accent-ink)"><span data-i="kl">Contact</span></div>
+      <h2 class="display" id="cta-h" data-i="kh">Parlons de votre terrain.</h2>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <p style="margin:0" data-i="kp">Décrivez-le en quelques lignes. Nous vous rappelons pour fixer une visite.</p>
+      <dl>
+        <dt data-i="ka">Adresse</dt><dd><span data-i="addr">Dar Nizar, Rabat – Salé</span><br><a href="https://maps.app.goo.gl/6f43CHxzyrMHoT4f9" data-i="map">Ouvrir dans Google Maps</a></dd>
+        <dt data-i="kt">Téléphone et WhatsApp</dt><dd class="pend">TODO(client)</dd>
+      </dl>
+      <a class="btn btn-ink" style="align-self:flex-start" href="#" data-i="cta">Demander une visite</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="marquee" aria-hidden="true"><div class="track"><span data-i="mR">Rabat</span><span>✦</span><span data-i="mS">Salé</span><span>✦</span><span data-i="mK">Kénitra</span><span>✦</span><span data-i="mT">Témara</span><span>✦</span><span data-i="mR">Rabat</span><span>✦</span><span data-i="mS">Salé</span><span>✦</span><span data-i="mK">Kénitra</span><span>✦</span><span data-i="mT">Témara</span><span>✦</span><span data-i="mR">Rabat</span><span>✦</span><span data-i="mS">Salé</span><span>✦</span><span data-i="mK">Kénitra</span><span>✦</span><span data-i="mT">Témara</span><span>✦</span><span data-i="mR">Rabat</span><span>✦</span><span data-i="mS">Salé</span><span>✦</span><span data-i="mK">Kénitra</span><span>✦</span><span data-i="mT">Témara</span><span>✦</span></div></div>
+  <div class="wrap">
+    <div class="foot-word" aria-hidden="true"><img src="data:image/webp;base64,@@MARK@@" alt="" width="160" height="137">TLAZRA</div>
+    <div class="foot-row">
+      <span data-i="copy">© 2026 Atlazra Design · L'art des espaces verts · Dar Nizar, Rabat – Salé</span>
+      <nav aria-label="Liens légaux" data-ia="legal"><a href="#" data-i="lg1">Mentions légales</a><a href="#" data-i="lg2">Confidentialité</a></nav>
+    </div>
+  </div>
+</footer>
+
+<script>@@JS@@</script>
+<script>
+(function(){
+document.documentElement.classList.add('js');
+var AR={
+ skip:"انتقل إلى المحتوى",n1:"المخطط",n2:"الخدمات",n3:"النباتات",n4:"المنهجية",n5:"اتصل بنا",cta:"اطلب زيارة",
+ kicker:"تنسيق الحدائق · الرباط وسلا والنواحي",h1:"حديقتك مرسومة بالأبعاد الثلاثة، قبل أول ضربة معول.",
+ hp:"نقيس الأرض ونصمّمها ثلاثيًا، وتعدّلها معنا. عرض السعر يتبع المخطط المعتمد، بندًا ببند.",cta2:"شاهد المخطط",
+ s1:"زيارة الموقع",s2:"نموذج ثلاثي الأبعاد",s3:"التعديلات وعرض السعر",s4:"الأشغال والتسليم",
+ t0:"الأرض الحالية",t1:"مشروع أطلزرا",towns:"الرباط · سلا · القنيطرة · تمارة",drag:"اسحب للتدوير",
+ pl:"01 — المخطط المفصّل",ph:"فيلا بمساحة 20 × 14 م، مرسومة بلاطةً بلاطة.",
+ c1:"عريشة",c1d:"3٫2 × 2٫2 م، سبع شرائح، فوق التراس",c2:"تراس",c2d:"9 × 2٫6 م أمام الصالون",c3:"أحواض الزهور",c3d:"ثلاثة أحواض في كل منها تسع شتلات",
+ c4:"مسبح",c4d:"6٫4 × 3٫2 م مع حافة",c5:"ممر",c5d:"سبع بلاطات يابانية في منحنى",c6:"سياج مصدّ للرياح",c6d:"10٫5 م على الحد الغربي",c7:"أشجار الظل",c7d:"خمس أشجار في زوايا الأرض",
+ pn:"يرافق هذا المخطط الفريق في الورش: كل قياس يُعاد بالمتر.",pc:"نموذج توضيحي · بدون مقياس",
+ bl:"02 — قبل / بعد",bh:"الأرض نفسها، قبل المخطط وبعده.",bp:"اسحب. من جهة، الأرض كما نجدها عند الزيارة: أوتاد وحجارة وتراب. ومن الجهة الأخرى، الحديقة المعتمدة.",
+ sl:"03 — ما نقوم به",sh:"محاور واحد، من القياس إلى السقي.",
+ v1:"التصميم ثلاثي الأبعاد",v1p:"مخطط ثنائي الأبعاد بالقياسات، نموذج ثلاثي، واختيار المواد. تطلب التعديلات على النموذج قبل التوقيع.",
+ v2:"تنسيق الحدائق",v2p:"تسوية الأرض، الغرس، العشب، الممرات والحواف، للفيلات والرياضات والإقامات والمكاتب.",
+ v3:"الفضاءات الخارجية",v3p:"تراسات، عرائش، أحواض مائية، إنارة خارجية وسقي بالتنقيط.",
+ pw:"نباتات",vl:"04 — الاختيار النباتي",vh:"نباتات تصمد أمام رياح الأطلسي.",vp:"رذاذ البحر، الرياح الغربية، صيف جاف: على ساحل الرباط يجب أن يتحمّل النبات الثلاثة. أمثلة نختارها معك حسب الأرض والماء المتوفّر.",
+ water:"الماء",use:"الاستعمال",low:"قليل",mid:"متوسط",reg:"منتظم",
+ p1:"الزيتون",p1u:"شجرة ظل، شمس كاملة",p2:"إكليل الجبل",p2u:"حواف، يتحمّل رذاذ البحر",p3:"البيتوسبوروم",p3u:"سياج مصدّ للرياح",p4:"الجهنمية",p4u:"جدران وعرائش مشمسة",p5:"الحوامض",p5u:"باحات ورياضات وأصص كبيرة",p6:"الباسبالوم",p6u:"عشب يتحمّل الملوحة",
+ ml:"05 — كيف يسير المشروع",mh:"أربع مراحل، من الزيارة إلى تسليم الحديقة.",
+ m1:"زيارة الموقع",m1p:"القياسات، نوع التربة، الشمس والرياح، الوصول إلى الماء. ونستمع إلى طريقة عيشك في الخارج.",
+ m2:"المخطط والنموذج ثلاثي الأبعاد",m2p:"التوزيع، اختيار النباتات، المواد والإنارة، معروضة بالأبعاد الثلاثة.",
+ m3:"التعديلات وعرض السعر",m3p:"تطلب التعديلات على النموذج. عرض السعر يطابق المخطط المعتمد، بندًا ببند.",
+ m4:"الأشغال والتسليم",m4p:"تنجز فرقنا المخطط، ثم نسلّمك الحديقة مع تعليمات السقي والصيانة.",
+ rl:"06 — إنجازاتنا",rh:"صور الأوراش تُنشر هنا، مشروعًا بعد مشروع.",
+ r1:"حدائق الفيلات",r1v:"عشب، أحواض، مسبح",r2:"الأفنية والرياضات",r2v:"حوامض، أحواض مائية، أصص",r3:"التراسات والأسطح",r3v:"أحواض مغروسة، عرائش",r4:"الإقامات والشركات",r4v:"فضاءات مشتركة، مداخل",
+ ql:"أسئلة متكررة",qh:"قبل أن تتصل.",q1:"أين تعملون؟",a1:"في الرباط وسلا والقنيطرة وتمارة.",
+ q2:"هل يمكنني تغيير المخطط بعد النموذج؟",a2:"نعم، هذا دور المرحلة الثالثة. لا يُعدّ عرض السعر إلا على المخطط الذي اعتمدته.",
+ q3:"كم من الماء ستحتاج الحديقة؟",a3:"يتوقف ذلك على النباتات المختارة. نصمّم سقيًا بالتنقيط ونحدّد حاجة كل حوض.",q4:"كم تكلّف الدراسة؟",
+ kl:"اتصل بنا",kh:"لنتحدث عن أرضك.",kp:"صِفها في بضعة أسطر، وسنعاود الاتصال بك لتحديد موعد الزيارة.",ka:"العنوان",addr:"دار نزار، الرباط – سلا",map:"افتح في خرائط Google",kt:"الهاتف وواتساب",
+ copy:"© 2026 أطلزرا ديزاين · فنّ المساحات الخضراء · دار نزار، الرباط – سلا",lg1:"إشعارات قانونية",lg2:"الخصوصية",mR:"الرباط",mS:"سلا",mK:"القنيطرة",mT:"تمارة",menu:"القائمة"
+};
+var ARA={nav:"التنقل الرئيسي",langLabel:"اللغة",model:"نموذج ثلاثي الأبعاد لحديقة فيلا بمساحة 20 × 14 م. اسحب أو استعمل الأسهم لتدويره.",steps:"المراحل الأربع",state:"حالة الحديقة",planAlt:"مخطط الحديقة التوضيحية من الأعلى",beforeAlt:"الأرض قبل الأشغال من الأعلى",afterAlt:"الأرض نفسها مع الحديقة المرسومة",splitLabel:"قارن بين الأرض الحالية والمشروع",legal:"روابط قانونية"};
+var FR={},FRA={};
+document.querySelectorAll('[data-i]').forEach(function(e){FR[e.dataset.i]=e.textContent});
+document.querySelectorAll('[data-ia]').forEach(function(e){FRA[e.dataset.ia]=e.getAttribute('aria-label')||e.getAttribute('alt')});
+var garden=null,lang='fr';
+function setLang(l){
+  lang=l;var d=l==='ar'?AR:FR,da=l==='ar'?ARA:FRA;
+  document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-i]').forEach(function(e){var v=d[e.dataset.i];if(v!=null)e.textContent=v});
+  document.querySelectorAll('[data-ia]').forEach(function(e){var v=da[e.dataset.ia];if(v==null)return;if(e.tagName==='IMG')e.alt=v;else e.setAttribute('aria-label',v)});
+  document.querySelectorAll('[data-lang]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.lang===l))});
+}
+document.querySelectorAll('[data-lang]').forEach(function(b){b.addEventListener('click',function(){setLang(b.dataset.lang)})});
+
+/* menu */
+var mb=document.getElementById('menu-btn'),nv=document.getElementById('nav');
+function closeNav(){nv.classList.remove('open');mb.setAttribute('aria-expanded','false')}
+mb.addEventListener('click',function(){var o=nv.classList.toggle('open');mb.setAttribute('aria-expanded',String(o));if(o)nv.querySelector('a').focus()});
+nv.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeNav)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&nv.classList.contains('open')){closeNav();mb.focus()}});
+/* plan pins */
+var P=@@PTS@@;P.terrace=[56,41];var order=['pergola','terrace','beds','pool','path','hedge','tree'],pins=document.getElementById('pins');
+order.forEach(function(k,i){var b=document.createElement('button');b.type='button';b.className='pin';b.textContent=String(i+1).padStart(2,'0');b.style.left=P[k][0]+'%';b.style.top=P[k][1]+'%';b.dataset.k=k;b.setAttribute('aria-label',(i+1));pins.appendChild(b)});
+function hi(k){document.querySelectorAll('.pin').forEach(function(p){p.classList.toggle('on',p.dataset.k===k)});document.querySelectorAll('#callouts li').forEach(function(li){li.classList.toggle('on',li.dataset.k===k)})}
+document.querySelectorAll('#callouts li').forEach(function(li){var b=li.querySelector('button');b.addEventListener('mouseenter',function(){hi(li.dataset.k)});b.addEventListener('focus',function(){hi(li.dataset.k)});b.addEventListener('click',function(){hi(li.dataset.k)})});
+document.querySelectorAll('.pin').forEach(function(p){p.addEventListener('click',function(){hi(p.dataset.k)});p.addEventListener('mouseenter',function(){hi(p.dataset.k)})});
+hi('pool');
+
+/* compare */
+var cmp=document.getElementById('compare'),rng=document.getElementById('split');
+rng.addEventListener('input',function(){cmp.style.setProperty('--split',rng.value+'%')});
+
+/* garden */
+var st0=document.getElementById('st-current'),st1=document.getElementById('st-project'),surface=document.getElementById('surface'),canvas=document.getElementById('garden');
+var POSTER={project:document.getElementById('poster').src,current:'data:image/webp;base64,@@CURRENT@@'};
+function setState(s){st0.setAttribute('aria-pressed',String(s==='current'));st1.setAttribute('aria-pressed',String(s==='project'));if(garden)garden.setState(s);else document.getElementById('poster').src=POSTER[s]}
+st0.addEventListener('click',function(){setState('current')});st1.addEventListener('click',function(){setState('project')});
+function boot(){ if(garden||!window.AtlazraGarden)return; try{garden=window.AtlazraGarden.mount(surface,canvas,document.documentElement.dir==='rtl');}catch(e){garden=null}
+  if(garden&&garden.ready){garden.ready.then(function(ok){if(ok)surface.classList.add('live')})} }
+if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){if(es[0].isIntersecting){io.disconnect();if(window.requestIdleCallback)requestIdleCallback(boot,{timeout:1500});else setTimeout(boot,300)}});io.observe(surface)}else boot();
+
+})();
+</script>
