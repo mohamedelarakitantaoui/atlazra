@@ -6,6 +6,7 @@ dist/
 playwright-report/
 test-results/
 artifacts/phase-6/
+artifacts/phase-6b/
 .env*
 !.env.example
 *.tsbuildinfo

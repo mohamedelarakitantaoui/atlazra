@@ -7,6 +7,7 @@ import Button from '../../components/ui/Button.astro';
 import Logo from '../../components/ui/Logo.astro';
 import AccordionRow from '../../components/ui/AccordionRow.astro';
 import Chip from '../../components/ui/Chip.astro';
+import ServiceIcon from '../../components/ServiceIcon.astro';
 import GardenModel from '../../components/garden/GardenModel.astro';
 import { locales, type Locale } from '../../i18n/routing';
 import { t } from '../../i18n/content';
@@ -68,18 +69,9 @@ const latestProjects = (await publishedProjects())
           open={true}
           title={t(locale, 'home.reference.a1')}
           summary={t(locale, 'home.reference.a1s')}
-          ><svg
-            slot="icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            ><path d="M12 21V11"></path><path
-              d="M12 13c-4 0-6-3-6-7 4 0 6 3 6 7Z"></path><path
-              d="M12 11c0-4 2-7 6-7 0 4-2 7-6 7Z"></path><path d="M5 21h14"
-            ></path></svg
-          ><p>{t(locale, 'home.reference.a1p')}</p><ul class="chips">
+          ><ServiceIcon slot="icon" name="landscape" /><p>
+            {t(locale, 'home.reference.a1p')}
+          </p><ul class="chips">
             <li><Chip>{t(locale, 'home.reference.a1a')}</Chip></li><li>
               <Chip>{t(locale, 'home.reference.a1b')}</Chip>
             </li><li><Chip>{t(locale, 'home.reference.a1c')}</Chip></li>
@@ -90,16 +82,9 @@ const latestProjects = (await publishedProjects())
           open={false}
           title={t(locale, 'home.reference.a2')}
           summary={t(locale, 'home.reference.a2s')}
-          ><svg
-            slot="icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linejoin="round"
-            ><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9Z"></path><path
-              d="M4 7.5 12 12l8-4.5M12 12v9"></path></svg
-          ><p>{t(locale, 'home.reference.a2p')}</p><ul class="chips">
+          ><ServiceIcon slot="icon" name="design" /><p>
+            {t(locale, 'home.reference.a2p')}
+          </p><ul class="chips">
             <li><Chip>{t(locale, 'home.reference.a2a')}</Chip></li><li>
               <Chip>{t(locale, 'home.reference.a2b')}</Chip>
             </li><li><Chip>{t(locale, 'home.reference.a2c')}</Chip></li>
@@ -110,15 +95,9 @@ const latestProjects = (await publishedProjects())
           open={false}
           title={t(locale, 'home.reference.a3')}
           summary={t(locale, 'home.reference.a3s')}
-          ><svg
-            slot="icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            ><path d="M3 9h18M5 9v12M19 9v12M3 21h18M7 9l5-5 5 5"></path></svg
-          ><p>{t(locale, 'home.reference.a3p')}</p><ul class="chips">
+          ><ServiceIcon slot="icon" name="outdoor" /><p>
+            {t(locale, 'home.reference.a3p')}
+          </p><ul class="chips">
             <li><Chip>{t(locale, 'home.reference.a3a')}</Chip></li><li>
               <Chip>{t(locale, 'home.reference.a3b')}</Chip>
             </li><li><Chip>{t(locale, 'home.reference.a3c')}</Chip></li>
@@ -266,7 +245,7 @@ const latestProjects = (await publishedProjects())
               <p>{t(locale, 'projects.intro')}</p>
             </>
           </div>
-          <ProjectGrid projects={latestProjects} {locale} />
+          <ProjectGrid projects={latestProjects} {locale} headingLevel={3} />
           <p style="margin-top:32px">
             <a class="link" href={`/${locale}/realisations/`}>
               {t(locale, 'projects.viewAll')}
@@ -332,52 +311,50 @@ const latestProjects = (await publishedProjects())
           <h2 id="contact-title">{t(locale, 'home.reference.ch')}</h2>
           <p>{t(locale, 'home.reference.cp')}</p>
         </div>
-        <dl>
-          <div>
-            <dt>{t(locale, 'home.reference.d1')}</dt><dd>
-              {site.address[locale]}<br /><a
-                class="link"
-                href={site.mapUrl}
-                target="_blank"
-                rel="noopener">{t(locale, 'home.reference.map')}</a
-              >
-            </dd>
-          </div>
-          <div>
-            <dt>{t(locale, 'home.reference.d2')}</dt><dd
-              class:list={{ todo: isPending(site.phone) }}
-              data-client-todo={isPending(site.phone) ? site.phone : undefined}
-            >
-              {
-                isPending(site.phone) ? (
-                  t(locale, 'home.reference.todo')
-                ) : (
-                  <a href={`tel:${site.phone}`}>{site.phone}</a>
-                )
-              }
-            </dd>
-          </div>
-          <div>
-            <dt>{t(locale, 'contact.email')}</dt><dd
-              class:list={{ todo: isPending(site.email) }}
-              data-client-todo={isPending(site.email) ? site.email : undefined}
-            >
-              {
-                isPending(site.email) ? (
-                  t(locale, 'home.reference.todo')
-                ) : (
-                  <a href={`mailto:${site.email}`}>{site.email}</a>
-                )
-              }
-            </dd>
-          </div>
-        </dl>
-      </div>
-      <div class="contact-action">
         <Button href={`/${locale}/contact/`}
           >{t(locale, 'home.reference.cta')}</Button
         >
       </div>
+      <dl>
+        <div>
+          <dt>{t(locale, 'home.reference.d1')}</dt><dd>
+            {site.address[locale]}<br /><a
+              class="link"
+              href={site.mapUrl}
+              target="_blank"
+              rel="noopener">{t(locale, 'home.reference.map')}</a
+            >
+          </dd>
+        </div>
+        <div>
+          <dt>{t(locale, 'home.reference.d2')}</dt><dd
+            class:list={{ todo: isPending(site.phone) }}
+            data-client-todo={isPending(site.phone) ? site.phone : undefined}
+          >
+            {
+              isPending(site.phone) ? (
+                t(locale, 'home.reference.todo')
+              ) : (
+                <a href={`tel:${site.phone}`}>{site.phone}</a>
+              )
+            }
+          </dd>
+        </div>
+        <div>
+          <dt>{t(locale, 'contact.email')}</dt><dd
+            class:list={{ todo: isPending(site.email) }}
+            data-client-todo={isPending(site.email) ? site.email : undefined}
+          >
+            {
+              isPending(site.email) ? (
+                t(locale, 'home.reference.todo')
+              ) : (
+                <a href={`mailto:${site.email}`}>{site.email}</a>
+              )
+            }
+          </dd>
+        </div>
+      </dl>
     </div>
   </section>
 </SiteLayout>
@@ -692,9 +669,24 @@ const latestProjects = (await publishedProjects())
     opacity: 0.35;
     margin: 0 auto 12px;
   }
-  .contact-action {
-    align-self: center;
-    justify-self: start;
+  /* Pitch and CTA on one side, the details beside them. */
+  .contact > div {
+    display: grid;
+    justify-items: start;
+    gap: 28px;
+  }
+  .contact .sec-head {
+    margin-block-end: 0;
+  }
+  @media (min-width: 861px) {
+    .contact dl {
+      padding-block-start: 10px;
+    }
+  }
+  dd .link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
   #etapes {
     padding-block-start: 0;

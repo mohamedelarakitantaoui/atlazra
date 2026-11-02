@@ -1,0 +1,42 @@
+---
+// Service illustrations from the reference (home accordion, services page).
+interface Props {
+  name: 'landscape' | 'design' | 'outdoor';
+}
+const { name } = Astro.props;
+const round = name === 'design' ? undefined : 'round';
+---
+
+<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.6"
+  stroke-linecap={round}
+  stroke-linejoin={round ? undefined : 'round'}
+  aria-hidden="true"
+>
+  {
+    name === 'landscape' && (
+      <>
+        <path d="M12 21V11" />
+        <path d="M12 13c-4 0-6-3-6-7 4 0 6 3 6 7Z" />
+        <path d="M12 11c0-4 2-7 6-7 0 4-2 7-6 7Z" />
+        <path d="M5 21h14" />
+      </>
+    )
+  }
+  {
+    name === 'design' && (
+      <>
+        <path d="M12 3 20 7.5v9L12 21l-8-4.5v-9Z" />
+        <path d="M4 7.5 12 12l8-4.5M12 12v9" />
+      </>
+    )
+  }
+  {
+    name === 'outdoor' && (
+      <path d="M3 9h18M5 9v12M19 9v12M3 21h18M7 9l5-5 5 5" />
+    )
+  }
+</svg>

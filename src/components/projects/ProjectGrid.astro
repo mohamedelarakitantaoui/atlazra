@@ -8,11 +8,16 @@ interface Props {
   projects: Project[];
   locale: Locale;
   eager?: boolean;
+  /** h3 when the grid sits under a section h2 (home teaser). */
+  headingLevel?: 2 | 3;
 }
-const { projects, locale, eager = false } = Astro.props;
+const { projects, locale, eager = false, headingLevel = 2 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+// The first card spans the row only when the rest pair up evenly.
+const featured = projects.length % 2 === 1;
 ---
 
-<div class="project-grid">
+<div class:list={['project-grid', { featured }]}>
   {
     projects.map((project, index) => (
       <article data-project-type={project.data.type}>
@@ -22,14 +27,14 @@ const { projects, locale, eager = false } = Astro.props;
             alt={coverAlt(project, locale)}
             eager={eager && index === 0}
             sizes={
-              index === 0
+              featured && index === 0
                 ? '(max-width: 1160px) calc(100vw - 40px), 1120px'
                 : '(max-width: 700px) calc(100vw - 40px), 544px'
             }
           />
           <div class="project-caption">
             <>
-              <h2>{project.data.title[locale]}</h2>
+              <Heading class="title">{project.data.title[locale]}</Heading>
               <p>
                 {project.data.city} ·{' '}
                 {t(locale, `projects.types.${project.data.type}`)}
@@ -47,10 +52,12 @@ const { projects, locale, eager = false } = Astro.props;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 56px 32px;
   }
-  article:first-child {
+  .featured article:first-child {
     grid-column: 1 / -1;
   }
-  article:nth-child(2n + 3) {
+  /* Offset the second column for a quieter, staggered rhythm. */
+  .featured article:nth-child(2n + 3),
+  .project-grid:not(.featured) article:nth-child(2n) {
     padding-block-start: 80px;
   }
   a {
@@ -63,7 +70,7 @@ const { projects, locale, eager = false } = Astro.props;
     border-radius: var(--radius-m);
     background: var(--mist);
   }
-  article:first-child :global(img) {
+  .featured article:first-child :global(img) {
     aspect-ratio: 2 / 1;
   }
   .project-caption {
@@ -71,7 +78,7 @@ const { projects, locale, eager = false } = Astro.props;
     display: grid;
     gap: 8px;
   }
-  h2 {
+  .title {
     font-size: clamp(1.35rem, 2.5vw, 2rem);
   }
   p {
@@ -82,10 +89,11 @@ const { projects, locale, eager = false } = Astro.props;
       grid-template-columns: 1fr;
       gap: 40px;
     }
-    article:nth-child(2n + 3) {
+    .featured article:nth-child(2n + 3),
+    .project-grid:not(.featured) article:nth-child(2n) {
       padding-block-start: 0;
     }
-    article:first-child :global(img) {
+    .featured article:first-child :global(img) {
       aspect-ratio: 4 / 3;
     }
   }

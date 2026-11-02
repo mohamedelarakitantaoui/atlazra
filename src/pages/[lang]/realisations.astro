@@ -9,6 +9,10 @@ export function getStaticPaths() {
 }
 const locale = Astro.params.lang as Locale;
 const projects = await publishedProjects();
+// Offer only types that have projects: an empty filter is a dead end.
+const presentTypes = projectTypes.filter((type) =>
+  projects.some((project) => project.data.type === type),
+);
 ---
 
 <SiteLayout
@@ -31,27 +35,29 @@ const projects = await publishedProjects();
   {
     projects.length ? (
       <project-filter class="wrap project-list">
-        <div
-          class="filters"
-          role="group"
-          aria-label={t(locale, 'projects.filter')}
-          style="visibility:hidden"
-        >
-          {['all', ...projectTypes].map((type) => (
-            <button
-              type="button"
-              data-filter={type}
-              aria-pressed={type === 'all' ? 'true' : 'false'}
-            >
-              {type === 'all'
-                ? t(locale, 'projects.all')
-                : t(
-                    locale,
-                    `projects.types.${type as (typeof projectTypes)[number]}`,
-                  )}
-            </button>
-          ))}
-        </div>
+        {presentTypes.length > 1 && (
+          <div
+            class="filters"
+            role="group"
+            aria-label={t(locale, 'projects.filter')}
+            style="visibility:hidden"
+          >
+            {['all', ...presentTypes].map((type) => (
+              <button
+                type="button"
+                data-filter={type}
+                aria-pressed={type === 'all' ? 'true' : 'false'}
+              >
+                {type === 'all'
+                  ? t(locale, 'projects.all')
+                  : t(
+                      locale,
+                      `projects.types.${type as (typeof projectTypes)[number]}`,
+                    )}
+              </button>
+            ))}
+          </div>
+        )}
         <ProjectGrid {projects} {locale} eager />
         <p class="empty muted" role="status" hidden>
           {t(locale, 'projects.empty')}
@@ -73,7 +79,8 @@ const projects = await publishedProjects();
 <script>
   class ProjectFilter extends HTMLElement {
     connectedCallback() {
-      const controls = this.querySelector<HTMLElement>('.filters')!;
+      const controls = this.querySelector<HTMLElement>('.filters');
+      if (!controls) return;
       const buttons = [
         ...this.querySelectorAll<HTMLButtonElement>('[data-filter]'),
       ];

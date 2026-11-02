@@ -84,6 +84,11 @@ for (const locale of locales) {
     await page.goto(`/${locale}/`);
     await expect(page.locator('#projets [data-project-type]')).toHaveCount(2);
     await expect(page.locator('#projets .pending')).toHaveCount(0);
+    // Card titles sit under the section h2; two cards pair up, none spans.
+    await expect(page.locator('#projets article h3')).toHaveCount(2);
+    await expect(page.locator('#projets .project-grid')).not.toHaveClass(
+      /featured/,
+    );
   });
 }
 
@@ -92,7 +97,7 @@ test.describe('published examples', () => {
     !examples,
     'Run scripts/verify-project-examples.mjs to build the temporary local fixtures.',
   );
-  test('type filters preserve hash, history, and empty state', async ({
+  test('type filters preserve hash and history, offering only used types', async ({
     page,
   }) => {
     await page.goto('/fr/realisations/#terrasse');
@@ -101,13 +106,26 @@ test.describe('published examples', () => {
       'aria-pressed',
       'true',
     );
-    await page.locator('[data-filter="riad"]').click();
-    await expect(page.locator('.empty')).toBeVisible();
-    await expect(page).toHaveURL(/#riad$/);
-    await page.goBack();
+    // Only types with projects are offered, so no filter leads nowhere.
+    await expect(page.locator('[data-filter]')).toHaveCount(3);
+    await expect(page.locator('[data-filter="riad"]')).toHaveCount(0);
+    await page.locator('[data-filter="villa"]').click();
+    await expect(page).toHaveURL(/#villa$/);
     await expect(page.locator('[data-project-type]:visible')).toHaveCount(1);
+    await page.goBack();
+    await expect(page.locator('[data-filter="terrasse"]')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     await page.locator('[data-filter="all"]').click();
     await expect(page.locator('[data-project-type]:visible')).toHaveCount(2);
+    // A stale link to a type with no projects falls back to all.
+    await page.goto('/fr/realisations/#riad');
+    await expect(page.locator('[data-filter="all"]')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await expect(page.locator('.empty')).toBeHidden();
   });
   for (const locale of ['fr', 'ar'] as const) {
     test(`comparison, hotspots and lightbox ${locale}`, async ({ page }) => {

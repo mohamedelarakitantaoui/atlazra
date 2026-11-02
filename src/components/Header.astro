@@ -9,6 +9,9 @@ interface Props {
   languagePath?: string;
 }
 const { locale, languagePath } = Astro.props;
+// Project stories and the thank-you page count as their section.
+const current = (section: string) =>
+  Astro.url.pathname.startsWith(`/${locale}/${section}/`) ? 'page' : undefined;
 ---
 
 <header>
@@ -24,13 +27,23 @@ const { locale, languagePath } = Astro.props;
     >
       <ul>
         <li>
-          <a href={`/${locale}/services/`}>{t(locale, 'nav.services')}</a>
+          <a href={`/${locale}/services/`} aria-current={current('services')}
+            >{t(locale, 'nav.services')}</a
+          >
         </li>
         <li><a href={`/${locale}/#etapes`}>{t(locale, 'nav.process')}</a></li>
         <li>
-          <a href={`/${locale}/realisations/`}>{t(locale, 'nav.projects')}</a>
+          <a
+            href={`/${locale}/realisations/`}
+            aria-current={current('realisations')}
+            >{t(locale, 'nav.projects')}</a
+          >
         </li>
-        <li><a href={`/${locale}/contact/`}>{t(locale, 'nav.contact')}</a></li>
+        <li>
+          <a href={`/${locale}/contact/`} aria-current={current('contact')}
+            >{t(locale, 'nav.contact')}</a
+          >
+        </li>
       </ul>
     </nav>
     <LanguageSwitcher {locale} path={languagePath} />
@@ -114,11 +127,19 @@ const { locale, languagePath } = Astro.props;
     align-items: center;
     min-height: 44px;
     text-decoration: none;
+    justify-content: center;
+    min-inline-size: 44px;
     font-size: 0.9rem;
     color: var(--ink-2);
   }
-  .main-nav a:hover {
+  .main-nav a:hover,
+  .main-nav a[aria-current='page'] {
     color: var(--ink);
+  }
+  .main-nav a[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 6px;
   }
   .bar :global(.header-cta) {
     min-height: 44px;

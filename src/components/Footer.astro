@@ -46,7 +46,7 @@ const [copyrightStart, copyrightEnd] = t(locale, 'footer.copyright')
       <a href={`/${locale}/confidentialite/`}>{t(locale, 'footer.privacy')}</a>
     </nav>
     <small class="copyright"
-      >{copyrightStart}<bdi>{brand}</bdi>{copyrightEnd}</small
+      ><span>{copyrightStart}<bdi>{brand}</bdi>{copyrightEnd}</span></small
     >
   </div>
 </footer>
@@ -88,7 +88,8 @@ const [copyrightStart, copyrightEnd] = t(locale, 'footer.copyright')
     gap: 8px 24px;
   }
   .legal-links a,
-  .map-link {
+  .map-link,
+  .copyright {
     display: inline-flex;
     align-items: center;
     min-height: 44px;

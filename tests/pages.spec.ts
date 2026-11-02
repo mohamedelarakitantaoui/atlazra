@@ -19,7 +19,11 @@ for (const locale of locales) {
         t(locale, `pages.${section}.title`),
       );
       if (section === 'legal' || section === 'privacy') {
-        await expect(page.locator('main .placeholder')).toHaveText(
+        // Visitors see a neutral placeholder; the TODO stays in markup.
+        const placeholder = page.locator('main .placeholder');
+        await expect(placeholder).toHaveText(t(locale, 'contact.pending'));
+        await expect(placeholder).toHaveAttribute(
+          'data-client-todo',
           t(locale, `pages.${section}.todo`),
         );
       }
@@ -41,6 +45,58 @@ for (const locale of locales) {
     });
   }
 }
+
+for (const locale of locales) {
+  test(`services page lists every service open ${locale}`, async ({ page }) => {
+    await page.goto(`/${locale}/services/`);
+    const titles = page.locator('.services h2');
+    await expect(titles).toHaveText(
+      (['a1', 'a2', 'a3'] as const).map((key) =>
+        t(locale, `home.reference.${key}`),
+      ),
+    );
+    await expect(page.locator('.services .chips li')).toHaveCount(9);
+    await expect(page.locator('.services')).toHaveAttribute(
+      'data-client-todo',
+      t(locale, 'home.todos.services'),
+    );
+    await expect(page.locator('main a.btn')).toHaveAttribute(
+      'href',
+      `/${locale}/contact/`,
+    );
+  });
+}
+
+test('header marks the current section, including nested pages', async ({
+  page,
+}) => {
+  await page.goto('/fr/services/');
+  const nav = page.locator('.main-nav');
+  await expect(nav.locator('[aria-current="page"]')).toHaveAttribute(
+    'href',
+    '/fr/services/',
+  );
+  await page.goto('/ar/contact/merci/');
+  await expect(nav.locator('[aria-current="page"]')).toHaveAttribute(
+    'href',
+    '/ar/contact/',
+  );
+  await page.goto('/fr/');
+  await expect(nav.locator('[aria-current="page"]')).toHaveCount(0);
+});
+
+test('skip link is first in tab order and moves focus to main', async ({
+  page,
+}) => {
+  await page.goto('/ar/services/');
+  await page.keyboard.press('Tab');
+  const skip = page.locator('a.skip');
+  await expect(skip).toBeFocused();
+  await expect(skip).toHaveText(t('ar', 'nav.skip'));
+  await expect(skip).toBeInViewport();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('main')).toBeFocused();
+});
 
 test('404 offers working localized home links and the brand mark', async ({
   page,

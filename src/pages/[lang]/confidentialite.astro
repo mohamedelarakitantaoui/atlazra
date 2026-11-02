@@ -16,6 +16,11 @@ const locale = Astro.params.lang as Locale;
   <section class="wrap page-shell">
     <h1>{t(locale, 'pages.privacy.title')}</h1>
     <p>{t(locale, 'pages.privacy.intro')}</p>
-    <p class="muted placeholder">{t(locale, 'pages.privacy.todo')}</p>
+    <p
+      class="muted placeholder"
+      data-client-todo={t(locale, 'pages.privacy.todo')}
+    >
+      {t(locale, 'contact.pending')}
+    </p>
   </section>
 </SiteLayout>

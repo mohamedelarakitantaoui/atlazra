@@ -67,8 +67,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     }
   </head>
   <body>
+    <a class="skip" href="#top">{t(locale, 'nav.skip')}</a>
     <Header {locale} {languagePath} />
-    <main id="top"><slot /></main>
+    <main id="top" tabindex="-1"><slot /></main>
     <Footer {locale} />
   </body>
 </html>
@@ -81,5 +82,28 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   }
   main {
     flex: 1;
+  }
+  main:focus {
+    outline: none;
+  }
+  /* Off-screen until keyboard focus; sits above the sticky header. */
+  .skip {
+    position: fixed;
+    inset-block-start: calc(env(safe-area-inset-top, 0px) + 8px);
+    inset-inline-start: max(20px, env(safe-area-inset-left, 0px));
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 16px;
+    border-radius: var(--radius-pill);
+    background: var(--forest);
+    color: var(--paper);
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateY(calc(-100% - 16px));
+  }
+  .skip:focus-visible {
+    transform: none;
   }
 </style>

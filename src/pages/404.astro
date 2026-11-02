@@ -28,10 +28,10 @@ import { t } from '../i18n/content';
 </SiteLayout>
 
 <style>
+  /* One language per line: mixed scripts wrap unpredictably in a row. */
   .home-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px 24px;
+    display: grid;
+    justify-items: start;
   }
   .home-links a {
     display: inline-flex;

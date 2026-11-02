@@ -96,6 +96,10 @@ p {
   max-width: 60ch;
   color: var(--ink-2);
 }
+/* A narrow pill would read as a button; span the text measure instead. */
+.page-shell .placeholder {
+  justify-self: stretch;
+}
 .placeholder {
   background: var(--mist);
   padding: var(--space-6);

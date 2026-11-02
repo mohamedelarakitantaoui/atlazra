@@ -1,11 +1,20 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import Button from '../../components/ui/Button.astro';
+import Chip from '../../components/ui/Chip.astro';
+import ServiceIcon from '../../components/ServiceIcon.astro';
 import { locales, type Locale } from '../../i18n/routing';
 import { t } from '../../i18n/content';
 export function getStaticPaths() {
   return locales.map((lang) => ({ params: { lang } }));
 }
 const locale = Astro.params.lang as Locale;
+// Same copy as the home accordion, shown open: this page is the detail view.
+const services = [
+  { key: 'a1', icon: 'landscape' },
+  { key: 'a2', icon: 'design' },
+  { key: 'a3', icon: 'outdoor' },
+] as const;
 ---
 
 <SiteLayout
@@ -17,4 +26,129 @@ const locale = Astro.params.lang as Locale;
     <h1>{t(locale, 'pages.services.title')}</h1>
     <p>{t(locale, 'pages.services.intro')}</p>
   </section>
+  <ul class="wrap services" data-client-todo={t(locale, 'home.todos.services')}>
+    {
+      services.map(({ key, icon }) => (
+        <li>
+          <div class="service-head">
+            <span class="ico">
+              <ServiceIcon name={icon} />
+            </span>
+            <div>
+              <h2>{t(locale, `home.reference.${key}`)}</h2>
+              <p class="muted">{t(locale, `home.reference.${key}s`)}</p>
+            </div>
+          </div>
+          <div class="service-body">
+            <p>{t(locale, `home.reference.${key}p`)}</p>
+            <ul class="chips">
+              {(['a', 'b', 'c'] as const).map((chip) => (
+                <li>
+                  <Chip>{t(locale, `home.reference.${key}${chip}`)}</Chip>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+  <section class="wrap next" aria-labelledby="next-title">
+    <h2 id="next-title">{t(locale, 'home.reference.ch')}</h2>
+    <p>{t(locale, 'home.reference.cp')}</p>
+    <Button href={`/${locale}/contact/`}
+      >{t(locale, 'home.reference.cta')}</Button
+    >
+  </section>
 </SiteLayout>
+
+<style>
+  .page-shell {
+    padding-block-end: clamp(40px, 5vw, 64px);
+  }
+  .services {
+    list-style: none;
+    margin-block: 0;
+  }
+  .services > li {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 20px clamp(28px, 5vw, 80px);
+    padding-block: clamp(28px, 4vw, 44px);
+    border-top: 1px solid var(--rule);
+  }
+  .services > li:last-child {
+    border-bottom: 1px solid var(--rule);
+  }
+  .service-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .ico {
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-icon);
+    background: var(--mist);
+    display: grid;
+    place-items: center;
+    color: var(--forest);
+  }
+  .ico :global(svg) {
+    width: 26px;
+    height: 26px;
+  }
+  .service-head h2 {
+    font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+  }
+  .service-head p {
+    margin-block-start: 6px;
+  }
+  .service-body {
+    display: grid;
+    gap: 18px;
+    align-content: start;
+  }
+  .service-body > p {
+    max-width: 60ch;
+    color: var(--ink-2);
+  }
+  /* Chips are paper-on-mist at home; on white they need the mist fill. */
+  .chips :global(.chip) {
+    background: var(--mist);
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .next {
+    display: grid;
+    justify-items: start;
+    gap: 14px;
+    padding-block: clamp(64px, 9vw, 120px);
+  }
+  .next p {
+    max-width: 52ch;
+    font-size: 1.125rem;
+    color: var(--ink-2);
+    margin-block-end: 14px;
+  }
+  @media (max-width: 860px) {
+    .services > li {
+      grid-template-columns: 1fr;
+    }
+    .service-body {
+      padding-inline-start: 68px;
+    }
+  }
+  @media (max-width: 480px) {
+    .service-body {
+      padding-inline-start: 0;
+    }
+  }
+</style>
