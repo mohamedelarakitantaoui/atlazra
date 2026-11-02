@@ -1,0 +1,170 @@
+---
+import ProjectImage from './ProjectImage.astro';
+import type { Project } from '../../lib/projects';
+import type { Locale } from '../../i18n/routing';
+import { t } from '../../i18n/content';
+interface Props {
+  project: Project;
+  locale: Locale;
+}
+const { project, locale } = Astro.props;
+const plan = project.data.images.find((image) => image.kind === 'plan');
+const hotspots = project.data.hotspots ?? [];
+---
+
+{
+  plan && hotspots.length > 0 && (
+    <section class="plan-section" aria-labelledby="plan-heading">
+      <h2 id="plan-heading">{t(locale, 'projects.plan')}</h2>
+      <plan-hotspots>
+        <div class="plan-image">
+          <ProjectImage src={plan.src} alt={plan.alt[locale]} />
+          {hotspots.map((spot, i) => (
+            <button
+              class="spot"
+              type="button"
+              style={`left:${spot.x}%;top:${spot.y}%`}
+              aria-label={spot.label[locale]}
+              aria-expanded={i === 0 ? 'true' : 'false'}
+              aria-controls={`spot-${i}`}
+              data-index={i}
+            >
+              <span aria-hidden="true">+</span>
+            </button>
+          ))}
+        </div>
+        <div class="details">
+          <p class="hint muted" hidden>
+            {t(locale, 'projects.planHint')}
+          </p>
+          {hotspots.map((spot, i) => (
+            <div id={`spot-${i}`} class="detail" hidden={i !== 0}>
+              <h3>{spot.label[locale]}</h3>
+              {spot.image && (
+                <ProjectImage
+                  src={spot.image}
+                  alt={spot.label[locale]}
+                  sizes="(max-width: 700px) calc(100vw - 40px), 360px"
+                />
+              )}
+              <p>{spot.text[locale]}</p>
+              <button type="button" class="close-detail">
+                {t(locale, 'projects.close')}
+              </button>
+            </div>
+          ))}
+        </div>
+      </plan-hotspots>
+    </section>
+  )
+}
+<script>
+  class PlanHotspots extends HTMLElement {
+    connectedCallback() {
+      const buttons = [...this.querySelectorAll<HTMLButtonElement>('.spot')];
+      const panels = [...this.querySelectorAll<HTMLElement>('.detail')];
+      let active = 0;
+      const show = (index: number) => {
+        active = index;
+        buttons.forEach((button, i) =>
+          button.setAttribute('aria-expanded', String(i === index)),
+        );
+        panels.forEach((panel, i) => {
+          panel.hidden = i !== index;
+        });
+        this.querySelector<HTMLElement>('.hint')!.hidden = index !== -1;
+      };
+      buttons.forEach((button, i) => {
+        button.addEventListener('click', () => show(i));
+        button.addEventListener('pointerenter', (event) => {
+          if (event.pointerType === 'mouse') show(i);
+        });
+      });
+      const close = () => {
+        const index = active;
+        show(-1);
+        if (index >= 0) buttons[index].focus({ preventScroll: true });
+      };
+      this.querySelectorAll('.close-detail').forEach((button) =>
+        button.addEventListener('click', close),
+      );
+      this.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && active >= 0) {
+          event.preventDefault();
+          close();
+        }
+      });
+    }
+  }
+  customElements.define('plan-hotspots', PlanHotspots);
+</script>
+<style>
+  .plan-section {
+    margin-block: 80px;
+  }
+  h2 {
+    margin-block-end: 24px;
+  }
+  plan-hotspots {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 32px;
+    align-items: start;
+  }
+  .plan-image {
+    position: relative;
+  }
+  .spot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    border: 2px solid var(--forest);
+    background: var(--paper);
+    color: var(--forest);
+    cursor: pointer;
+    font-size: 24px;
+  }
+  .spot[aria-expanded='true'] {
+    background: var(--forest);
+    color: var(--paper);
+  }
+  .spot:active {
+    transform: translate(-50%, -50%) scale(0.97);
+    transition: transform 100ms var(--ease-out);
+  }
+  .detail {
+    display: grid;
+    gap: 16px;
+  }
+  .detail :global(img) {
+    max-height: 280px;
+    object-fit: contain;
+    object-position: center;
+  }
+  .details {
+    min-height: 420px;
+  }
+  .close-detail {
+    justify-self: start;
+    border: 0;
+    padding: 10px 16px;
+    min-height: 44px;
+    color: var(--forest);
+    background: var(--mist);
+    border-radius: var(--radius-pill);
+    font: inherit;
+    cursor: pointer;
+  }
+  @media (max-width: 700px) {
+    plan-hotspots {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .details {
+      min-height: 440px;
+    }
+  }
+</style>

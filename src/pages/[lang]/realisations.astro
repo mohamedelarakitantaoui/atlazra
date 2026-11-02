@@ -2,19 +2,157 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { locales, type Locale } from '../../i18n/routing';
 import { t } from '../../i18n/content';
+import { publishedProjects, projectTypes } from '../../lib/projects';
+import ProjectGrid from '../../components/projects/ProjectGrid.astro';
 export function getStaticPaths() {
   return locales.map((lang) => ({ params: { lang } }));
 }
 const locale = Astro.params.lang as Locale;
+const projects = await publishedProjects();
 ---
 
 <SiteLayout
   {locale}
+  projectFonts
   title={t(locale, 'pages.realisations.title')}
   description={t(locale, 'pages.realisations.intro')}
 >
   <section class="wrap page-shell">
     <h1>{t(locale, 'pages.realisations.title')}</h1>
-    <p>{t(locale, 'pages.realisations.intro')}</p>
+    <p>
+      {
+        t(
+          locale,
+          projects.length ? 'projects.intro' : 'pages.realisations.intro',
+        )
+      }
+    </p>
   </section>
+  {
+    projects.length ? (
+      <project-filter class="wrap project-list">
+        <div
+          class="filters"
+          role="group"
+          aria-label={t(locale, 'projects.filter')}
+          style="visibility:hidden"
+        >
+          {['all', ...projectTypes].map((type) => (
+            <button
+              type="button"
+              data-filter={type}
+              aria-pressed={type === 'all' ? 'true' : 'false'}
+            >
+              {type === 'all'
+                ? t(locale, 'projects.all')
+                : t(
+                    locale,
+                    `projects.types.${type as (typeof projectTypes)[number]}`,
+                  )}
+            </button>
+          ))}
+        </div>
+        <ProjectGrid {projects} {locale} eager />
+        <p class="empty muted" role="status" hidden>
+          {t(locale, 'projects.empty')}
+        </p>
+      </project-filter>
+    ) : (
+      <div class="wrap project-list">
+        <p
+          class="placeholder"
+          data-client-todo={t(locale, 'home.todos.photos')}
+        >
+          {t(locale, 'home.reference.pend')}
+        </p>
+      </div>
+    )
+  }
 </SiteLayout>
+
+<script>
+  class ProjectFilter extends HTMLElement {
+    connectedCallback() {
+      const controls = this.querySelector<HTMLElement>('.filters')!;
+      const buttons = [
+        ...this.querySelectorAll<HTMLButtonElement>('[data-filter]'),
+      ];
+      const projects = [
+        ...this.querySelectorAll<HTMLElement>('[data-project-type]'),
+      ];
+      const apply = () => {
+        const hash = location.hash.slice(1);
+        const selected = buttons.some((b) => b.dataset.filter === hash)
+          ? hash
+          : 'all';
+        buttons.forEach((b) =>
+          b.setAttribute('aria-pressed', String(b.dataset.filter === selected)),
+        );
+        projects.forEach((p) => {
+          p.hidden = selected !== 'all' && p.dataset.projectType !== selected;
+        });
+        this.querySelector<HTMLElement>('.empty')!.hidden = projects.some(
+          (p) => !p.hidden,
+        );
+      };
+      const abort = new AbortController();
+      this.cleanup = () => abort.abort();
+      buttons.forEach((button) =>
+        button.addEventListener(
+          'click',
+          () => {
+            history.pushState(null, '', `#${button.dataset.filter}`);
+            apply();
+          },
+          { signal: abort.signal },
+        ),
+      );
+      window.addEventListener('hashchange', apply, { signal: abort.signal });
+      window.addEventListener('popstate', apply, { signal: abort.signal });
+      apply();
+      controls.style.visibility = 'visible';
+    }
+    cleanup?: () => void;
+    disconnectedCallback() {
+      this.cleanup?.();
+    }
+  }
+  customElements.define('project-filter', ProjectFilter);
+</script>
+<style>
+  .page-shell {
+    padding-block-end: 40px;
+  }
+  .project-list {
+    display: block;
+    padding-block-end: 96px;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-block-end: 40px;
+    min-height: 44px;
+  }
+  button {
+    min-height: 44px;
+    padding: 10px 20px;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-pill);
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+    cursor: pointer;
+  }
+  button[aria-pressed='true'] {
+    color: var(--paper);
+    background: var(--forest);
+  }
+  button:active {
+    transform: scale(0.97);
+    transition: transform 100ms var(--ease-out);
+  }
+  .empty {
+    padding-block: 48px;
+  }
+</style>

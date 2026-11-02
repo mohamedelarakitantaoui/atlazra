@@ -19,10 +19,12 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@astrojs/markdown-remark": "6.3.11",
     "@astrojs/sitemap": "^3.7.4",
     "@astrojs/vercel": "^8.0.0",
     "@fontsource/ibm-plex-sans-arabic": "^5.0.0",
     "astro": "^5.0.0",
+    "sharp": "0.34.5",
     "three": "0.180.0",
     "zod": "3.25.76"
   },

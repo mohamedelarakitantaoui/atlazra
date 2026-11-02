@@ -5,6 +5,7 @@ dist/
 .vercel/
 playwright-report/
 test-results/
+artifacts/phase-6/
 .env*
 !.env.example
 *.tsbuildinfo

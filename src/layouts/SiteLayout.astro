@@ -6,13 +6,23 @@ import Footer from '../components/Footer.astro';
 import { locales, localizedPath, type Locale } from '../i18n/routing';
 // Same hashed file as the 600 @font-face in fonts.css: the hero h1's weight.
 import arabicHeading from '../assets/fonts/ibm-plex-sans-arabic-arabic-600.woff2?url';
+import arabicBody from '../assets/fonts/ibm-plex-sans-arabic-arabic-400.woff2?url';
+import arabicLatinBody from '../assets/fonts/ibm-plex-sans-arabic-latin-400.woff2?url';
+import arabicLatinHeading from '../assets/fonts/ibm-plex-sans-arabic-latin-600.woff2?url';
 interface Props {
   locale: Locale;
   title: string;
   description: string;
   languagePath?: string;
+  projectFonts?: boolean;
 }
-const { locale, title, description, languagePath } = Astro.props;
+const {
+  locale,
+  title,
+  description,
+  languagePath,
+  projectFonts = false,
+} = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -38,6 +48,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       )
     }
     <link rel="canonical" href={canonical} />
+    {
+      locale === 'ar' &&
+        projectFonts &&
+        [arabicBody, arabicLatinBody, arabicLatinHeading].map((href) => (
+          <link rel="preload" {href} as="font" type="font/woff2" crossorigin />
+        ))
+    }
     <link rel="sitemap" href="/sitemap-index.xml" />
     {
       locales.map((lang) => (

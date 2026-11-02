@@ -1,4 +1,6 @@
 ---
+import ProjectGrid from '../../components/projects/ProjectGrid.astro';
+import { publishedProjects } from '../../lib/projects';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { site, isPending } from '../../data/site';
 import Button from '../../components/ui/Button.astro';
@@ -12,6 +14,12 @@ export function getStaticPaths() {
   return locales.map((lang) => ({ params: { lang } }));
 }
 const locale = Astro.params.lang as Locale;
+const latestProjects = (await publishedProjects())
+  .sort(
+    (a, b) =>
+      b.data.year - a.data.year || a.data.sort_order - b.data.sort_order,
+  )
+  .slice(0, 3);
 ---
 
 <SiteLayout
@@ -249,45 +257,72 @@ const locale = Astro.params.lang as Locale;
   </section>
 
   <section id="projets" aria-labelledby="projets-title">
-    <div class="wrap proj">
-      <div>
-        <div class="sec-head">
-          <h2 id="projets-title">{t(locale, 'home.reference.ph')}</h2>
-          <p>{t(locale, 'home.reference.pp')}</p>
-        </div>
-        <ul>
-          <li>
-            <span>{t(locale, 'home.reference.p1')}</span><span
-              >{t(locale, 'home.reference.p1v')}</span
-            >
-          </li>
-          <li>
-            <span>{t(locale, 'home.reference.p2')}</span><span
-              >{t(locale, 'home.reference.p2v')}</span
-            >
-          </li>
-          <li>
-            <span>{t(locale, 'home.reference.p3')}</span><span
-              >{t(locale, 'home.reference.p3v')}</span
-            >
-          </li>
-          <li>
-            <span>{t(locale, 'home.reference.p4')}</span><span
-              >{t(locale, 'home.reference.p4v')}</span
-            >
-          </li>
-        </ul>
-      </div><div
-        class="pending"
-        data-client-todo={t(locale, 'home.todos.photos')}
-      >
-        <div>
-          <Logo variant="mark" decorative /><p>
-            {t(locale, 'home.reference.pend')}
+    {
+      latestProjects.length ? (
+        <div class="wrap">
+          <div class="sec-head">
+            <>
+              <h2 id="projets-title">{t(locale, 'home.reference.ph')}</h2>
+              <p>{t(locale, 'projects.intro')}</p>
+            </>
+          </div>
+          <ProjectGrid projects={latestProjects} {locale} />
+          <p style="margin-top:32px">
+            <a class="link" href={`/${locale}/realisations/`}>
+              {t(locale, 'projects.viewAll')}
+            </a>
           </p>
         </div>
-      </div>
-    </div>
+      ) : (
+        <div class="wrap proj">
+          <>
+            <div>
+              <div class="sec-head">
+                <h2 id="projets-title">{t(locale, 'home.reference.ph')}</h2>
+                <p>{t(locale, 'home.reference.pp')}</p>
+              </div>
+              <ul>
+                <li>
+                  <>
+                    <span>{t(locale, 'home.reference.p1')}</span>
+                    <span>{t(locale, 'home.reference.p1v')}</span>
+                  </>
+                </li>
+                <li>
+                  <>
+                    <span>{t(locale, 'home.reference.p2')}</span>
+                    <span>{t(locale, 'home.reference.p2v')}</span>
+                  </>
+                </li>
+                <li>
+                  <>
+                    <span>{t(locale, 'home.reference.p3')}</span>
+                    <span>{t(locale, 'home.reference.p3v')}</span>
+                  </>
+                </li>
+                <li>
+                  <>
+                    <span>{t(locale, 'home.reference.p4')}</span>
+                    <span>{t(locale, 'home.reference.p4v')}</span>
+                  </>
+                </li>
+              </ul>
+            </div>
+            <div
+              class="pending"
+              data-client-todo={t(locale, 'home.todos.photos')}
+            >
+              <div>
+                <>
+                  <Logo variant="mark" decorative />
+                  <p>{t(locale, 'home.reference.pend')}</p>
+                </>
+              </div>
+            </div>
+          </>
+        </div>
+      )
+    }
   </section>
 
   <section id="contact" aria-labelledby="contact-title" class="tint">

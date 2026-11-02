@@ -22,7 +22,14 @@ export default defineConfig({
           // Vercel's function packager otherwise copies pnpm symlinks, which
           // Windows cannot create without Developer Mode. Dev needs no change.
           if (command === 'build')
-            updateConfig({ vite: { ssr: { noExternal: ['zod'] } } });
+            updateConfig({
+              vite: { ssr: { noExternal: ['zod'] } },
+              // All project images are prerendered by Sharp. No request-time
+              // image transforms are needed in the contact-only Node function.
+              image: {
+                endpoint: { entrypoint: 'src/lib/static-image-endpoint.ts' },
+              },
+            });
         },
       },
     },

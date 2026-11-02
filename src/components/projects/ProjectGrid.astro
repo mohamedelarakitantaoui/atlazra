@@ -1,0 +1,92 @@
+---
+import type { Project } from '../../lib/projects';
+import { coverAlt } from '../../lib/projects';
+import type { Locale } from '../../i18n/routing';
+import { t } from '../../i18n/content';
+import ProjectImage from './ProjectImage.astro';
+interface Props {
+  projects: Project[];
+  locale: Locale;
+  eager?: boolean;
+}
+const { projects, locale, eager = false } = Astro.props;
+---
+
+<div class="project-grid">
+  {
+    projects.map((project, index) => (
+      <article data-project-type={project.data.type}>
+        <a href={`/${locale}/realisations/${project.id}/`}>
+          <ProjectImage
+            src={project.data.cover}
+            alt={coverAlt(project, locale)}
+            eager={eager && index === 0}
+            sizes={
+              index === 0
+                ? '(max-width: 1160px) calc(100vw - 40px), 1120px'
+                : '(max-width: 700px) calc(100vw - 40px), 544px'
+            }
+          />
+          <div class="project-caption">
+            <>
+              <h2>{project.data.title[locale]}</h2>
+              <p>
+                {project.data.city} ·{' '}
+                {t(locale, `projects.types.${project.data.type}`)}
+              </p>
+            </>
+          </div>
+        </a>
+      </article>
+    ))
+  }
+</div>
+<style>
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 56px 32px;
+  }
+  article:first-child {
+    grid-column: 1 / -1;
+  }
+  article:nth-child(2n + 3) {
+    padding-block-start: 80px;
+  }
+  a {
+    display: block;
+    text-decoration: none;
+  }
+  article :global(img) {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-m);
+    background: var(--mist);
+  }
+  article:first-child :global(img) {
+    aspect-ratio: 2 / 1;
+  }
+  .project-caption {
+    padding-block-start: 20px;
+    display: grid;
+    gap: 8px;
+  }
+  h2 {
+    font-size: clamp(1.35rem, 2.5vw, 2rem);
+  }
+  p {
+    color: var(--ink-2);
+  }
+  @media (max-width: 700px) {
+    .project-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    article:nth-child(2n + 3) {
+      padding-block-start: 0;
+    }
+    article:first-child :global(img) {
+      aspect-ratio: 4 / 3;
+    }
+  }
+</style>

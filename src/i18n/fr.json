@@ -226,5 +226,40 @@
     "current": "Terrain actuel",
     "project": "Projet Atlazra",
     "caption": "Maquette d'exemple : une villa de 20 × 14 m. Chaque projet commence ainsi."
+  },
+  "projects": {
+    "all": "Tous",
+    "filter": "Filtrer les réalisations",
+    "intro": "Du terrain au jardin, les projets en images.",
+    "empty": "Aucun projet dans cette catégorie.",
+    "viewAll": "Toutes les réalisations",
+    "album": "Album",
+    "open": "Agrandir la photo",
+    "close": "Fermer",
+    "previous": "Photo précédente",
+    "next": "Photo suivante",
+    "comparison": "Avant / après",
+    "slider": "Part du terrain avant travaux",
+    "before": "Avant",
+    "after": "Après",
+    "plan": "Le plan en détail",
+    "planHint": "Choisissez un élément sur le plan.",
+    "surface": "Surface",
+    "year": "Année",
+    "city": "Ville",
+    "type": "Type",
+    "types": {
+      "villa": "Villa",
+      "riad": "Riad",
+      "terrasse": "Terrasse",
+      "pro": "Professionnel",
+      "3d": "Conception 3D"
+    },
+    "chapters": {
+      "before": "Le terrain",
+      "design": "Le plan 3D",
+      "photo": "Le chantier",
+      "after": "Le jardin"
+    }
   }
 }

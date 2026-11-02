@@ -20,6 +20,8 @@ what was built, decisions, verification results and open TODOs.
   see completion below. Real-device check still pending.
 - Phase 5 — contact form (database plan removed): implemented and locally
   verified; see completion below.
+- Phase 6 — réalisations from content collections: implemented and locally
+  verified; see completion below.
 
 ## Phase 2 completion
 
@@ -299,6 +301,61 @@ what was built, decisions, verification results and open TODOs.
 - Not verified: a real Resend send and the Vercel deployment (no keys or
   project yet).
 
+## Phase 6 completion: réalisations from content collections
+
+- Built:
+  - `projects` content collection (`src/content.config.ts`): one folder per
+    project in `src/content/projects/<slug>/` with `index.md` and its photos.
+    Frontmatter (JSON, also valid YAML) holds status, type, city, optional
+    surface, year, sort order, FR/AR/EN title/summary, cover, images (`kind`:
+    `before`, `render_3d`, `plan`, `photo`, `after`; localized alt required)
+    and optional plan hotspots. The cover must appear in `images`; hotspots
+    require a plan image. The story body has `## fr|ar|en` sections with
+    chapter keys (`### before`, `### design`, …) parsed by
+    `src/lib/project-story.ts`.
+  - `src/lib/project-loader.ts` drops non-`published` entries inside the
+    loader, so drafts get no page, no sitemap entry and no image assets.
+    `_*` folders are ignored; on CI/Vercel `exemple-*` folders are excluded
+    too, even if someone publishes them by mistake.
+  - `/[lang]/realisations/` grid and `/[lang]/realisations/<slug>/` story
+    (`src/components/projects/`): image-kind chapters, before/after slider,
+    plan hotspots, album with lightbox (keyboard, RTL-mirrored controls,
+    reduced motion, plain links without JavaScript). The home teaser shows
+    published projects. Empty states stay honest placeholders.
+  - Images are prerendered by Astro/Sharp (AVIF + WebP, explicit sizes, lazy
+    below the fold). Sharp is a direct dependency; the production image
+    endpoint is replaced by a 404 stub (`src/lib/static-image-endpoint.ts`)
+    so Vercel's Windows packager doesn't try to copy Sharp into the contact
+    function. Project pages preload the Arabic font (CLS 0).
+  - Two flat placeholder examples (`exemple-villa`, `exemple-terrasse`) and a
+    `_template` folder, all `draft`. Editor guide: `docs/adding-a-project.md`.
+- Scripts: `scripts/verify-project-examples.mjs` (local only) temporarily
+  publishes both examples, builds, runs `tests/projects.spec.ts` with
+  `PROJECT_EXAMPLES=1`, runs the Lighthouse audit, builds again with `CI=1`
+  and asserts no `exemple-*` routes or images leak, then restores the drafts
+  and rebuilds. `scripts/audit-projects.ts [--draft]` writes screenshots and
+  Lighthouse reports to `artifacts/phase-6/` (ignored by Git).
+- Verification (2026-11-02, local Node 24):
+  - `pnpm lint`; `pnpm check` 0 errors/warnings/hints; `pnpm build` passed.
+    The build logs "collection projects … is empty" because every project is
+    a draft; this is expected.
+  - `pnpm test` on the draft-only build: 50/50 unit, 102 Playwright passed,
+    4 skipped (populated-page tests, which only run with `PROJECT_EXAMPLES=1`).
+    The examples build passed those tests in FR/AR/EN, including RTL controls
+    and no-JavaScript album links.
+  - Lighthouse 13.6 mobile:
+    | Build | Page | Perf | A11y | BP | SEO | LCP | CLS |
+    |---|---|---|---|---|---|---|---|
+    | examples | `/fr/realisations/` | 100 | 100 | 100 | 100 | 1.36 s | 0 |
+    | examples | `/fr/realisations/exemple-villa/` | 100 | 100 | 100 | 100 | 1.28 s | 0 |
+    | examples | `/ar/realisations/` | 100 | 100 | 100 | 100 | 1.51 s | 0 |
+    | examples | `/ar/realisations/exemple-villa/` | 100 | 100 | 100 | 100 | 1.59 s | 0 |
+    | drafts only | `/fr/realisations/` | 100 | 100 | 100 | 100 | 0.91 s | 0 |
+    | drafts only | `/ar/realisations/` | 100 | 100 | 100 | 100 | 0.92 s | 0 |
+  - FR/AR grid and story screenshots at 390 and 1440 px (examples) and
+    home/grid (drafts only) captured in `artifacts/phase-6/` and reviewed.
+- Before launch: delete both `exemple-*` folders once real projects exist.
+
 ## Open TODOs
 
 - Client: phone/WhatsApp, email, opening hours, address label confirmation
@@ -307,4 +364,6 @@ what was built, decisions, verification results and open TODOs.
 - Real-device check of the 3D model on a mid-range Android phone and an iPhone.
 - Before launch: Resend account with a verified sending domain, the four
   contact env vars and `SITE_URL` on Vercel, then a live test submission.
-- Phase 6 is gated on the user's next prompt.
+- Real project content: replace the `exemple-*` folders with published
+  client projects (photos, 3D renders, plans, confirmed facts).
+- Phase 7 is gated on the user's next prompt.

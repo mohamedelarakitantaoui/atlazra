@@ -1,0 +1,263 @@
+---
+import { getImage } from 'astro:assets';
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import ProjectImage from '../../../components/projects/ProjectImage.astro';
+import BeforeAfter from '../../../components/projects/BeforeAfter.astro';
+import PlanHotspots from '../../../components/projects/PlanHotspots.astro';
+import ProjectAlbum from '../../../components/projects/ProjectAlbum.astro';
+import {
+  publishedProjects,
+  projectChapters,
+  coverAlt,
+  type Project,
+} from '../../../lib/projects';
+import { locales, type Locale } from '../../../i18n/routing';
+import { t } from '../../../i18n/content';
+export async function getStaticPaths() {
+  const projects = await publishedProjects();
+  return projects.flatMap((project) =>
+    locales.map((lang) => ({
+      params: { lang, slug: project.id },
+      props: { project },
+    })),
+  );
+}
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+const { data } = project;
+const locale = Astro.params.lang as Locale;
+const chapters = await projectChapters(project, locale);
+const before = data.images.find((image) => image.kind === 'before');
+const after = data.images.find((image) => image.kind === 'after');
+const plan = data.hotspots?.length
+  ? data.images.find((image) => image.kind === 'plan')
+  : undefined;
+const used = new Set([
+  data.cover.src,
+  ...chapters.map((chapter) => chapter.image.src.src),
+  ...(plan ? [plan.src.src] : []),
+]);
+const album = data.images.filter((image) => !used.has(image.src.src));
+const structuredImages = await Promise.all(
+  data.images.map(
+    async (image) =>
+      new URL(
+        (
+          await getImage({
+            src: image.src,
+            format: 'webp',
+            width: Math.min(1600, image.src.width),
+          })
+        ).src,
+        Astro.site,
+      ).href,
+  ),
+);
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: data.title[locale],
+  description: data.summary[locale],
+  inLanguage: locale,
+  image: structuredImages,
+  url: new URL(Astro.url.pathname, Astro.site).href,
+  contentLocation: { '@type': 'Place', name: data.city },
+  dateCreated: String(data.year),
+  creator: { '@type': 'Organization', name: 'Atlazra Design' },
+};
+---
+
+<SiteLayout
+  {locale}
+  projectFonts
+  title={data.title[locale]}
+  description={data.summary[locale]}
+>
+  <article>
+    <header class="story-cover">
+      <ProjectImage
+        src={data.cover}
+        alt={coverAlt(project, locale)}
+        eager
+        sizes="100vw"
+      />
+      <div class="cover-copy wrap">
+        <div><h1>{data.title[locale]}</h1><p>{data.city}</p></div>
+      </div>
+    </header>
+    <div class="wrap story">
+      <dl class="meta">
+        <div>
+          <dt>{t(locale, 'projects.type')}</dt><dd>
+            {t(locale, `projects.types.${data.type}`)}
+          </dd>
+        </div>
+        <div><dt>{t(locale, 'projects.city')}</dt><dd>{data.city}</dd></div>
+        {
+          data.surface_m2 !== undefined && (
+            <div>
+              <>
+                <dt>{t(locale, 'projects.surface')}</dt>
+                <dd>
+                  <bdi>
+                    {new Intl.NumberFormat(locale).format(data.surface_m2)} m²
+                  </bdi>
+                </dd>
+              </>
+            </div>
+          )
+        }
+        <div>
+          <dt>{t(locale, 'projects.year')}</dt><dd><bdi>{data.year}</bdi></dd>
+        </div>
+      </dl>
+      <p class="summary">{data.summary[locale]}</p>
+      {
+        chapters.map((chapter) => (
+          <>
+            {chapter.key === 'after' && before && after && (
+              <BeforeAfter {before} {after} {locale} />
+            )}
+            <section
+              class="chapter"
+              data-chapter={chapter.key}
+              aria-labelledby={`chapter-${chapter.key}`}
+            >
+              <div class="chapter-copy">
+                <>
+                  <h2 id={`chapter-${chapter.key}`}>
+                    {t(locale, `projects.chapters.${chapter.key}`)}
+                  </h2>
+                  <div class="prose" set:html={chapter.html} />
+                </>
+              </div>
+              <figure>
+                <>
+                  <ProjectImage
+                    src={chapter.image.src}
+                    alt={chapter.image.alt[locale]}
+                  />
+                  <figcaption>{chapter.image.alt[locale]}</figcaption>
+                </>
+              </figure>
+            </section>
+            {chapter.key === 'design' && <PlanHotspots {project} {locale} />}
+          </>
+        ))
+      }
+      <ProjectAlbum images={album} {locale} />
+      <a class="link back" href={`/${locale}/realisations/`}
+        >{t(locale, 'projects.viewAll')}</a
+      >
+    </div>
+  </article>
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')}
+  />
+</SiteLayout>
+<style>
+  .story-cover {
+    position: relative;
+    height: clamp(420px, 70svh, 800px);
+    background: var(--mist);
+  }
+  .story-cover :global(picture),
+  .story-cover :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cover-copy {
+    position: absolute;
+    inset: auto 0 32px;
+    width: 100%;
+  }
+  .cover-copy > div {
+    background: var(--paper);
+    width: fit-content;
+    max-width: 900px;
+    padding: clamp(20px, 3vw, 40px);
+  }
+  .cover-copy p {
+    margin-block-start: 12px;
+    color: var(--ink-2);
+  }
+  .story {
+    padding-block-end: 96px;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px 48px;
+    padding-block: 32px;
+    margin: 0;
+    border-block-end: 1px solid var(--rule);
+  }
+  dt {
+    font-size: 0.875rem;
+    color: var(--ink-2);
+  }
+  dd {
+    margin: 4px 0 0;
+  }
+  .summary {
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    max-width: 52ch;
+    margin-block: 48px 80px;
+  }
+  .chapter {
+    margin-block: 80px;
+  }
+  .chapter-copy {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-block-end: 32px;
+  }
+  .prose {
+    color: var(--ink-2);
+    max-width: 60ch;
+  }
+  .prose :global(p + p) {
+    margin-block-start: 16px;
+  }
+  figure {
+    margin: 0;
+  }
+  figcaption {
+    font-size: 0.875rem;
+    color: var(--ink-2);
+    margin-block-start: 12px;
+  }
+  .chapter :global(img) {
+    max-height: 760px;
+    object-fit: contain;
+    background: var(--mist);
+  }
+  .back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  @media (max-width: 700px) {
+    .chapter-copy {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .story-cover {
+      height: 560px;
+    }
+    .cover-copy {
+      inset-block-end: 20px;
+    }
+    h1 {
+      font-size: 2.5rem;
+    }
+    .meta {
+      gap: 24px;
+    }
+  }
+</style>

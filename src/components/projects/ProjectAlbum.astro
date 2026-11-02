@@ -1,0 +1,219 @@
+---
+import ProjectImage from './ProjectImage.astro';
+import type { Project } from '../../lib/projects';
+import type { Locale } from '../../i18n/routing';
+import { t } from '../../i18n/content';
+interface Props {
+  images: Project['data']['images'];
+  locale: Locale;
+}
+const { images, locale } = Astro.props;
+---
+
+{
+  images.length > 0 && (
+    <project-album>
+      <section aria-labelledby="album-title" class="album">
+        <h2 id="album-title">{t(locale, 'projects.album')}</h2>
+        <div class="spread">
+          {images.map((image, i) => (
+            <figure
+              class:list={{ portrait: image.src.height > image.src.width }}
+            >
+              <a
+                class="thumbnail"
+                href={image.src.src}
+                data-index={i}
+                aria-label={`${t(locale, 'projects.open')} — ${image.alt[locale]}`}
+              >
+                <ProjectImage
+                  src={image.src}
+                  alt={image.alt[locale]}
+                  sizes="(max-width: 700px) calc(100vw - 40px), 720px"
+                />
+              </a>
+              <figcaption>{image.alt[locale]}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+      <dialog aria-label={t(locale, 'projects.album')}>
+        <div class="lightbox-toolbar">
+          <>
+            <p class="counter" aria-live="polite" aria-atomic="true" />
+            <button type="button" class="close" autofocus>
+              {t(locale, 'projects.close')}
+            </button>
+          </>
+        </div>
+        <div class="viewport">
+          <div class="slides">
+            {images.map((image) => (
+              <figure class="slide" aria-hidden="true" inert>
+                <ProjectImage
+                  src={image.src}
+                  alt={image.alt[locale]}
+                  sizes="100vw"
+                />
+                <figcaption>{image.alt[locale]}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+        <div class="lightbox-controls">
+          <>
+            <button type="button" class="previous">
+              {t(locale, 'projects.previous')}
+            </button>
+            <button type="button" class="next">
+              {t(locale, 'projects.next')}
+            </button>
+          </>
+        </div>
+      </dialog>
+    </project-album>
+  )
+}
+<script>
+  import './album';
+</script>
+<style>
+  project-album {
+    display: block;
+  }
+  .album {
+    margin-block: 96px;
+  }
+  h2 {
+    margin-block-end: 40px;
+  }
+  .spread {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 56px 32px;
+    align-items: start;
+  }
+  figure {
+    margin: 0;
+    min-width: 0;
+  }
+  .spread figure {
+    grid-column: span 8;
+  }
+  .spread figure.portrait {
+    grid-column: span 4;
+  }
+  .spread figure:nth-child(3n + 2) {
+    padding-block-start: 80px;
+  }
+  .spread figure:last-child:nth-child(3n) {
+    grid-column: 3 / 12;
+  }
+  figcaption {
+    font-size: 0.875rem;
+    color: var(--ink-2);
+    margin-block-start: 12px;
+  }
+  .thumbnail {
+    display: block;
+  }
+  dialog {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    width: 100%;
+    max-width: 1440px;
+    height: 100dvh;
+    max-height: 100dvh;
+    padding: 20px;
+    border: 0;
+    color: var(--ink);
+    background: var(--paper);
+    overflow: hidden;
+  }
+  dialog[open] {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: 16px;
+  }
+  dialog::backdrop {
+    background: rgba(23, 32, 27, 0.8);
+  }
+  .lightbox-toolbar,
+  .lightbox-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  button {
+    min-height: 44px;
+    padding: 10px 20px;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-pill);
+    background: var(--mist);
+    color: var(--ink);
+    font: inherit;
+    cursor: pointer;
+  }
+  button:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+  button:active:not(:disabled) {
+    transform: scale(0.97);
+    transition: transform 100ms var(--ease-out);
+  }
+  .viewport {
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+  .slides {
+    height: 100%;
+    display: flex;
+    direction: ltr;
+    will-change: transform;
+  }
+  .slide {
+    flex: 0 0 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    text-align: center;
+  }
+  :global([dir='rtl']) .slides {
+    flex-direction: row-reverse;
+  }
+  :global([dir='rtl']) .slide {
+    direction: rtl;
+  }
+  .slide :global(picture),
+  .slide :global(img) {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  @media (max-width: 700px) {
+    .spread {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 40px 16px;
+    }
+    .spread figure {
+      grid-column: 1 / -1;
+    }
+    .spread figure.portrait {
+      grid-column: 1 / 6;
+    }
+    .spread figure:nth-child(3n + 2) {
+      padding-block-start: 0;
+    }
+    .spread figure:last-child:nth-child(3n) {
+      grid-column: 2 / -1;
+    }
+    dialog {
+      padding: 16px;
+    }
+  }
+</style>

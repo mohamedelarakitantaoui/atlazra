@@ -1,0 +1,171 @@
+---
+import ProjectImage from './ProjectImage.astro';
+import type { Project } from '../../lib/projects';
+import type { Locale } from '../../i18n/routing';
+import { t } from '../../i18n/content';
+interface Props {
+  before: Project['data']['images'][number];
+  after: Project['data']['images'][number];
+  locale: Locale;
+}
+const { before, after, locale } = Astro.props;
+---
+
+<section class="comparison" aria-label={t(locale, 'projects.comparison')}>
+  <h2>{t(locale, 'projects.comparison')}</h2>
+  <before-after style="--position:50%">
+    <div class="pair after">
+      <ProjectImage src={after.src} alt={after.alt[locale]} />
+    </div>
+    <div class="pair before">
+      <ProjectImage src={before.src} alt={before.alt[locale]} />
+    </div>
+    <span class="tag start">{t(locale, 'projects.before')}</span><span
+      class="tag end">{t(locale, 'projects.after')}</span
+    >
+    <div
+      class="handle"
+      role="slider"
+      tabindex="0"
+      aria-label={t(locale, 'projects.slider')}
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="50"
+      aria-orientation="horizontal"
+    >
+      <span aria-hidden="true">↔</span>
+    </div>
+  </before-after>
+</section>
+<script>
+  class BeforeAfter extends HTMLElement {
+    connectedCallback() {
+      const handle = this.querySelector<HTMLElement>('.handle')!;
+      const rtl = document.dir === 'rtl';
+      let value = 50;
+      let pointer: number | undefined;
+      const set = (next: number) => {
+        value = Math.max(0, Math.min(100, next));
+        this.style.setProperty('--position', `${value}%`);
+        handle.setAttribute('aria-valuenow', String(Math.round(value)));
+      };
+      const move = (event: PointerEvent) => {
+        const box = this.getBoundingClientRect();
+        set(
+          ((rtl ? box.right - event.clientX : event.clientX - box.left) /
+            box.width) *
+            100,
+        );
+      };
+      this.addEventListener('pointerdown', (event) => {
+        if (!event.isPrimary || event.button !== 0) return;
+        pointer = event.pointerId;
+        this.setPointerCapture(pointer);
+        handle.focus({ preventScroll: true });
+        move(event);
+      });
+      this.addEventListener('pointermove', (event) => {
+        if (pointer === event.pointerId) move(event);
+      });
+      const release = () => {
+        pointer = undefined;
+      };
+      this.addEventListener('pointerup', release);
+      this.addEventListener('pointercancel', release);
+      this.addEventListener('lostpointercapture', release);
+      handle.addEventListener('keydown', (event) => {
+        const delta = (rtl ? -1 : 1) * 5;
+        const keys: Record<string, number> = {
+          ArrowRight: value + delta,
+          ArrowLeft: value - delta,
+          ArrowUp: value + 5,
+          ArrowDown: value - 5,
+          Home: 0,
+          End: 100,
+        };
+        if (event.key in keys) {
+          event.preventDefault();
+          set(keys[event.key]);
+        }
+      });
+    }
+  }
+  customElements.define('before-after', BeforeAfter);
+</script>
+<style>
+  .comparison {
+    margin-block: 80px;
+  }
+  h2 {
+    margin-block-end: 24px;
+  }
+  before-after {
+    display: block;
+    position: relative;
+    aspect-ratio: 8 / 5;
+    background: var(--mist);
+    touch-action: pan-y;
+    user-select: none;
+    overflow: hidden;
+  }
+  .pair {
+    position: absolute;
+    inset: 0;
+  }
+  .pair :global(picture),
+  .pair :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .before {
+    clip-path: inset(0 calc(100% - var(--position)) 0 0);
+  }
+  :global([dir='rtl']) .before {
+    clip-path: inset(0 0 0 calc(100% - var(--position)));
+  }
+  .handle {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: clamp(22px, var(--position), calc(100% - 22px));
+    width: 44px;
+    margin-inline-start: -22px;
+    display: grid;
+    place-items: center;
+    cursor: ew-resize;
+  }
+  .handle::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background: var(--forest);
+  }
+  .handle span {
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    background: var(--paper);
+    color: var(--forest);
+    border: 1px solid var(--forest);
+    border-radius: 50%;
+  }
+  .tag {
+    position: absolute;
+    top: 12px;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 0.875rem;
+    pointer-events: none;
+  }
+  .start {
+    inset-inline-start: 12px;
+  }
+  .end {
+    inset-inline-end: 12px;
+  }
+</style>

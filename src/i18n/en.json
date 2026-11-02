@@ -226,5 +226,40 @@
     "current": "Current site",
     "project": "Atlazra project",
     "caption": "Example model: a 20 × 14 m villa plot. Every project starts like this."
+  },
+  "projects": {
+    "all": "All",
+    "filter": "Filter projects",
+    "intro": "From the site to the garden, projects in pictures.",
+    "empty": "No projects in this category.",
+    "viewAll": "All projects",
+    "album": "Album",
+    "open": "Enlarge image",
+    "close": "Close",
+    "previous": "Previous image",
+    "next": "Next image",
+    "comparison": "Before / after",
+    "slider": "Amount of the site before work",
+    "before": "Before",
+    "after": "After",
+    "plan": "Explore the plan",
+    "planHint": "Choose an element on the plan.",
+    "surface": "Area",
+    "year": "Year",
+    "city": "City",
+    "type": "Type",
+    "types": {
+      "villa": "Villa",
+      "riad": "Riad",
+      "terrasse": "Terrace",
+      "pro": "Commercial",
+      "3d": "3D design"
+    },
+    "chapters": {
+      "before": "The site",
+      "design": "The 3D plan",
+      "photo": "The work",
+      "after": "The garden"
+    }
   }
 }
