@@ -1,0 +1,19 @@
+---
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+const chapter = text.match(/^(\d+)\s—\s(.*)$/);
+---
+
+<span
+  >{
+    chapter ? (
+      <>
+        <bdi>{chapter[1]}</bdi> — {chapter[2]}
+      </>
+    ) : (
+      text
+    )
+  }</span
+>

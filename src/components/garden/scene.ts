@@ -1,6 +1,5 @@
 import {
   BoxGeometry,
-  Color,
   CylinderGeometry,
   DirectionalLight,
   DodecahedronGeometry,
@@ -76,16 +75,22 @@ export function createGarden(
   // Probe first: a normal no-WebGL fallback must not emit a renderer error.
   const context = canvas.getContext('webgl2', {
     antialias: true,
-    alpha: false,
+    alpha: true,
   });
   if (!context) return null;
-  const renderer = new WebGLRenderer({ canvas, context, antialias: true });
+  const renderer = new WebGLRenderer({
+    canvas,
+    context,
+    antialias: true,
+    alpha: true,
+  });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = PCFSoftShadowMap;
   const scene = new Scene();
-  scene.background = new Color('#f2f3f0');
+  scene.background = null;
+  renderer.setClearColor(0x000000, 0);
   const camera = new PerspectiveCamera(28, 1, 0.1, 300);
   // r149's legacy lighting multiplied these intensities by PI internally.
   scene.add(new HemisphereLight(0xffffff, 0xc9d2c6, 0.7 * Math.PI));
@@ -460,9 +465,7 @@ export function createGarden(
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     const distance =
-      46 *
-      Math.max(config.plot.width / 20, config.plot.depth / 14) *
-      (width < 520 ? 1.12 : 1);
+      41.4 * Math.max(config.plot.width / 20, config.plot.depth / 14);
     camera.position.set(
       0,
       Math.sin(0.62) * distance,

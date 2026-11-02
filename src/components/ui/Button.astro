@@ -43,7 +43,7 @@ const { variant = 'primary', class: className, ...attributes } = Astro.props;
     cursor: pointer;
     transition:
       transform var(--dur-press) ease-out,
-      background-color var(--dur) ease;
+      background-color var(--dur) var(--ease-out);
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
   }
@@ -54,11 +54,11 @@ const { variant = 'primary', class: className, ...attributes } = Astro.props;
     transform: scale(0.97);
   }
   .btn-primary {
-    background: var(--forest);
-    color: var(--paper);
+    background: var(--accent);
+    color: var(--accent-ink);
   }
   .btn-primary:hover {
-    background: var(--forest-press);
+    background: #d6b27d;
   }
   .btn-quiet {
     background: var(--mist);

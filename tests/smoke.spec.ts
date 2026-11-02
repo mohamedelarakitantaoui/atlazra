@@ -5,7 +5,7 @@ test('French homepage shows the company tagline', async ({
 }, testInfo) => {
   await page.goto('/fr/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    "L'art des espaces verts",
+    'Votre jardin dessiné en 3D, avant le premier coup de pelle.',
   );
 
   for (const locale of ['fr', 'ar']) {

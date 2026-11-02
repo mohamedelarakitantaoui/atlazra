@@ -73,15 +73,15 @@ const description =
     font: inherit;
     font-size: 1rem;
     color: var(--ink);
-    background: var(--mist);
-    border: 1px solid transparent;
+    background: var(--paper);
+    border: 1px solid var(--ink-2);
     border-radius: var(--radius-s);
     padding: 12px 14px;
     min-height: 48px;
     width: 100%;
     transition:
-      border-color var(--dur-fast) ease,
-      background-color var(--dur-fast) ease;
+      border-color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
   }
   textarea {
     min-height: 120px;

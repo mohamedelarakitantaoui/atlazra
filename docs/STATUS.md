@@ -26,6 +26,8 @@ what was built, decisions, verification results and open TODOs.
   locally verified; see completion below.
 - Phase 7 — SEO, performance and accessibility: implemented and locally
   verified; see completion below and `docs/qa.md`.
+- Phase 6c — port of the approved redesign (`reference/redesign/`):
+  implemented and locally verified; see completion below. Not yet committed.
 
 ## Phase 2 completion
 
@@ -520,6 +522,40 @@ Full report with every table: `docs/qa.md`.
 - Not verified: OG generation on Vercel's Linux build (Sharp's prebuilt
   libvips includes Pango, so it should work; check the first deploy's
   `/og/ar/home.png`), and how social networks render the cards.
+
+## Phase 6c completion: approved redesign port
+
+- Reference package committed first as `e6f6094`. The site now follows
+  `reference/redesign/atlazra-home.html`: emerald/gold/bone tokens, self-hosted
+  Big Shoulders Display, Manrope and IBM Plex Mono, sandwich hero (gold
+  monogram + ATLAZRA behind the live model, poster corners), plan with seven
+  callouts wired to the garden config, before/after comparison slider, plant
+  tags, four-step notebook pages, towns marquee and giant footer word.
+- Home styles live in `src/styles/home.css`; new components `ChapterLabel`,
+  `MeasuredText` (keeps `20 × 14` order in RTL), `NotFound`, `garden/plan.ts`
+  and `garden/renderer-probe.ts`. Garden posters were regenerated as
+  transparent renders of the live scene for both states; no-WebGL devices can
+  switch states without loading three.js.
+- Fixes in the final pass: comparison tags are solid `--ink-950` and capped at
+  half the frame width; OG images use the new palette; `tests/ui.spec.ts`
+  expects the new `--ink-900`. The contrast audit now hides all page text while
+  sampling backgrounds (tight display headings were read as their own
+  background).
+- QA scripts: `scripts/verify-redesign-examples.mjs` (local only) publishes the
+  two example projects temporarily, runs projects/SEO/axe specs, screenshots at
+  390/768/1024/1440, Lighthouse and contrast, then restores the drafts and
+  the safe build. Output in `artifacts/phase-6c/` (ignored by Git).
+- Verification (2026-11-02, local Node 24):
+  - `pnpm lint`, `pnpm check` (0/0/0), `pnpm build` passed.
+  - `pnpm test`: 50/50 unit, 168 Playwright passed, 6 skipped (examples-only).
+  - Examples build: 64 passed; axe clean; contrast 1588 text elements,
+    0 failures (only a disabled lightbox button is below 4.5, exempt).
+  - Lighthouse mobile, FR and AR, 10 pages each: performance 99–100,
+    accessibility, best practices and SEO 100; home LCP ≈ 2.1 s. The thank-you
+    page scores SEO 66 only because it is intentionally `noindex`.
+  - At 1440 × 900 the hero fits the first screen with every corner visible
+    (h1 at y≈416 as in the reference; state toggle 826–878). Screenshots FR/AR
+    at 390 and 1440 px inspected against `artifacts/phase-6c/reference/`.
 
 ## Open TODOs
 

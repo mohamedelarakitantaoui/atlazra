@@ -14,7 +14,7 @@ const families = {
   regular: 'IBM Plex Sans Arabic',
   semibold: 'IBM Plex Sans Arabic SemiBold',
 };
-const colors = { ink: '#17201b', ink2: '#56615a', forest: '#123d2c' };
+const colors = { ink: '#0f2419', ink2: '#465649', forest: '#1b4130' };
 const pad = 80;
 
 const escape = (text: string) =>

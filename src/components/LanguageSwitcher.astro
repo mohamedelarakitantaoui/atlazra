@@ -53,7 +53,8 @@ const { locale, path } = Astro.props;
   /* Reference .lang, lines 61–63; 44px hit areas follow AGENTS.md. */
   .lang {
     display: flex;
-    background: var(--mist);
+    background: var(--paper);
+    border: 1px solid var(--line);
     border-radius: var(--radius-pill);
     padding: 3px;
     position: relative;
@@ -73,9 +74,8 @@ const { locale, path } = Astro.props;
     text-decoration: none;
   }
   a[aria-current='page'] {
-    color: var(--ink);
-    background: var(--paper);
-    box-shadow: var(--shadow-thumb);
+    color: var(--paper);
+    background: var(--forest);
   }
   a[lang='ar'] {
     font-family: Tahoma, 'Segoe UI', Arial, sans-serif;

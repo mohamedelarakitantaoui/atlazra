@@ -10,6 +10,9 @@ import arabicHeading from '../assets/fonts/ibm-plex-sans-arabic-arabic-600.woff2
 import arabicBody from '../assets/fonts/ibm-plex-sans-arabic-arabic-400.woff2?url';
 import arabicLatinBody from '../assets/fonts/ibm-plex-sans-arabic-latin-400.woff2?url';
 import arabicLatinHeading from '../assets/fonts/ibm-plex-sans-arabic-latin-600.woff2?url';
+import latinDisplay from '../assets/fonts/big-shoulders-display-latin-800-normal.woff2?url';
+import latinBody from '../assets/fonts/manrope-latin-400-normal.woff2?url';
+import latinStrong from '../assets/fonts/manrope-latin-600-normal.woff2?url';
 interface Props {
   locale: Locale;
   /** Page part of the title; the brand is appended. Keep it ≤ 43 chars. */
@@ -55,6 +58,9 @@ const ogImage = new URL(ogImagePath(Astro.url.pathname, locale), Astro.site);
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <meta name="description" content={description} />
+    <link rel="icon" href="/brand/favicon.png" type="image/png" />
+    <link rel="preload" href={latinDisplay} as="font" type="font/woff2" crossorigin />
+    {locale!=='ar' && [latinBody,latinStrong].map(href=><link rel="preload" {href} as="font" type="font/woff2" crossorigin/>)}
     <title>{fullTitle}</title>
     {noindex && <meta name="robots" content="noindex" />}
     {

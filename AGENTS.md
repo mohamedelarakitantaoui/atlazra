@@ -13,37 +13,53 @@ Claude Code reads it through `CLAUDE.md`; Codex reads it directly.
 - Audience: villa owners, riads, residences, businesses in Rabat / Salé / Kénitra.
 
 ## Reference design
-`reference/index.html` is the approved visual reference (single-file prototype). Match its look and behavior.
+`reference/redesign/atlazra-home.html` is the approved visual reference. `template.html` provides readable CSS, markup, FR/AR copy and interactions; `design-tokens.md`, `content.md`, `references.md` and `research.md` explain the decisions. This replaces `reference/index.html`. Use the assets as files; never paste base64 images or the mockup bundle. Match the approved look and behavior.
 When porting, keep its tokens, spacing, copy and interactions. Don't "improve" it into a template.
 
 ## Design rules (non-negotiable)
 
-### Palette (single light theme, the client asked for white)
+### Palette (white base, emerald ink and gold accent)
 | Token | Value | Use |
 |---|---|---|
-| `--paper` | `#ffffff` | page background |
-| `--mist` | `#f2f3f0` | quiet surfaces, 3D table, inputs |
-| `--ink` | `#17201b` | text |
-| `--ink-2` | `#56615a` | secondary text (AA on white and mist) |
-| `--forest` | `#123d2c` | logo, primary buttons, focus ring |
-| `--bronze` | `#8b693a` | rare small accent only (step labels) |
+| `--paper` | `#FFFFFF` | page base |
+| `--bone-50` / `--mist` | `#F6F2E9` | alternating quiet band, fields |
+| `--bone-100` | `#EDE6D6` | alternating deeper bone band |
+| `--ink-900` / `--forest` | `#1B4130` | giant word, headings, dark buttons, footer |
+| `--ink-800` | `#153829` | plan and compare frames |
+| `--ink-950` | `#112F22` | deepest frame |
+| `--ink-on-bone` / `--ink` | `#0F2419` | body text |
+| `--muted-bone` / `--ink-2` | `#465649` | secondary text |
+| `--accent` | `#C9A26B` | main CTAs, plan pins, monogram, contact band |
+| `--accent-ink` | `#0A2618` | text on gold |
+| `--accent-text` / `--bronze` | `#7A5B2C` | small accent text on white or bone |
+| `--rule` / `--line` | `rgba(15,36,25,.14)` | hairlines |
 
-`--bronze` was darkened from the reference's `#9a7440` (3.81:1 on mist, 4.25:1 on white) to `#8b693a` (4.51:1 on mist, 5.02:1 on white), the smallest HSL-lightness change that lets the 0.8rem step labels pass AA. Same hue and saturation; `reference/index.html` keeps the old value.
-| `--rule` | `rgba(23,32,27,.10)` | hairlines |
+Gold is never small text on white. Every small-text pair must meet 4.5:1.
+White and bone alternate; the contact band is gold and the footer emerald.
 
 ### Type
-- Latin: system font stack (`-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, …`). Arabic: IBM Plex Sans Arabic.
-- Headings weight 600, **negative tracking that scales with size** (h1 `-0.032em`, h2 `-0.025em`, body ~0). Arabic: tracking 0, line-height ≥1.3.
-- Sentence case. The calligraphic serif lives **only in the logo**, never in headings.
+- Display: self-hosted Big Shoulders Display 800/900; condensed uppercase, tracking about -0.005em, line-height .88–.95.
+- Body: self-hosted Manrope 400–700. Labels: self-hosted IBM Plex Mono 500, 12–13px with editorial tracking.
+- Arabic: IBM Plex Sans Arabic with the existing subset and size-matched fallback. Arabic tracking 0, line-height ≥1.3. Never force Latin uppercase styling on Arabic.
+- All web fonts use font-display: swap; no Google Fonts at runtime.
+- No italic emphasis inside headings. No invented facts. Missing facts stay `TODO(client): …` in content and use a neutral placeholder in the UI.
+
+### Six signature moves
+1. Sandwich hero: giant ATLAZRA behind a live transparent 3D garden, corner UI in front; gold monogram replaces the first A. The word and model stay LTR in every locale.
+2. Emerald and gold on white: emerald brand ink, monogram-derived gold accent, warm bone bands.
+3. Poster corners: logo and navigation above; h1 and CTAs mid-start, four-step index mid-end, state toggle bottom-start, towns bottom-center, drag hint bottom-end.
+4. Monogram symbol: use the supplied transparent gold leaf/A in the hero, brand, footer, favicon and 404.
+5. Condensed display type: Big Shoulders Display with Manrope and Plex Mono; Plex Sans Arabic for Arabic.
+6. Editorial labels: numbered chapters, [01] service rows, hairlines, one pausable towns marquee, giant footer word. Chapter counters are isolated LTR in Arabic.
 
 ### Logo
-- Files in `public/brand/`: `atlazra-logo.svg` (full), `atlazra-mark.svg` (A + leaf), `atlazra-wordmark.svg`. All use `fill="currentColor"`.
-- On white: color `--forest`. Bronze version only for special print/merch. Don't use the metallic PNG on the website.
+- The approved transparent gold assets are in `reference/redesign/assets/`; optimized files are served from `public/redesign/`.
+- Earlier vector assets in `public/brand/` remain available for structured data and print; the redesigned site uses the approved gold monogram.
 
 ### Banned (these make a site look AI-generated)
 - Giant serif display headlines; italic emphasis words inside headings.
-- Monospace uppercase "eyebrow" labels with an icon above every heading.
-- Decorative numbering (01 / 02 / 03) when order is not information. Real sequences (project steps) may be numbered.
+- Generic uppercase labels with an icon above every heading. Editorial chapter labels from the approved reference are intentional.
+- Meaningless decorative numbering. Chapter navigation, service indexes, plan callouts and real project steps may be numbered.
 - Gradient text, purple/blue gradients, glassmorphism as decoration, neon glow.
 - Centered hero + two buttons + three identical icon cards.
 - Same rounded card + shadow on every block. Emoji as icons.
@@ -56,19 +72,19 @@ When porting, keep its tokens, spacing, copy and interactions. Don't "improve" i
 - Enter/exit: ease-out `cubic-bezier(.23,1,.32,1)`; UI transitions ≤ 300 ms. Never `ease-in` for UI. Never `transition: all`.
 - Gestures (3D model drag, carousels): 1:1 tracking with pointer capture, release velocity handed to momentum, interruptible at any time.
 - Springs critically damped by default; a little bounce only after a gesture with momentum.
-- Translucent sticky header (`backdrop-filter`), solid under `prefers-reduced-transparency`.
+- Reference header stays in normal flow. Any translucent controls become solid under `prefers-reduced-transparency`.
 - `prefers-reduced-motion`: cross-fades or instant changes, no springs, no momentum.
 - Don't animate things people use many times (nav links, language switch).
 
 ### Layout
 - Mobile-first; works at 360 px; no horizontal page scroll; tap targets ≥ 44 px.
-- Side gutter `max(20px, env(safe-area-inset-*))`. Max content width 1160 px.
+- Side gutter `max(20px, env(safe-area-inset-*))`. Max content width 1440 px, matching the new reference.
 - RTL: use logical properties (`margin-inline-start`, `inset-inline-start`), mirror arrows, keep the 3D model LTR.
 
 ## Engineering rules
 - Stack: Astro 5 + TypeScript (strict), plain CSS tokens, three.js island, Astro content collections for projects, Resend for the contact email, Vercel.
 - Package manager: pnpm. Node 20+.
-- Every page server-renders its content; JS only for islands (3D model and contact form).
+- Every page server-renders its content; JS only for progressive interactive components (3D model, contact form, menu, plan pins, comparison, project controls and marquee pause).
 - Secrets only in env vars, never in the browser.
 - Validate every input on the server with zod. Contact spam protection uses a honeypot and HMAC-signed minimum fill time; no database or rate-limit store.
 - No invented content: missing facts stay as `TODO(client): …` in content files and show as a neutral placeholder in the UI.

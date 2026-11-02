@@ -1,0 +1,43 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { locales, type Locale } from '../i18n/routing';
+import { t } from '../i18n/content';
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+---
+
+<SiteLayout
+  {locale}
+  languagePath="/"
+  title={t(locale, 'seo.notFound.title')}
+  description={t(locale, 'seo.notFound.description')}
+  canonical={false}
+>
+  <section class="wrap page-shell">
+    <img src="/redesign/monogram.webp" alt="" width="96" height="82" />
+    <h1>{t(locale, 'pages.notFound.title')}</h1>
+    <p>{t(locale, 'pages.notFound.intro')}</p>
+    <div class="home-links">
+      {
+        locales.map((lang) => (
+          <a class="link" href={`/${lang}/`} lang={lang} hreflang={lang}>
+            {t(lang, 'nav.home')}
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</SiteLayout>
+<style>
+  .home-links {
+    display: grid;
+    justify-items: start;
+  }
+  .home-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+</style>

@@ -201,8 +201,10 @@ const jsonLd = {
     border-block-end: 1px solid var(--rule);
   }
   dt {
-    font-size: 0.875rem;
-    color: var(--ink-2);
+    font: 500 12px/1.5 var(--mono);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--accent-text);
   }
   dd {
     margin: 4px 0 0;
@@ -214,7 +216,10 @@ const jsonLd = {
   }
   .chapter {
     margin-block: 80px;
+    border-block-start: 1px solid var(--rule);
+    padding-block-start: 40px;
   }
+  :global(html[dir='rtl']) dt {font-family:var(--font-ar);letter-spacing:0;text-transform:none;}
   .chapter-copy {
     display: grid;
     grid-template-columns: 1fr 1fr;

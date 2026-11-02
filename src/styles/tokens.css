@@ -1,16 +1,33 @@
-/* Reference: reference/index.html :root (lines 9–22). */
+/* Phase 6c: reference/redesign/design-tokens.md. Legacy semantic aliases keep form and project behavior intact. */
 :root {
+  --ink-950: #112f22;
+  --ink-900: #1b4130;
+  --ink-800: #153829;
+  --ink-on-bone: #0f2419;
+  --bone-50: #f6f2e9;
+  --bone-100: #ede6d6;
+  --line: rgba(15, 36, 25, 0.14);
+  --line-dark: rgba(246, 242, 233, 0.16);
+  --accent: #c9a26b;
+  --accent-ink: #0a2618;
+  --accent-text: #7a5b2c;
+  --muted-dark: rgba(246, 242, 233, 0.76);
+  --muted-bone: #465649;
+  --display: 'Big Shoulders Display', Impact, 'Arial Narrow', sans-serif;
+  --body: var(--font);
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --ar: var(--font-ar);
+  --pad: max(20px, 4.4vw);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --paper: #ffffff;
-  --mist: #f2f3f0;
-  --ink: #17201b;
-  --ink-2: #56615a;
-  --forest: #123d2c;
-  --forest-press: #0c2e21;
-  --bronze: #8b693a;
-  --rule: rgba(23, 32, 27, 0.1);
-  --font:
-    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui,
-    'Helvetica Neue', Arial, sans-serif;
+  --mist: #f6f2e9;
+  --ink: #0f2419;
+  --ink-2: #465649;
+  --forest: #1b4130;
+  --forest-press: #153829;
+  --bronze: #7a5b2c;
+  --rule: rgba(15, 36, 25, 0.14);
+  --font: 'Manrope', system-ui, sans-serif;
   --font-ar:
     'IBM Plex Sans Arabic', 'IBM Plex Sans Arabic Fallback',
     'IBM Plex Sans Arabic Fallback Arial', 'Geeza Pro', 'Noto Sans Arabic',

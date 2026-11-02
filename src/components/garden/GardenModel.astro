@@ -8,18 +8,22 @@ interface Props {
   locale: Locale;
   config?: GardenConfig;
   caption?: string;
+  hero?: boolean;
 }
 const {
   locale,
   config = defaultGardenConfig,
   caption = t(locale, 'garden.caption'),
+  hero = false,
 } = Astro.props;
 ---
 
 <garden-model
+  class:list={{ 'hero-model': hero }}
   data-config={JSON.stringify(config)}
   data-rtl={locale === 'ar'}
   data-status="waiting"
+  data-state="project"
 >
   <div class="stage" dir="ltr">
     <div
@@ -43,19 +47,18 @@ const {
       />
       <span class="hint" aria-hidden="true">{t(locale, 'garden.hint')}</span>
     </div>
-    <div class="model-control">
-      <SegmentedControl
-        disabled
-        mode="pressed"
-        label={t(locale, 'garden.controlLabel')}
-        value="project"
-        options={[
-          { value: 'current', label: t(locale, 'garden.current') },
-          { value: 'project', label: t(locale, 'garden.project') },
-        ]}
-      />
-    </div>
     <p class="fallback" role="status" hidden>{t(locale, 'garden.fallback')}</p>
+  </div>
+  <div class="model-control">
+    <SegmentedControl
+      mode="pressed"
+      label={t(locale, 'redesign.state')}
+      value="project"
+      options={[
+        { value: 'current', label: t(locale, 'redesign.t0') },
+        { value: 'project', label: t(locale, 'redesign.t1') },
+      ]}
+    />
   </div>
   <p class="caption">{caption}</p>
 </garden-model>
@@ -68,7 +71,7 @@ const {
   const SOFTWARE_RENDERER = /swiftshader|llvmpipe|software|basic render/i;
 
   /** The GPU name, or null when WebGL 2 is unavailable. Frees the probe context. */
-  const rendererName = () => {
+  const rendererNameSync = () => {
     const gl = document.createElement('canvas').getContext('webgl2');
     if (!gl) return null;
     const info = gl.getExtension('WEBGL_debug_renderer_info');
@@ -77,6 +80,19 @@ const {
     );
     gl.getExtension('WEBGL_lose_context')?.loseContext();
     return name;
+  };
+
+  const rendererName=async():Promise<string|null>=>{
+    if(typeof Worker==='undefined'||typeof OffscreenCanvas==='undefined')return rendererNameSync();
+    try {
+      const worker=new Worker(new URL('./renderer-probe.ts',import.meta.url),{type:'module'});
+      return await new Promise(resolve=>{
+        const finish=(name:string|null)=>{clearTimeout(timeout);worker.terminate();resolve(name);};
+        const timeout=setTimeout(()=>finish(rendererNameSync()),3000);
+        worker.onmessage=(event:MessageEvent<string|null>)=>finish(event.data);
+        worker.onerror=()=>finish(rendererNameSync());
+      });
+    }catch{return rendererNameSync();}
   };
 
   /** Runs after the page's own load and the first idle period. */
@@ -111,7 +127,7 @@ const {
       this.querySelector('.fallback')?.setAttribute('hidden', '');
       this.querySelector('.surface')?.setAttribute('aria-busy', 'true');
       this.querySelectorAll('button').forEach(
-        (button) => (button.disabled = true),
+        (button) => (button.disabled = false),
       );
       const fail = () => {
         if (this.generation !== generation) return;
@@ -120,7 +136,7 @@ const {
         this.querySelector('.surface')?.setAttribute('aria-busy', 'false');
         this.querySelector('.fallback')?.removeAttribute('hidden');
         this.querySelectorAll('button').forEach(
-          (button) => (button.disabled = true),
+          (button) => (button.disabled = false),
         );
       };
       // A capable device that still renders slowly keeps the poster, silently.
@@ -129,12 +145,13 @@ const {
         this.dataset.status = 'poster';
         this.querySelector('.surface')?.setAttribute('aria-busy', 'false');
         this.querySelectorAll('button').forEach(
-          (button) => (button.disabled = true),
+          (button) => (button.disabled = false),
         );
       };
-      const start = () => {
+      const start = async () => {
         if (!this.isConnected || generation !== this.generation) return;
-        const renderer = rendererName();
+        const renderer = await rendererName();
+        if (!this.isConnected || generation !== this.generation) return;
         if (renderer === null) return fail();
         if (SOFTWARE_RENDERER.test(renderer)) return poster();
         this.dataset.status = 'loading';
@@ -196,8 +213,17 @@ const {
         'change',
         (event) => {
           const value = (event as CustomEvent<{ value: string }>).detail?.value;
-          if (value === 'current' || value === 'project')
+          if (value === 'current' || value === 'project') {
+            this.dataset.state = value;
+            const image = this.querySelector<HTMLImageElement>('.poster')!;
+            const prefix =
+              value === 'current' ? 'garden-current-poster' : 'garden-poster';
+            image.src = `/${prefix}-960.webp`;
+            image.srcset = [640, 960, 1440, 2160]
+              .map((width) => `/${prefix}-${width}.webp ${width}w`)
+              .join(', ');
             this.scene?.setState(value);
+          }
         },
         { signal: this.events.signal },
       );
@@ -235,7 +261,7 @@ const {
     max-width: 100%;
     overflow: hidden;
     border-radius: var(--radius-l);
-    background: var(--mist);
+    background: transparent;
   }
   .surface {
     position: absolute;

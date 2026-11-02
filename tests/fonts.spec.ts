@@ -17,35 +17,37 @@ for (const locale of ['fr', 'en'])
           page.locator('[data-language-switch] a[lang="ar"]'),
         ).toHaveText('ع');
       }
-      expect(fonts).toEqual([]);
+      expect(fonts.some((url) => url.includes('ibm-plex-sans-arabic'))).toBe(
+        false,
+      );
+      expect(fonts.some((url) => url.includes('manrope'))).toBe(true);
     });
   }
 
-test('only Arabic pages preload the hero heading font', async ({ page }) => {
+test('pages preload the critical display and locale heading fonts', async ({ page }) => {
   await page.goto('/ar/');
   const preloads = page.locator('link[rel="preload"][as="font"]');
-  await expect(preloads).toHaveCount(1);
-  await expect(preloads).toHaveAttribute(
+  await expect(preloads).toHaveCount(2);
+  await expect(page.locator('link[rel="preload"][as="font"][href*="ibm-plex-sans-arabic"]')).toHaveAttribute(
     'href',
     /ibm-plex-sans-arabic-arabic-600.*\.woff2$/,
   );
-  await expect(preloads).toHaveAttribute('type', 'font/woff2');
-  await expect(preloads).toHaveAttribute('crossorigin', '');
+  for(const preload of await preloads.all()){
+    await expect(preload).toHaveAttribute('type', 'font/woff2');
+    await expect(preload).toHaveAttribute('crossorigin', '');
+  }
   await page.goto('/fr/');
-  await expect(page.locator('link[rel="preload"][as="font"]')).toHaveCount(0);
+  await expect(page.locator('link[rel="preload"][as="font"]')).toHaveCount(3);
 });
 
 const heroBoxes = (page: Page) =>
   page.evaluate(() =>
-    [
-      '#hero-title',
-      '.hero-copy > p',
-      '.hero-copy .actions',
-      'garden-model',
-    ].map((selector) => {
-      const box = document.querySelector(selector)!.getBoundingClientRect();
-      return { selector, top: box.top, height: box.height };
-    }),
+    ['#hero-title', '.hero-copy > p', '.hero-copy .ctas', 'garden-model'].map(
+      (selector) => {
+        const box = document.querySelector(selector)!.getBoundingClientRect();
+        return { selector, top: box.top, height: box.height };
+      },
+    ),
   );
 
 for (const width of [390, 1440]) {

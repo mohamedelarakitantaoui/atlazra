@@ -155,7 +155,7 @@ for (const locale of ['fr', 'ar'] as const) {
     await expect(villaChip).not.toBeChecked();
     await expect(page.locator('label[for="choice-plan"]')).toHaveCSS(
       'background-color',
-      'rgb(18, 61, 44)',
+      'rgb(27, 65, 48)',
     );
   });
 }

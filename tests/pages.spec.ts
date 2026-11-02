@@ -51,14 +51,12 @@ for (const locale of locales) {
     await page.goto(`/${locale}/services/`);
     const titles = page.locator('.services h2');
     await expect(titles).toHaveText(
-      (['a1', 'a2', 'a3'] as const).map((key) =>
-        t(locale, `home.reference.${key}`),
-      ),
+      (['v1', 'v2', 'v3'] as const).map((key) => t(locale, `redesign.${key}`)),
     );
-    await expect(page.locator('.services .chips li')).toHaveCount(9);
+    await expect(page.locator('.services img')).toHaveCount(3);
     await expect(page.locator('.services')).toHaveAttribute(
       'data-client-todo',
-      t(locale, 'home.todos.services'),
+      t(locale, 'redesign.servicesTodo'),
     );
     await expect(page.locator('main a.btn')).toHaveAttribute(
       'href',
@@ -106,7 +104,9 @@ test('404 offers working localized home links and the brand mark', async ({
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     t('fr', 'pages.notFound.title'),
   );
-  await expect(page.locator('main .logo-mark svg')).toBeVisible();
+  await expect(
+    page.locator('main img[src="/redesign/monogram.webp"]'),
+  ).toBeVisible();
   for (const locale of locales) {
     await expect(page.locator(`main a[href="/${locale}/"]`)).toBeVisible();
     await expect(
@@ -114,6 +114,18 @@ test('404 offers working localized home links and the brand mark', async ({
     ).toHaveAttribute('href', `/${locale}/`);
   }
 });
+
+for (const locale of locales)
+  test(`missing localized route renders a genuine 404 in ${locale}`, async ({
+    page,
+  }) => {
+    const response = await page.goto(`/${locale}/page-introuvable/`);
+    expect(response?.status()).toBe(404);
+    await expect(page.locator('html')).toHaveAttribute('lang', locale);
+    await expect(page.locator('h1')).toHaveText(
+      t(locale, 'pages.notFound.title'),
+    );
+  });
 
 for (const [locale, route] of [
   ['fr', 'services'],

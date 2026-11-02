@@ -1,100 +1,219 @@
 ---
-import Logo from './ui/Logo.astro';
-import { t } from '../i18n/content';
+import { t, getRedesign } from '../i18n/content';
 import type { Locale } from '../i18n/routing';
 import { site, isPending } from '../data/site';
 interface Props {
   locale: Locale;
 }
 const { locale } = Astro.props;
+const r = getRedesign(locale);
 const brand = t(locale, 'footer.brand');
 const [copyrightStart, copyrightEnd] = t(locale, 'footer.copyright')
   .replace('{year}', String(new Date().getUTCFullYear()))
   .split(brand);
+const towns = [r.mR, r.mS, r.mK, r.mT];
 ---
 
-<footer>
-  <div class="wrap foot">
-    <div class="signature">
-      <a class="brand" href={`/${locale}/`} aria-label={t(locale, 'nav.home')}
-        ><Logo decorative /></a
-      >
-      <small>{t(locale, 'home.title')}</small>
-      <small>{site.address[locale]}</small>
+<footer class="foot">
+  <div class="marquee" data-paused="false">
+    <div class="track" aria-hidden="true">
       {
-        (['phone', 'email'] as const).map((key) => (
-          <small
-            data-client-todo={isPending(site[key]) ? site[key] : undefined}
-          >
-            {t(locale, `contact.${key}`)} :{' '}
-            {isPending(site[key]) ? (
-              t(locale, 'contact.pending')
-            ) : (
-              <a href={`${key === 'phone' ? 'tel' : 'mailto'}:${site[key]}`}>
-                {site[key]}
-              </a>
-            )}
-          </small>
-        ))
+        Array.from({ length: 4 }, () => towns)
+          .flat()
+          .map((town) => (
+            <>
+              <>
+                <span>{town}</span>
+                <img
+                  src="/redesign/monogram.webp"
+                  alt=""
+                  width="24"
+                  height="21"
+                  loading="lazy"
+                />
+              </>
+            </>
+          ))
       }
-      <a class="map-link" href={site.mapUrl} target="_blank" rel="noopener"
-        >{t(locale, 'footer.map')}</a
-      >
     </div>
-    <nav class="legal-links" aria-label={t(locale, 'footer.links')}>
-      <a href={`/${locale}/mentions-legales/`}>{t(locale, 'footer.legal')}</a>
-      <a href={`/${locale}/confidentialite/`}>{t(locale, 'footer.privacy')}</a>
-    </nav>
-    <small class="copyright"
-      ><span>{copyrightStart}<bdi>{brand}</bdi>{copyrightEnd}</span></small
+  </div>
+  <div class="wrap">
+    <button
+      type="button"
+      class="marquee-toggle"
+      aria-pressed="false"
+      data-pause={r.pause}
+      data-resume={r.resume}>{r.pause}</button
     >
+    <div class="foot-word" aria-hidden="true">
+      <img
+        src="/redesign/monogram.webp"
+        alt=""
+        width="400"
+        height="343"
+        loading="lazy"
+      />TLAZRA
+    </div>
+    <div class="signature">
+      <p>{t(locale, 'home.title')}</p>
+      <a class="map-link" href={site.mapUrl} target="_blank" rel="noopener"
+        >{r.addr} · {r.map}</a
+      >
+      <div class="contact-meta">
+        {
+          (['phone', 'email'] as const).map((key) => (
+            <p data-client-todo={isPending(site[key]) ? site[key] : undefined}>
+              {t(locale, `contact.${key}`)}:{' '}
+              {isPending(site[key]) ? (
+                r.pending
+              ) : (
+                <a href={`${key === 'phone' ? 'tel' : 'mailto'}:${site[key]}`}>
+                  {site[key]}
+                </a>
+              )}
+            </p>
+          ))
+        }
+      </div>
+    </div>
+    <div class="foot-row">
+      <small class="copyright"
+        ><span>{copyrightStart}<bdi>{brand}</bdi>{copyrightEnd}</span></small
+      >
+      <nav class="legal-links" aria-label={t(locale, 'footer.links')}>
+        <a href={`/${locale}/mentions-legales/`}>{r.lg1}</a><a
+          href={`/${locale}/confidentialite/`}>{r.lg2}</a>
+      </nav>
+    </div>
   </div>
 </footer>
-
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.marquee-toggle');
+  const marquee = document.querySelector<HTMLElement>('.marquee');
+  if (toggle && marquee)
+    toggle.addEventListener('click', () => {
+      const paused = toggle.getAttribute('aria-pressed') !== 'true';
+      toggle.setAttribute('aria-pressed', String(paused));
+      marquee.dataset.paused = String(paused);
+      toggle.textContent = paused
+        ? toggle.dataset.resume!
+        : toggle.dataset.pause!;
+    });
+</script>
 <style>
-  /* Reference footer, lines 190–193, markup 372–376. */
-  footer {
-    padding-block: 48px 40px;
-    border-top: 1px solid var(--rule);
-  }
   .foot {
+    background: var(--ink-900);
+    color: var(--bone-50);
+    overflow: clip;
+  }
+  .foot .wrap {
+    padding-block: 20px 32px;
+  }
+  .foot-word {
+    direction: ltr;
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px 40px;
-    justify-content: space-between;
-    align-items: end;
+    justify-content: center;
+    align-items: flex-end;
+    font: 900 clamp(80px, 20vw, 320px)/0.8 var(--display);
+    color: var(--bone-50);
+    white-space: nowrap;
+    margin: 24px 0 48px;
+    user-select: none;
+  }
+  .foot-word img {
+    height: 0.78em;
+    width: auto;
   }
   .signature {
+    font-size: 14px;
+    color: var(--muted-dark);
     display: grid;
-    gap: 10px;
+    gap: 8px;
+    padding-bottom: 24px;
   }
-  .brand {
-    display: flex;
-    align-items: center;
-    color: var(--forest);
-    text-decoration: none;
-    min-height: 44px;
-  }
-  .foot .brand :global(svg) {
-    height: 22px;
-  }
-  small {
-    color: var(--ink-2);
-    font-size: 0.85rem;
-  }
-  .legal-links {
+  .contact-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 24px;
+    gap: 8px 32px;
   }
-  .legal-links a,
-  .map-link,
+  .map-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    justify-self: start;
+  }
+  .foot-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line-dark);
+    color: var(--muted-dark);
+    font-size: 14px;
+  }
+  .foot-row nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .foot-row a,
   .copyright {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-    color: var(--ink-2);
-    font-size: 0.85rem;
-    text-underline-offset: 3px;
+    font-size: 14px;
+  }
+  .marquee {
+    direction: ltr;
+    overflow: clip;
+    border-block: 1px solid var(--line-dark);
+    padding: 14px 0;
+  }
+  .track {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    width: max-content;
+    animation: towns 40s linear infinite;
+    font: 800 28px/1 var(--display);
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--ink-900);
+  }
+  :global(html[dir='rtl']) .track span {
+    font-family: var(--font-ar);
+    font-size: 24px;
+    line-height: 1.3;
+  }
+  .marquee:hover .track,
+  .marquee[data-paused='true'] .track {
+    animation-play-state: paused;
+  }
+  .marquee-toggle {
+    background: none;
+    border: 1px solid var(--line-dark);
+    border-radius: 999px;
+    color: var(--bone-50);
+    font: 500 12px var(--mono);
+    padding: 8px 16px;
+    min-height: 44px;
+    cursor: pointer;
+  }
+  :global(html[dir='rtl']) .marquee-toggle {
+    font-family: var(--font-ar);
+  }
+  @keyframes towns {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      animation: none;
+    }
+    .marquee-toggle {
+      display: none;
+    }
   }
 </style>

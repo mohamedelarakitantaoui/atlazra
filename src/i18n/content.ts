@@ -25,3 +25,6 @@ export function t(lang: Locale, key: TranslationKey): string {
     throw new Error(`Missing translation: ${lang}.${key}`);
   return value;
 }
+
+/** Flat, typed server-rendered copy ported from the approved redesign. */
+export const getRedesign = (lang: Locale) => dictionaries[lang].redesign;

@@ -31,7 +31,7 @@ test.beforeEach(async ({ page }) => {
   await disableFrameGuard(page);
 });
 
-test('garden is viewport-lazy, has a poster, and enables controls only after rendering', async ({
+test('garden is viewport-lazy, has a poster, and keeps both poster states usable before rendering', async ({
   page,
 }) => {
   // On the dev server Vite transforms three.js on first request, after load + idle.
@@ -77,7 +77,7 @@ test('garden is viewport-lazy, has a poster, and enables controls only after ren
   expect(file).not.toBeNull();
   expect(Number(file![1])).toBeGreaterThanOrEqual(chosen.needed);
   for (const button of await page.locator('garden-model button').all())
-    await expect(button).toBeDisabled();
+    await expect(button).toBeEnabled();
   await page.locator('garden-model').scrollIntoViewIfNeeded();
   await ready(page);
   expect(sceneRequests.length).toBeGreaterThan(0);
@@ -97,13 +97,13 @@ test('garden is viewport-lazy, has a poster, and enables controls only after ren
   await expect(page.locator('garden-model canvas')).toHaveCSS('opacity', '1');
   await expect(poster).toHaveCSS('opacity', '0');
   await page
-    .getByRole('button', { name: t('fr', 'garden.current'), exact: true })
+    .getByRole('button', { name: t('fr', 'redesign.t0'), exact: true })
     .click();
   await expect(
     page.locator('garden-model [data-value="current"]'),
   ).toHaveAttribute('aria-pressed', 'true');
   await page
-    .getByRole('button', { name: t('fr', 'garden.project'), exact: true })
+    .getByRole('button', { name: t('fr', 'redesign.t1'), exact: true })
     .click();
   await expect(
     page.locator('garden-model [data-value="project"]'),
@@ -235,9 +235,10 @@ test('garden tracks the pointer, carries momentum, stops when idle, pauses and d
   expect((await snapshot(page)).state).toBe('current');
 });
 
-test('no WebGL keeps the poster and localized fallback with disabled controls', async ({
+test('no WebGL keeps the poster and localized fallback with usable poster controls', async ({
   page,
 }) => {
+  await reportRenderer(page,null);
   await page.addInitScript(() => {
     const original = HTMLCanvasElement.prototype.getContext;
     HTMLCanvasElement.prototype.getContext = function (
@@ -260,7 +261,7 @@ test('no WebGL keeps the poster and localized fallback with disabled controls', 
   );
   await expect(page.locator('garden-model .poster')).toHaveCSS('opacity', '1');
   for (const button of await page.locator('garden-model button').all())
-    await expect(button).toBeDisabled();
+    await expect(button).toBeEnabled();
 });
 
 test('a software renderer keeps the poster and never requests three.js', async ({
@@ -290,8 +291,17 @@ test('a software renderer keeps the poster and never requests three.js', async (
     'false',
   );
   for (const button of await page.locator('garden-model button').all())
-    await expect(button).toBeDisabled();
+    await expect(button).toBeEnabled();
   await page.waitForTimeout(500);
+  await page.locator('garden-model [data-value="current"]').click();
+  await expect(page.locator('garden-model .poster')).toHaveAttribute(
+    'srcset',
+    /garden-current-poster/,
+  );
+  await expect(page.locator('garden-model')).toHaveAttribute(
+    'data-state',
+    'current',
+  );
   expect(sceneRequests).toEqual([]);
   expect(messages).toEqual([]);
 });
@@ -331,7 +341,7 @@ test('slow intro frames hand back to the poster and dispose the scene', async ({
   const { introMedianMs } = await snapshot(page);
   expect(introMedianMs).toBeGreaterThan(40);
   for (const button of await page.locator('garden-model button').all())
-    await expect(button).toBeDisabled();
+    await expect(button).toBeEnabled();
   const garden = messages.filter((m) => m.text.startsWith('Atlazra garden'));
   expect(garden).toHaveLength(1);
   expect(garden[0].type).toBe('info');

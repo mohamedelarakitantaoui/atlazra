@@ -8,8 +8,20 @@ export const SOFTWARE_GPU =
  * Headless Chromium rasterizes WebGL with SwiftShader, which the island treats
  * as a software renderer. Tests choose the reported GPU name explicitly.
  */
-export const reportRenderer = (page: Page, name: string) =>
+export const reportRenderer = (page: Page, name: string|null) =>
   page.addInitScript((name) => {
+    // Exercise the real worker probe with the same simulated GL capability as
+    // the window. The actual scene still renders on real headless SwiftShader.
+    const NativeWorker=window.Worker;
+    window.Worker=class extends NativeWorker {
+      constructor(url:string|URL,options?:WorkerOptions){
+        if(String(url).includes('renderer-probe')){
+          const prefix=name===null?'OffscreenCanvas.prototype.getContext=()=>null;':`for(const Context of [WebGLRenderingContext,WebGL2RenderingContext]){const get=Context.prototype.getParameter;Context.prototype.getParameter=function(p){if(p===0x9246||p===0x1f01)return ${JSON.stringify(name)};return get.call(this,p)}};`;
+          const wrapped=URL.createObjectURL(new Blob([prefix+`import(${JSON.stringify(String(url))});`],{type:'text/javascript'}));
+          super(wrapped,options);
+        }else super(url,options);
+      }
+    };
     const UNMASKED_RENDERER = 0x9246,
       RENDERER = 0x1f01;
     for (const context of [WebGLRenderingContext, WebGL2RenderingContext]) {

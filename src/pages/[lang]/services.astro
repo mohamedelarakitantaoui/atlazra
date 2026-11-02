@@ -1,19 +1,17 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import Button from '../../components/ui/Button.astro';
-import Chip from '../../components/ui/Chip.astro';
-import ServiceIcon from '../../components/ServiceIcon.astro';
 import { locales, type Locale } from '../../i18n/routing';
-import { t } from '../../i18n/content';
+import { t, getRedesign } from '../../i18n/content';
 export function getStaticPaths() {
   return locales.map((lang) => ({ params: { lang } }));
 }
 const locale = Astro.params.lang as Locale;
-// Same copy as the home accordion, shown open: this page is the detail view.
+const r = getRedesign(locale);
 const services = [
-  { key: 'a1', icon: 'landscape' },
-  { key: 'a2', icon: 'design' },
-  { key: 'a3', icon: 'outdoor' },
+  { key: 'v1', image: 'plan-project.webp', width: 1200, height: 899 },
+  { key: 'v2', image: 'a-pool.webp', width: 900, height: 900 },
+  { key: 'v3', image: 'a-pergola.webp', width: 900, height: 900 },
 ] as const;
 ---
 
@@ -26,33 +24,30 @@ const services = [
     <h1>{t(locale, 'pages.services.title')}</h1>
     <p>{t(locale, 'pages.services.intro')}</p>
   </section>
-  <ul class="wrap services" data-client-todo={t(locale, 'home.todos.services')}>
-    {
-      services.map(({ key, icon }) => (
-        <li>
-          <div class="service-head">
-            <span class="ico">
-              <ServiceIcon name={icon} />
-            </span>
-            <div>
-              <h2>{t(locale, `home.reference.${key}`)}</h2>
-              <p class="muted">{t(locale, `home.reference.${key}s`)}</p>
-            </div>
-          </div>
-          <div class="service-body">
-            <p>{t(locale, `home.reference.${key}p`)}</p>
-            <ul class="chips">
-              {(['a', 'b', 'c'] as const).map((chip) => (
-                <li>
-                  <Chip>{t(locale, `home.reference.${key}${chip}`)}</Chip>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </li>
-      ))
-    }
-  </ul>
+  <div class="services-band">
+    <ul class="wrap services" data-client-todo={r.servicesTodo}>
+      {
+        services.map(({ key, image, width, height }, index) => (
+          <li>
+            <>
+              <bdi class="number">[{String(index + 1).padStart(2, '0')}]</bdi>
+              <h2>{r[key]}</h2>
+              <p>{r[(key + 'p') as keyof typeof r]}</p>
+              <img
+                src={`/redesign/${image}`}
+                alt=""
+                {width}
+                {height}
+                loading="lazy"
+              />
+            </>
+          </li>
+        ))
+      }
+    </ul><p class="wrap service-pending" data-client-todo={r.servicesTodo}>
+      {r.pending}
+    </p>
+  </div>
   <section class="wrap next" aria-labelledby="next-title">
     <h2 id="next-title">{t(locale, 'home.reference.ch')}</h2>
     <p>{t(locale, 'home.reference.cp')}</p>
@@ -64,7 +59,11 @@ const services = [
 
 <style>
   .page-shell {
-    padding-block-end: clamp(40px, 5vw, 64px);
+    padding-block-end: 64px;
+  }
+  .services-band {
+    background: var(--bone-100);
+    padding-block: 32px 64px;
   }
   .services {
     list-style: none;
@@ -72,83 +71,70 @@ const services = [
   }
   .services > li {
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 20px clamp(28px, 5vw, 80px);
-    padding-block: clamp(28px, 4vw, 44px);
+    grid-template-columns: 52px minmax(0, 4fr) minmax(0, 5fr) 180px;
+    align-items: center;
+    gap: 24px;
+    padding-block: 32px;
     border-top: 1px solid var(--rule);
   }
   .services > li:last-child {
     border-bottom: 1px solid var(--rule);
   }
-  .service-head {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
+  .number {
+    font: 500 13px var(--mono);
+    color: var(--accent-text);
   }
-  .ico {
-    flex: none;
-    width: 52px;
-    height: 52px;
-    border-radius: var(--radius-icon);
-    background: var(--mist);
-    display: grid;
-    place-items: center;
-    color: var(--forest);
+  .services h2 {
+    font-size: clamp(34px, 3.6vw, 54px);
   }
-  .ico :global(svg) {
-    width: 26px;
-    height: 26px;
-  }
-  .service-head h2 {
-    font-size: clamp(1.35rem, 2.2vw, 1.75rem);
-  }
-  .service-head p {
-    margin-block-start: 6px;
-  }
-  .service-body {
-    display: grid;
-    gap: 18px;
-    align-content: start;
-  }
-  .service-body > p {
-    max-width: 60ch;
+  .services p {
     color: var(--ink-2);
   }
-  /* Chips are paper-on-mist at home; on white they need the mist fill. */
-  .chips :global(.chip) {
-    background: var(--mist);
+  .services img {
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    border-radius: 14px;
+    width: 180px;
   }
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .service-pending {
+    padding-top: 24px;
+    font-size: 14px;
+    color: var(--ink-2);
   }
   .next {
     display: grid;
     justify-items: start;
-    gap: 14px;
+    gap: 24px;
     padding-block: clamp(64px, 9vw, 120px);
   }
   .next p {
     max-width: 52ch;
-    font-size: 1.125rem;
     color: var(--ink-2);
-    margin-block-end: 14px;
   }
-  @media (max-width: 860px) {
+  @media (max-width: 1024px) {
     .services > li {
-      grid-template-columns: 1fr;
+      grid-template-columns: 44px 1fr 160px;
     }
-    .service-body {
-      padding-inline-start: 68px;
+    .services p {
+      grid-column: 2;
+    }
+    .services img {
+      grid-column: 3;
+      grid-row: 1/3;
     }
   }
-  @media (max-width: 480px) {
-    .service-body {
-      padding-inline-start: 0;
+  @media (max-width: 700px) {
+    .services > li {
+      grid-template-columns: 32px minmax(0, 1fr);
+    }
+    .services p,
+    .services img {
+      grid-column: 2;
+      grid-row: auto;
+    }
+    .services img {
+      width: 100%;
+      max-width: 320px;
     }
   }
 </style>
