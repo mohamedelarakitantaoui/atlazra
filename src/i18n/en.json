@@ -262,5 +262,41 @@
       "photo": "The work",
       "after": "The garden"
     }
+  },
+  "seo": {
+    "home": {
+      "title": "Landscape designer in Rabat and Salé",
+      "description": "Landscape design in Rabat and Salé: villa gardens, riads and terraces, planned as a 3D model you can change before any work starts."
+    },
+    "services": {
+      "title": "Villa garden design and 3D plans",
+      "description": "Landscaping, 3D garden design in Morocco and outdoor spaces: terraces, pergolas, lighting and drip irrigation, from one team."
+    },
+    "realisations": {
+      "title": "Garden projects in Rabat and Salé",
+      "description": "Atlazra Design projects in Rabat and Salé: the site before, the 3D model, the works, then the finished garden."
+    },
+    "contact": {
+      "title": "Book a site visit",
+      "description": "Planning a garden in Rabat, Salé or Kénitra? Describe your plot in a few lines and we will call you back to arrange a visit."
+    },
+    "legal": {
+      "title": "Legal notice",
+      "description": "Legal notice for the Atlazra Design website, landscape designers in Rabat and Salé."
+    },
+    "privacy": {
+      "title": "Privacy",
+      "description": "How Atlazra Design uses the information sent through the contact form."
+    },
+    "notFound": {
+      "title": "Page not found",
+      "description": "This page cannot be found. Go back to the Atlazra Design home page."
+    },
+    "thanks": {
+      "title": "Request sent",
+      "description": "Your request has been sent to Atlazra Design."
+    },
+    "ogTagline": "Landscaping · 3D design · Outdoor spaces",
+    "ogLocale": "en_US"
   }
 }

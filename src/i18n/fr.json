@@ -262,5 +262,41 @@
       "photo": "Le chantier",
       "after": "Le jardin"
     }
+  },
+  "seo": {
+    "home": {
+      "title": "Paysagiste à Rabat et Salé, jardins en 3D",
+      "description": "Paysagiste à Rabat et Salé : aménagement de jardin de villa, riad ou terrasse, avec une conception de jardin 3D que vous ajustez avant les travaux."
+    },
+    "services": {
+      "title": "Aménagement de jardin de villa et 3D",
+      "description": "Aménagement paysager, conception de jardin 3D au Maroc et espaces extérieurs : terrasses, pergolas, éclairage et arrosage goutte-à-goutte."
+    },
+    "realisations": {
+      "title": "Réalisations : jardins à Rabat et Salé",
+      "description": "Les projets d'Atlazra Design, paysagiste à Rabat et Salé : le terrain avant, la maquette 3D, le chantier, puis le jardin fini."
+    },
+    "contact": {
+      "title": "Demander une visite de votre terrain",
+      "description": "Paysagiste à Rabat, Salé ou Kénitra : décrivez votre terrain en quelques lignes, nous vous rappelons pour fixer une visite."
+    },
+    "legal": {
+      "title": "Mentions légales",
+      "description": "Mentions légales du site d'Atlazra Design, paysagiste à Rabat et Salé."
+    },
+    "privacy": {
+      "title": "Confidentialité",
+      "description": "Comment Atlazra Design utilise les informations envoyées par le formulaire de contact."
+    },
+    "notFound": {
+      "title": "Page introuvable",
+      "description": "Cette page est introuvable. Revenez à l'accueil d'Atlazra Design."
+    },
+    "thanks": {
+      "title": "Demande envoyée",
+      "description": "Votre demande a bien été envoyée à Atlazra Design."
+    },
+    "ogTagline": "Aménagement paysager · Conception 3D · Espaces extérieurs",
+    "ogLocale": "fr_MA"
   }
 }

@@ -13,6 +13,7 @@ import {
 } from '../../../lib/projects';
 import { locales, type Locale } from '../../../i18n/routing';
 import { t } from '../../../i18n/content';
+import { isPending } from '../../../data/site';
 export async function getStaticPaths() {
   const projects = await publishedProjects();
   return projects.flatMap((project) =>
@@ -63,7 +64,9 @@ const jsonLd = {
   inLanguage: locale,
   image: structuredImages,
   url: new URL(Astro.url.pathname, Astro.site).href,
-  contentLocation: { '@type': 'Place', name: data.city },
+  ...(isPending(data.city)
+    ? {}
+    : { contentLocation: { '@type': 'Place', name: data.city } }),
   dateCreated: String(data.year),
   creator: { '@type': 'Organization', name: 'Atlazra Design' },
 };
@@ -74,6 +77,7 @@ const jsonLd = {
   projectFonts
   title={data.title[locale]}
   description={data.summary[locale]}
+  ogType="article"
 >
   <article>
     <header class="story-cover">

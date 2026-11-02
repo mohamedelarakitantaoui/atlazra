@@ -1,8 +1,12 @@
 ---
 import { t } from '../../i18n/content';
-import full from '../../../public/brand/atlazra-logo.svg?raw';
-import mark from '../../../public/brand/atlazra-mark.svg?raw';
-import wordmark from '../../../public/brand/atlazra-wordmark.svg?raw';
+// Inline copies of the public/brand originals, path data rounded to one
+// decimal (about 0.006 px at the sizes used here; renders identical):
+//   pnpm dlx svgo@3.3.2 --precision 1 -i public/brand/<file> -o src/assets/brand/<file>
+// The originals are 30–66 KB each and were inlined two or three times per page.
+import full from '../../assets/brand/atlazra-logo.svg?raw';
+import mark from '../../assets/brand/atlazra-mark.svg?raw';
+import wordmark from '../../assets/brand/atlazra-wordmark.svg?raw';
 
 interface Props {
   variant?: 'full' | 'mark' | 'wordmark';

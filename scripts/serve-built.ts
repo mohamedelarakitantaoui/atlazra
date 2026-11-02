@@ -51,14 +51,30 @@ export async function serveBuilt(
     '.txt': 'text/plain',
     '.xml': 'application/xml',
   };
-  async function staticFile(pathname: string) {
+  // Only a missing file is "not found". Windows can briefly refuse to open
+  // freshly built files (antivirus or indexer scans, handle limits under
+  // parallel tests); answering those with a 404 silently dropped a script
+  // and broke whichever test hit it. Retry them, then fail loudly.
+  const transient = new Set(['EBUSY', 'EPERM', 'EACCES', 'EMFILE', 'ENFILE']);
+  async function staticFile(
+    pathname: string,
+  ): Promise<{ file: string; source: Buffer } | undefined> {
     let file = resolve(root, '.' + pathname);
     if (file !== root && !file.startsWith(root + sep)) return undefined;
-    try {
-      if ((await stat(file)).isDirectory()) file = resolve(file, 'index.html');
-      return { file, source: await readFile(file) };
-    } catch {
-      return undefined;
+    for (let attempt = 0; ; attempt++) {
+      try {
+        if ((await stat(file)).isDirectory())
+          file = resolve(file, 'index.html');
+        return { file, source: await readFile(file) };
+      } catch (error) {
+        const code = (error as NodeJS.ErrnoException).code ?? '';
+        if (code === 'ENOENT' || code === 'ENOTDIR') return undefined;
+        if (!transient.has(code) || attempt === 4) {
+          console.error(`[serve-built] ${code} reading ${file}`);
+          throw error;
+        }
+        await new Promise((done) => setTimeout(done, 25 * 2 ** attempt));
+      }
     }
   }
   function send(

@@ -1,11 +1,13 @@
 import { defineCollection, z } from 'astro:content';
 import { projectLoader } from './lib/project-loader';
 
-const localized = z.object({
-  fr: z.string().trim().min(1),
-  ar: z.string().trim().min(1),
-  en: z.string().trim().min(1),
-});
+const localizedText = (max = Infinity) =>
+  z.object({
+    fr: z.string().trim().min(1).max(max),
+    ar: z.string().trim().min(1).max(max),
+    en: z.string().trim().min(1).max(max),
+  });
+const localized = localizedText();
 const projects = defineCollection({
   loader: projectLoader(Boolean(import.meta.env.VERCEL || import.meta.env.CI)),
   schema: ({ image }) =>
@@ -17,8 +19,10 @@ const projects = defineCollection({
         surface_m2: z.number().positive().optional(),
         year: z.number().int().min(1900).max(2100),
         sort_order: z.number().int(),
-        title: localized,
-        summary: localized,
+        // The page title adds " — Atlazra Design" (60 chars in all); the
+        // summary is the meta description.
+        title: localizedText(43),
+        summary: localizedText(155),
         cover: image(),
         images: z
           .array(

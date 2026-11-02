@@ -4,6 +4,7 @@ import { t } from '../i18n/content';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { locales, localizedPath, type Locale } from '../i18n/routing';
+import { ogImagePath, ogSize } from '../lib/seo';
 // Same hashed file as the 600 @font-face in fonts.css: the hero h1's weight.
 import arabicHeading from '../assets/fonts/ibm-plex-sans-arabic-arabic-600.woff2?url';
 import arabicBody from '../assets/fonts/ibm-plex-sans-arabic-arabic-400.woff2?url';
@@ -11,10 +12,21 @@ import arabicLatinBody from '../assets/fonts/ibm-plex-sans-arabic-latin-400.woff
 import arabicLatinHeading from '../assets/fonts/ibm-plex-sans-arabic-latin-600.woff2?url';
 interface Props {
   locale: Locale;
+  /** Page part of the title; the brand is appended. Keep it ≤ 43 chars. */
   title: string;
+  /** ≤ 155 chars. */
   description: string;
   languagePath?: string;
   projectFonts?: boolean;
+  /** Thank-you page: not indexed, so no canonical or alternates. */
+  noindex?: boolean;
+  /**
+   * 404: the status already keeps it out of the index, so no robots tag
+   * (Lighthouse scores a noindex page 63 for SEO), but a canonical would
+   * point at whatever URL was missing.
+   */
+  canonical?: boolean;
+  ogType?: 'website' | 'article';
 }
 const {
   locale,
@@ -22,8 +34,16 @@ const {
   description,
   languagePath,
   projectFonts = false,
+  noindex = false,
+  canonical: withCanonical = !noindex,
+  ogType = 'website',
 } = Astro.props;
+const brand = t(locale, 'footer.brand');
+const fullTitle = `${title} — ${brand}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const alternate = (lang: Locale) =>
+  new URL(localizedPath(Astro.url.pathname, lang), Astro.site).href;
+const ogImage = new URL(ogImagePath(Astro.url.pathname, locale), Astro.site);
 ---
 
 <!doctype html>
@@ -35,7 +55,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <meta name="description" content={description} />
-    <title>{title} — {t(locale, 'footer.brand')}</title>
+    <title>{fullTitle}</title>
+    {noindex && <meta name="robots" content="noindex" />}
     {
       locale === 'ar' && (
         <link
@@ -47,7 +68,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         />
       )
     }
-    <link rel="canonical" href={canonical} />
+
     {
       locale === 'ar' &&
         projectFonts &&
@@ -57,14 +78,38 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     }
     <link rel="sitemap" href="/sitemap-index.xml" />
     {
-      locales.map((lang) => (
-        <link
-          rel="alternate"
-          hreflang={lang}
-          href={new URL(localizedPath(Astro.url.pathname, lang), Astro.site)}
-        />
-      ))
+      withCanonical && (
+        <>
+          <link rel="canonical" href={canonical} />
+          {locales.map((lang) => (
+            <link rel="alternate" hreflang={lang} href={alternate(lang)} />
+          ))}
+          <link rel="alternate" hreflang="x-default" href={alternate('fr')} />
+        </>
+      )
     }
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={brand} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={t(locale, 'seo.ogLocale')} />
+    {
+      locales
+        .filter((lang) => lang !== locale)
+        .map((lang) => (
+          <meta
+            property="og:locale:alternate"
+            content={t(lang, 'seo.ogLocale')}
+          />
+        ))
+    }
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content={String(ogSize.width)} />
+    <meta property="og:image:height" content={String(ogSize.height)} />
+    <meta property="og:image:alt" content={fullTitle} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <slot name="head" />
   </head>
   <body>
     <a class="skip" href="#top">{t(locale, 'nav.skip')}</a>

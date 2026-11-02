@@ -8,6 +8,8 @@ interface SiteDetails {
   instagram: string;
   address: Localized;
   mapUrl: string;
+  geo: { latitude: number; longitude: number };
+  areaServed: string[];
   whatsappMessage: Localized;
 }
 export const site: SiteDetails = {
@@ -27,13 +29,17 @@ export const site: SiteDetails = {
     en: 'Dar Nizar, Rabat – Salé',
   },
   mapUrl: 'https://maps.app.goo.gl/6f43CHxzyrMHoT4f9',
+  // The supplied Google Maps pin.
+  geo: { latitude: 34.1051351, longitude: -6.7560591 },
+  areaServed: ['Rabat', 'Salé', 'Kénitra', 'Témara'],
   whatsappMessage: {
     fr: 'Bonjour Atlazra Design, je souhaite parler de mon projet de jardin.',
     ar: 'مرحباً أطلازرا ديزاين، أود التحدث عن مشروع حديقتي.',
     en: 'Hello Atlazra Design, I would like to discuss my garden project.',
   },
 };
-export const isPending = (value: string) => value.startsWith('TODO(client):');
+// Any client placeholder, with or without a note after the colon.
+export const isPending = (value: string) => value.startsWith('TODO(client)');
 export function whatsappUrl(locale: Locale): string | undefined {
   if (isPending(site.whatsapp)) return undefined;
   const phone = site.whatsapp.replace(/[^0-9]/g, '');

@@ -78,11 +78,10 @@ for (const locale of ['fr', 'ar'] as const) {
     await expect(control).toHaveAttribute('data-ready', 'true');
     await expect(choices.nth(1)).toBeChecked();
     await page.evaluate(() => document.fonts.ready);
-    await choices.nth(0).scrollIntoViewIfNeeded();
-    // Feedback occurs on pointer press, before release.
-    const box = await choices.nth(0).boundingBox();
-    if (!box) throw new Error('Segment button is missing');
-    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    // Feedback occurs on pointer press, before release. hover() scrolls and
+    // waits until the button itself receives pointer events at its centre;
+    // raw boundingBox coordinates had no such check.
+    await choices.nth(0).hover();
     await page.mouse.down();
     await expect(choices.nth(0)).toBeChecked();
     await page.mouse.up();

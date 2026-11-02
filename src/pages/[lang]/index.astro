@@ -11,6 +11,7 @@ import ServiceIcon from '../../components/ServiceIcon.astro';
 import GardenModel from '../../components/garden/GardenModel.astro';
 import { locales, type Locale } from '../../i18n/routing';
 import { t } from '../../i18n/content';
+import { businessJsonLd, jsonLdScript } from '../../lib/structured-data';
 export function getStaticPaths() {
   return locales.map((lang) => ({ params: { lang } }));
 }
@@ -25,9 +26,14 @@ const latestProjects = (await publishedProjects())
 
 <SiteLayout
   {locale}
-  title={t(locale, 'home.title')}
-  description={t(locale, 'home.intro')}
+  title={t(locale, 'seo.home.title')}
+  description={t(locale, 'seo.home.description')}
 >
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={jsonLdScript(businessJsonLd(locale, Astro.site!))}
+  />
   <section
     id="hero"
     aria-labelledby="hero-title"

@@ -24,6 +24,8 @@ what was built, decisions, verification results and open TODOs.
   verified; see completion below.
 - Phase 6b — design review and polish of every public page: implemented and
   locally verified; see completion below.
+- Phase 7 — SEO, performance and accessibility: implemented and locally
+  verified; see completion below and `docs/qa.md`.
 
 ## Phase 2 completion
 
@@ -426,6 +428,99 @@ what was built, decisions, verification results and open TODOs.
   - Screenshots before/after in `artifacts/phase-6b/before/` and `after/`
     (plus `after/skip-ar-390.png`, `after/menu-ar-390.png`), all inspected.
 
+## Phase 7 completion: SEO, performance and accessibility
+
+Full report with every table: `docs/qa.md`.
+
+- SEO:
+  - Titles (≤ 60 chars with " — Atlazra Design") and descriptions (≤ 155)
+    per page in FR/AR/EN under `seo.*` in the locale JSON, written for each
+    language. French copy uses "paysagiste à Rabat et Salé", "aménagement de
+    jardin de villa" and "conception de jardin 3D au Maroc". Project titles
+    are capped at 43 chars and summaries at 155 in the content schema
+    (documented in `docs/adding-a-project.md`).
+  - `SiteLayout`: canonical, `hreflang` fr/ar/en + x-default (→ fr), Open
+    Graph (type, site name, title, description, url, locale + alternates,
+    image 1200×630 with alt) and `twitter:card`; a `head` slot. Props:
+    `noindex` (thank-you page: robots noindex, no canonical/alternates) and
+    `canonical={false}` (404: no canonical/alternates; its 404 status keeps
+    it out of the index, and a noindex tag cost 37 SEO points).
+  - Home JSON-LD (`src/lib/structured-data.ts`): HomeAndConstructionBusiness
+    with name, slogan, description, url, logo (`/brand/atlazra-logo.png`,
+    512² PNG rendered at build), image, address (Dar Nizar, region
+    Rabat-Salé-Kénitra, MA), geo 34.1051351/-6.7560591, map link and
+    areaServed Rabat/Salé/Kénitra/Témara. Telephone, email, sameAs
+    (Instagram) and opening hours are omitted while `TODO(client)`; they
+    appear automatically once set in `src/data/site.ts`. `isPending` now
+    matches any `TODO(client)` prefix; the story JSON-LD drops a pending
+    city.
+  - OG images: prerendered endpoint `src/pages/og/[lang]/[...page].png.ts`
+    (pages and published projects) using `src/lib/og-image.ts`: logo on
+    white, heading, one line; mirrored for Arabic. Drawn with Sharp's text
+    input (Pango + HarfBuzz) so Arabic is shaped and right to left (satori
+    cannot shape Arabic). Fonts: `src/assets/fonts/og/` from
+    `scripts/build-og-fonts.py` (Plex Arabic + Latin merged per weight).
+    Pango reads "… SemiBold 68" as a weight and picked the 400 file; the
+    font string names the SemiBold family explicitly.
+  - `robots.txt` endpoint (allow all, disallow `/api/`, sitemap URL from
+    `SITE_URL`). Sitemap verified: every public page in three locales,
+    published projects only, no `/dev/`, thank-you or 404.
+- Performance: every page 100/100/100/100 in FR and AR (median of 3).
+  `/ar/` LCP 2.27 s → 1.82 s (median of 3); `/fr/` 1.66 s → 1.52 s:
+  - Inline logos (header, footer, hero) were the 30–66 KB traced
+    originals; `Logo.astro` now inlines SVGO copies rounded to one decimal
+    (`src/assets/brand/`, command in the file). Visually identical at 4×.
+    Home HTML 44 → 22 KB gzipped. `public/brand/` originals unchanged.
+  - Spaces, bidi marks and U+2010–2027 punctuation moved into the Arabic
+    Plex subset (built from Arabic + Latin merged); the Latin subset is
+    now U+0021–007E, U+00A1–00FF. All-Arabic text no longer fetches a Latin
+    file per weight (`/ar/` loaded Latin 500 for spaces and one en dash).
+    `scripts/subset-arabic-font.py` and `src/styles/fonts.css` updated.
+  - `scripts/audit-pages.ts --runs=N` reports the median-LCP run.
+- Accessibility:
+  - `tests/a11y.spec.ts` (`@axe-core/playwright` 4.11.0, WCAG 2.0–2.2 A/AA
+    - best practice): every public page in FR/AR/EN, 404, thank-you, open
+      mobile menu and open lightbox. 0 violations of any impact (29 states on
+      the examples build).
+  - `scripts/audit-contrast.ts`: 929 text elements on 24 states, including
+    placeholders, form errors, disabled controls (exempt, listed), text on
+    images and the translucent header sampled while scrolling. 0 failures.
+  - `--glass-header` 0.72 → 0.86 alpha: at 0.72, `--ink-2` nav text over a
+    dark photo could fall to 3.24:1; at 0.86 it stays ≥ 4.68:1 over black.
+    Same colour, only the alpha changed (like the bronze change in Phase 4).
+- Flaky `ui-ar-interaction`:
+  - Not reproduced in 1,900+ runs of the test (isolated, repeated, with
+    20× CPU throttling, delayed fonts, and seven full suites).
+  - Found while adding the new specs: with 8 workers (Playwright's default,
+    half of 16 cores) free RAM on this machine fell from ~3.7 GB to 19 MB
+    and tests failed at random with `net::ERR_INSUFFICIENT_RESOURCES` and
+    "Target crashed". Each worker takes ~600 MB. This is the most likely
+    cause of the Phase 6b failure. `playwright.config.ts` now sizes local
+    workers to free memory (900 MB each, at most half the cores; CI keeps
+    the default). With 4 workers free RAM stayed ≥ 1.3 GB.
+  - Two weaknesses fixed along the way: `serve-built` answered any file
+    error with a silent 404 (now retries transient Windows errors and
+    otherwise logs and returns 500), and the test pressed raw
+    `boundingBox` coordinates (now `hover()`, which checks the hit target).
+- New tests: `tests/seo.spec.ts` (lengths, canonical, hreflang, OG image
+  size and type, noindex/404 rules, JSON-LD content and no TODO, robots,
+  exact sitemap) and `tests/a11y.spec.ts`.
+- Other: `@axe-core/playwright` installed with `--store-dir .pnpm-store`
+  (the project's store; pnpm otherwise refuses). `artifacts/` is fully
+  ignored by Git and ESLint.
+- Verification (2026-11-02, local Node 24):
+  - `pnpm lint`; `pnpm check` 0 errors/warnings/hints; `pnpm build` passed.
+  - Draft-only build, `pnpm test` three runs in a row: 50/50 unit,
+    156 Playwright passed, 6 skipped (examples-only) each run.
+  - Examples build: projects, SEO and axe specs with
+    `PROJECT_EXAMPLES=1`: 64 passed (lightbox axe and story SEO included).
+  - Lighthouse, axe and contrast tables: `docs/qa.md`. Screenshots FR/AR at
+    390 and 1440 px in `artifacts/phase-6b/phase-7/` (path from the script's
+    label), inspected; OG images inspected in FR, AR and EN.
+- Not verified: OG generation on Vercel's Linux build (Sharp's prebuilt
+  libvips includes Pango, so it should work; check the first deploy's
+  `/og/ar/home.png`), and how social networks render the cards.
+
 ## Open TODOs
 
 - Client: phone/WhatsApp, email, opening hours, address label confirmation
@@ -436,6 +531,9 @@ what was built, decisions, verification results and open TODOs.
   contact env vars and `SITE_URL` on Vercel, then a live test submission.
 - Real project content: replace the `exemple-*` folders with published
   client projects (photos, 3D renders, plans, confirmed facts).
-- Phase 7 is gated on the user's next prompt.
-- Flaky test to watch: `ui-ar-interaction` failed once under full-suite
-  load in Phase 6b, then passed twice.
+- Phase 8 is gated on the user's next prompt.
+- After the first deploy: open `/og/ar/home.png` and `/robots.txt`, test a
+  page in a social card validator, and submit the sitemap in Search Console.
+- When the client sends phone, email or Instagram: set them in
+  `src/data/site.ts`; the JSON-LD picks them up (tests expect them absent
+  today and must be updated).

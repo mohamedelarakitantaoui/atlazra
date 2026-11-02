@@ -1,13 +1,19 @@
 // Phase 6b review: every public page in FR/AR at 390 and 1440 px.
-// Usage: node scripts/audit-pages.ts <label> [--lighthouse]
+// Usage: node scripts/audit-pages.ts <label> [--lighthouse] [--runs=N]
+// With --runs=N each page is audited N times and the run with the median
+// LCP is reported (all LCPs are kept).
 // Writes screenshots, a layout report and Lighthouse summaries to
 // artifacts/phase-6b/<label>/ (ignored by Git). Run after `pnpm build`.
 import { chromium } from '@playwright/test';
 import lighthouse from 'lighthouse';
+import type { Result } from 'lighthouse';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { serveBuilt } from './serve-built.ts';
 
 const label = process.argv[2];
+const runs = Number(
+  process.argv.find((arg) => arg.startsWith('--runs='))?.slice(7) ?? 1,
+);
 if (!label || label.startsWith('--'))
   throw new Error('Usage: audit-pages.ts <label> [--lighthouse]');
 const directory = `artifacts/phase-6b/${label}`;
@@ -100,20 +106,28 @@ try {
             ? `${server.url}/404.html`
             : `${server.url}/${locale}/${route}`;
         if (name === 'notfound' && locale !== 'fr') continue;
-        const result = await lighthouse(url, {
-          port: 9226,
-          logLevel: 'error',
-          output: 'json',
-          onlyCategories: [
-            'performance',
-            'accessibility',
-            'best-practices',
-            'seo',
-          ],
-        });
-        if (!result) throw new Error('Missing Lighthouse result');
-        const { lhr } = result;
+        const reports: Result[] = [];
+        for (let run = 0; run < runs; run++) {
+          const result = await lighthouse(url, {
+            port: 9226,
+            logLevel: 'error',
+            output: 'json',
+            onlyCategories: [
+              'performance',
+              'accessibility',
+              'best-practices',
+              'seo',
+            ],
+          });
+          if (!result) throw new Error('Missing Lighthouse result');
+          reports.push(result.lhr);
+        }
+        const lcp = (report: Result) =>
+          report.audits['largest-contentful-paint'].numericValue ?? 0;
+        reports.sort((a, b) => lcp(a) - lcp(b));
+        const lhr = reports[Math.floor(reports.length / 2)];
         summary[`${name}-${locale}`] = {
+          runsLcpMs: reports.map((report) => Math.round(lcp(report))),
           scores: Object.fromEntries(
             Object.entries(lhr.categories).map(([key, value]) => [
               key,

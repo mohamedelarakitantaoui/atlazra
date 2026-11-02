@@ -26,7 +26,9 @@
   --danger: #b3261e; /* .field[data-bad=true], .err */
   --success: #2e7a4b; /* .sent svg */
   --success-bg: #eaf3ec; /* .sent */
-  --glass-header: rgba(255, 255, 255, 0.72); /* header */
+  /* header. Reference 0.72; 0.86 keeps --ink-2 nav text ≥ 4.5:1 over any
+     content scrolling beneath, even black (4.68:1). Phase 7. */
+  --glass-header: rgba(255, 255, 255, 0.86);
   --glass-control: rgba(255, 255, 255, 0.78); /* .seg */
   --shadow-thumb: 0 1px 3px rgba(23, 32, 27, 0.12); /* .lang selected */
   --shadow-float:

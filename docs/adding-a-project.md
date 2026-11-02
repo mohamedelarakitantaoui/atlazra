@@ -23,7 +23,10 @@ aucune URL publique, même si l'on connaît son slug.
    - `type`: `villa`, `riad`, `terrasse`, `pro` ou `3d`.
    - `city`, `year` (entier), `sort_order` (entier, les plus petits d'abord).
    - `surface_m2`: nombre positif, facultatif; supprimer si inconnu.
-   - `title` et `summary`: chacun avec `fr`, `ar`, `en`, non vides.
+   - `title` et `summary`: chacun avec `fr`, `ar`, `en`, non vides. Le titre
+     fait au plus 43 caractères (il devient le titre de la page avec
+     « — Atlazra Design »), le résumé au plus 155 (il sert de description
+     pour Google).
    - `cover`: chemin relatif, par exemple `./jardin.jpg`. Cette image doit
      aussi figurer dans `images`, afin de fournir ses textes alternatifs.
    - `images`: liste de `src`, `kind` et `alt: { fr, ar, en }`. Chaque texte
@@ -34,33 +37,57 @@ aucune URL publique, même si l'on connaît son slug.
 
    ```markdown
    ## fr
+
    ### before
+
    Une à trois phrases sur le terrain avant les travaux.
+
    ### design
+
    Une à trois phrases sur le plan et les choix validés.
+
    ### photo
+
    Une à trois phrases sur le chantier.
+
    ### after
+
    Une à trois phrases sur le jardin livré.
 
    ## ar
+
    ### before
+
    وصف الأرض قبل الأشغال في جملة إلى ثلاث جمل.
+
    ### design
+
    وصف المخطط والاختيارات المعتمدة.
+
    ### photo
+
    وصف مراحل الأشغال.
+
    ### after
+
    وصف الحديقة بعد انتهاء الأشغال.
 
    ## en
+
    ### before
+
    One to three sentences about the original site.
+
    ### design
+
    One to three sentences about the approved design.
+
    ### photo
+
    One to three sentences about the work.
+
    ### after
+
    One to three sentences about the finished garden.
    ```
 
@@ -78,6 +105,7 @@ aucune URL publique, même si l'on connaît son slug.
    chapitre jardin si les deux images `before` et `after` existent. Les images
    restantes, hors couverture, chapitres et plan interactif, forment l'album.
    L'ordre de la liste détermine l'ordre des images de l'album.
+
 6. Facultatif : ajouter `hotspots` si une image `kind: plan` existe. La
    première image `plan` est utilisée. `x` et `y` sont des pourcentages de
    0 à 100, mesurés depuis le bord **gauche et supérieur de l'image**, même en
@@ -87,16 +115,17 @@ aucune URL publique, même si l'on connaît son slug.
    hotspots:
      - x: 28
        y: 38
-       label: { fr: "Terrasse", ar: "الشرفة", en: "Terrace" }
+       label: { fr: 'Terrasse', ar: 'الشرفة', en: 'Terrace' }
        image: ./terrasse.jpg
        text:
-         fr: "Description confirmée de cet élément."
-         ar: "وصف معتمد لهذا العنصر."
-         en: "Confirmed description of this element."
+         fr: 'Description confirmée de cet élément.'
+         ar: 'وصف معتمد لهذا العنصر.'
+         en: 'Confirmed description of this element.'
    ```
 
    `image` est facultative. Le libellé localisé sert d'alternative à la photo.
    Sans hotspots, la section interactive ne s'affiche pas.
+
 7. Pour prévisualiser localement, changer le statut du **vrai** projet en
    `published`, puis lancer `pnpm build` et les tests. Le teaser affiche au
    plus trois projets, par année décroissante puis `sort_order`; la liste

@@ -11,8 +11,9 @@ const locale = Astro.params.lang as Locale;
 
 <SiteLayout
   {locale}
-  title={t(locale, 'contact.form.success')}
-  description={t(locale, 'contact.form.successDetail')}
+  title={t(locale, 'seo.thanks.title')}
+  description={t(locale, 'seo.thanks.description')}
+  noindex
 >
   <section class="wrap">
     <h1>{t(locale, 'contact.form.success')}</h1><p>
