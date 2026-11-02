@@ -2,10 +2,29 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { locales, type Locale } from '../../i18n/routing';
 import { t } from '../../i18n/content';
-export function getStaticPaths() {
-  return locales.map((lang) => ({ params: { lang } }));
-}
+import ContactDetails from '../../components/ContactDetails.astro';
+import ContactForm from '../../components/contact/ContactForm.astro';
+import Button from '../../components/ui/Button.astro';
+import { whatsappUrl } from '../../data/site';
+import { createContactToken } from '../../lib/contact/security';
+import { fields, type ContactErrors } from '../../lib/contact/schema';
+export const prerender = false;
 const locale = Astro.params.lang as Locale;
+if (!locales.includes(locale)) return Astro.redirect('/404.html');
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+const token = createContactToken(
+  process.env.CONTACT_SIGNING_SECRET ??
+    import.meta.env.CONTACT_SIGNING_SECRET ??
+    '',
+);
+const errors: ContactErrors = {};
+for (const field of (Astro.url.searchParams.get('errors') ?? '').split(',')) {
+  const key = [...fields, 'spam', 'time', 'form'] as const;
+  const known = key.find((key) => key === field);
+  if (known) errors[known] = t(locale, `contact.form.errors.${known}`);
+}
+const failed = Astro.url.searchParams.get('failed') === '1';
+const whatsapp = whatsappUrl(locale);
 ---
 
 <SiteLayout
@@ -16,48 +35,21 @@ const locale = Astro.params.lang as Locale;
   <section class="wrap contact">
     <div class="copy">
       <h1>{t(locale, 'contact.title')}</h1><p>{t(locale, 'contact.intro')}</p>
+      <ContactDetails {locale} />
+      {
+        whatsapp && (
+          <Button variant="quiet" href={whatsapp}>
+            {t(locale, 'contact.form.whatsapp')}
+          </Button>
+        )
+      }
     </div>
-    <dl>
-      <div>
-        <dt>{t(locale, 'contact.address')}</dt><dd>
-          {t(locale, 'contact.location')}<br /><a
-            class="link"
-            href="https://maps.app.goo.gl/6f43CHxzyrMHoT4f9"
-            target="_blank"
-            rel="noopener">{t(locale, 'contact.map')}</a
-          >
-        </dd>
-      </div>
-      <div>
-        <dt>{t(locale, 'contact.phone')}</dt><dd
-          class="muted"
-          data-client-todo={t(locale, 'contact.todos.phone')}
-        >
-          {t(locale, 'contact.pending')}
-        </dd>
-      </div>
-      <div>
-        <dt>{t(locale, 'contact.email')}</dt><dd
-          class="muted"
-          data-client-todo={t(locale, 'contact.todos.email')}
-        >
-          {t(locale, 'contact.pending')}
-        </dd>
-      </div>
-      <div>
-        <dt>{t(locale, 'contact.hours')}</dt><dd
-          class="muted"
-          data-client-todo={t(locale, 'contact.todos.hours')}
-        >
-          {t(locale, 'contact.pending')}
-        </dd>
-      </div>
-    </dl>
+    <ContactForm {locale} {token} {errors} {failed} />
   </section>
 </SiteLayout>
 
 <style>
-  /* Contact information only; reference .contact/dl typography, lines 163–167. */
+  /* Reference contact grid, lines 163–185. */
   .contact {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -73,20 +65,8 @@ const locale = Astro.params.lang as Locale;
     font-size: 1.125rem;
     color: var(--ink-2);
   }
-  dl {
-    margin: 0;
-    display: grid;
-    gap: 18px;
-  }
-  dt {
-    font-size: 0.82rem;
-    color: var(--ink-2);
-    margin-bottom: 2px;
-  }
-  dd {
-    margin: 0;
-    font-weight: 500;
-    overflow-wrap: anywhere;
+  .copy :global(dl) {
+    margin-block-start: 24px;
   }
   @media (max-width: 860px) {
     .contact {

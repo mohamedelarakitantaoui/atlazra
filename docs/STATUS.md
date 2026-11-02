@@ -1,6 +1,6 @@
 # Atlazra Design — project status
 
-Updated: 2026-10-30. Read this file at the start of every future session, after
+Updated: 2026-11-02. Read this file at the start of every future session, after
 `AGENTS.md` and before implementation. Update it at the end of every phase with
 what was built, decisions, verification results and open TODOs.
 
@@ -12,11 +12,14 @@ what was built, decisions, verification results and open TODOs.
   `/fr/dev/ui/` and `/ar/dev/ui/`.
 - Phase 2 — i18n routing and site shell: approved in the original handoff;
   footer correction and completion work below are implemented and locally verified.
-  Decisions: FR/AR/EN routes with `prefixDefaultLocale`, an edge middleware
-  redirect on `/`, path-preserving language switching, sitemap, header and footer.
+  Decisions: FR/AR/EN routes with `prefixDefaultLocale`, a middleware
+  redirect on `/` (Edge until Phase 5, now in the Node function),
+  path-preserving language switching, sitemap, header and footer.
 - Phase 3 — home page: implemented and locally verified; see completion below.
 - Phase 4 — interactive 3D garden model: implemented and locally verified;
   see completion below. Real-device check still pending.
+- Phase 5 — contact form (database plan removed): implemented and locally
+  verified; see completion below.
 
 ## Phase 2 completion
 
@@ -223,10 +226,85 @@ what was built, decisions, verification results and open TODOs.
 - Noticed, not changed: French and English pages download the Plex 600 Arabic
   and Latin files only for the "ع" language-switch label.
 
+## Phase 5 completion: contact form, database plan removed
+
+- Stack change (decided 2026-10-30, recorded in `AGENTS.md` and `PROMPTS.md`):
+  the site is a showcase. No Supabase, database, admin panel or rate-limit
+  store. Projects will be Astro content collections; contact details live in
+  `src/data/site.ts`; leads go by email only, through Resend. `.env.example`
+  now lists `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`,
+  `CONTACT_SIGNING_SECRET` and `SITE_URL`.
+- Built:
+  - `/[lang]/contact/` is rendered per request so the form carries a fresh
+    HMAC-signed timestamp (`src/lib/contact/security.ts`); it also works
+    without JavaScript (native POST, 303 to `/[lang]/contact/merci/` or back
+    with field-error ids and `failed=1`; no personal data in redirect URLs).
+  - `POST /api/contact/` (`src/lib/contact/server.ts`): body capped at 64 KB,
+    Origin check, honeypot, minimum fill time, shared zod schema
+    (`schema.ts`, also used for blur validation in the island), localized
+    errors, Resend call with an idempotency key and a 10 s timeout.
+  - `ContactForm` island: blur validation, loading/success/failure states,
+    focus management, retry. WhatsApp links and the failure fallback stay
+    hidden while the number is `TODO(client)`.
+  - `ContactDetails`, footer details, `Field` error wiring; `Button` fixed to
+    render a single `type` attribute (it rendered both `button` and `submit`).
+  - Sitemap keeps the three contact URLs (now on-demand) and excludes the
+    thank-you pages. Language-switch "ع" uses a system Arabic font, so FR/EN
+    pages request no Arabic web fonts.
+  - Build bundles zod into the function (`ssr.noExternal`): Vercel's packager
+    otherwise copies pnpm symlinks, which Windows can't create without
+    Developer Mode.
+- Production fixes found while moving tests to the production build:
+  - `edgeMiddleware: true` removed. `@astrojs/vercel` 8.2.11's Edge wrapper
+    forwards only headers to the Node function, so on Vercel a contact POST
+    would have arrived as a bodiless GET. Middleware now runs in `_render`;
+    `/` still negotiates `Accept-Language`. A build test asserts `/` and
+    `/api/contact/` route to `_render` and no `_middleware` exists.
+  - `security.allowedDomains` added. Without it Astro 5.18 rebuilds every
+    request URL as `localhost`, and its `checkOrigin` returned 403 for every
+    form POST. Allowed: the `SITE_URL` host and `www.`, `**.vercel.app`
+    (https), and `127.0.0.1` / `localhost` (http, for the local production
+    server; Vercel never routes those hosts). Checked by hand: a valid POST
+    gets 303; a cross-site Origin or spoofed Host gets 403. If the final
+    domain differs from `atlazra.ma`, set `SITE_URL` at build time or form
+    POSTs will be rejected.
+- Tests now run on the production build:
+  - Why: the Vite dev server stalled a module fetch for exactly 60 s at
+    random points (first request, then again mid-run) and rendered an error
+    overlay, failing random tests. Warm-up requests, fewer workers, separate
+    caches and `optimizeDeps.include` made it rarer but never removed it.
+    Those workarounds and the second dev server are deleted.
+  - `pnpm build` then `pnpm test`. Playwright starts `tests/serve.ts`, which
+    uses `scripts/serve-built.ts` (now following `.vercel/output/config.json`:
+    308 slash redirects, static files, `_render`, 404 page) and mocks Resend
+    in-process with `/__test/emails`. The garden spec runs as its own serial
+    project after the rest (SwiftShader timing is unreliable under load).
+  - WhatsApp-with-a-number can't be shown by the production build while the
+    number is a TODO, so the browser tests cover the pending state (failure
+    and retry with no WhatsApp link, with and without JavaScript) and a unit
+    test covers the `wa.me` link format once a number is set.
+  - The success test holds the request with `page.route` to observe the
+    loading label instead of relying on a 250 ms mock delay.
+- Verification (2026-11-02, local Node 24):
+  - `pnpm lint`; `pnpm check` 0 errors/warnings/hints; `pnpm build` passed.
+  - `pnpm test` three consecutive runs, all green: 48/48 unit, 98/98
+    Playwright (87 + 11 garden) each run, 1.5–1.7 min.
+  - Lighthouse 13.6 mobile (`scripts/audit-contact.ts`, production build):
+    | Page | Perf | A11y | BP | SEO | LCP | TBT | CLS |
+    |---|---|---|---|---|---|---|---|
+    | `/fr/contact/` | 100 | 100 | 100 | 100 | 1.23 s | 0 ms | 0 |
+    | `/ar/contact/` | 100 | 100 | 100 | 100 | 1.22 s | 0 ms | 0.0001 |
+  - Screenshots FR/AR/EN at 390 and 1440 px reviewed (RTL mirrored, no
+    horizontal scroll).
+- Not verified: a real Resend send and the Vercel deployment (no keys or
+  project yet).
+
 ## Open TODOs
 
 - Client: phone/WhatsApp, email, opening hours, address label confirmation
   (Dar Nizar versus the Top Dar Fleur map pin), confirmed services, real project
   photos and 3D renders, domain and lead recipient email.
 - Real-device check of the 3D model on a mid-range Android phone and an iPhone.
-- Phase 5 remains gated on the user's next prompt.
+- Before launch: Resend account with a verified sending domain, the four
+  contact env vars and `SITE_URL` on Vercel, then a live test submission.
+- Phase 6 is gated on the user's next prompt.

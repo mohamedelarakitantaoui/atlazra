@@ -34,7 +34,9 @@ pnpm format
 
 The Chromium smoke test checks the French heading, then captures French and Arabic
 at 390 px and 1440 px in `test-results/`. CI uploads these results on every PR.
-Playwright starts the local Astro dev server; it does not emulate Vercel Functions.
+Playwright serves the production build (run `pnpm build` before `pnpm test`) through
+`tests/serve.ts`, which follows Vercel's generated route table and runs the built
+function; garden tests run serially after the rest.
 
 ## Phase 1 UI primitives
 
@@ -76,13 +78,19 @@ returns a temporary 302 to `/ar/` or `/en/` when preferred, otherwise `/fr/`, wi
 `Vary: Accept-Language` and `Cache-Control: private, no-store`. Explicit locale URLs
 are authoritative and are never changed by browser language detection.
 
-The Vercel adapter's `edgeMiddleware: true` compiles this tiny middleware into an
-Edge function. `src/pages/index.ts` is the only on-demand route and retains the
-French fallback redirect; localized pages are static. The generated Vercel route
-table sends `/` through `_middleware`. There is no client-side locale redirect or
-flash of another language. Local tests exercise the same Astro middleware; the
-build tests verify that Vercel emitted an Edge function. Live Vercel behavior still
-requires deployment validation.
+Middleware runs inside the Vercel Node function (`_render`), not as an Edge
+function: the adapter's Edge wrapper forwards only headers to the function, which
+would drop the contact form's POST method and body. `src/pages/index.ts`, the contact
+pages and `/api/contact/` are the on-demand routes; localized pages are static. The
+generated Vercel route table sends `/` to `_render`. There is no client-side locale
+redirect or flash of another language. `security.allowedDomains` in
+`astro.config.mjs` lists the hosts the function trusts (the `SITE_URL` domain,
+`www.`, `*.vercel.app` previews, loopback for local tests); without it Astro rebuilds
+every request URL as `localhost` and its origin check rejects form POSTs.
+
+Playwright runs against the production build (`pnpm build` first), served by
+`tests/serve.ts`, which follows `.vercel/output/config.json` and mocks Resend.
+Live Vercel behavior still requires deployment validation.
 
 `LanguageSwitcher.astro` maps the current pathname to the equivalent locale path.
 Query parameters and fragments are retained; the fragment is added client-side

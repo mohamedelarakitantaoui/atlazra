@@ -7,6 +7,7 @@ import { t } from '../src/i18n/content';
 const pages = [
   '',
   'contact/',
+  'contact/merci/',
   'services/',
   'realisations/',
   'mentions-legales/',
@@ -77,7 +78,6 @@ for (const locale of ['fr', 'ar'] as const) {
           path,
           fullPage: true,
           animations: 'disabled',
-          style: 'astro-dev-toolbar { display: none !important; }',
         });
         await testInfo.attach(`${route}-${locale}-${width}`, {
           path,
@@ -145,6 +145,7 @@ test('root negotiates Accept-Language while explicit URLs remain authoritative',
 
 test('every built page is covered; sitemap has locale alternatives and excludes all dev pages', async () => {
   const expected = pages
+    .filter((path) => path !== 'contact/') // Contact is rendered per request for its signed timestamp.
     .flatMap((path) => locales.map((locale) => `${locale}/${path}index.html`))
     .sort();
   const built = (await readdir('.vercel/output/static', { recursive: true }))
@@ -164,12 +165,14 @@ test('every built page is covered; sitemap has locale alternatives and excludes 
   const output = JSON.parse(
     await readFile('.vercel/output/config.json', 'utf8'),
   );
-  expect(JSON.stringify(output)).toContain('_middleware');
-  const edge = JSON.parse(
-    await readFile(
-      '.vercel/output/functions/_middleware.func/.vc-config.json',
-      'utf8',
-    ),
+  // Middleware runs inside the Node function; Vercel's edge wrapper would
+  // forward only headers, dropping the contact POST method and body.
+  const destinations = Object.fromEntries(
+    output.routes
+      .filter((route: { dest?: string }) => route.dest)
+      .map((route: { src: string; dest: string }) => [route.src, route.dest]),
   );
-  expect(edge.runtime).toBe('edge');
+  expect(destinations['^/$']).toBe('_render');
+  expect(destinations['^/api/contact/$']).toBe('_render');
+  expect(JSON.stringify(output)).not.toContain('_middleware');
 });

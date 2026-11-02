@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { site, isPending } from '../../data/site';
 import Button from '../../components/ui/Button.astro';
 import Logo from '../../components/ui/Logo.astro';
 import AccordionRow from '../../components/ui/AccordionRow.astro';
@@ -299,9 +300,9 @@ const locale = Astro.params.lang as Locale;
         <dl>
           <div>
             <dt>{t(locale, 'home.reference.d1')}</dt><dd>
-              {t(locale, 'contact.location')}<br /><a
+              {site.address[locale]}<br /><a
                 class="link"
-                href="https://maps.app.goo.gl/6f43CHxzyrMHoT4f9"
+                href={site.mapUrl}
                 target="_blank"
                 rel="noopener">{t(locale, 'home.reference.map')}</a
               >
@@ -309,18 +310,30 @@ const locale = Astro.params.lang as Locale;
           </div>
           <div>
             <dt>{t(locale, 'home.reference.d2')}</dt><dd
-              class="todo"
-              data-client-todo={t(locale, 'contact.todos.phone')}
+              class:list={{ todo: isPending(site.phone) }}
+              data-client-todo={isPending(site.phone) ? site.phone : undefined}
             >
-              {t(locale, 'home.reference.todo')}
+              {
+                isPending(site.phone) ? (
+                  t(locale, 'home.reference.todo')
+                ) : (
+                  <a href={`tel:${site.phone}`}>{site.phone}</a>
+                )
+              }
             </dd>
           </div>
           <div>
             <dt>{t(locale, 'contact.email')}</dt><dd
-              class="todo"
-              data-client-todo={t(locale, 'contact.todos.email')}
+              class:list={{ todo: isPending(site.email) }}
+              data-client-todo={isPending(site.email) ? site.email : undefined}
             >
-              {t(locale, 'home.reference.todo')}
+              {
+                isPending(site.email) ? (
+                  t(locale, 'home.reference.todo')
+                ) : (
+                  <a href={`mailto:${site.email}`}>{site.email}</a>
+                )
+              }
             </dd>
           </div>
         </dl>

@@ -72,7 +72,6 @@ for (const [locale, route] of [
       path,
       fullPage: true,
       animations: 'disabled',
-      style: 'astro-dev-toolbar { display: none !important; }',
     });
     await testInfo.attach(`${locale}-${route}-390`, {
       path,

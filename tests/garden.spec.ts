@@ -365,7 +365,6 @@ for (const locale of ['fr', 'ar'] as const)
           path,
           fullPage: true,
           animations: 'disabled',
-          style: 'astro-dev-toolbar { display: none !important; }',
         });
         await info.attach(`${locale}-${width}-${state}`, {
           path,
@@ -374,7 +373,7 @@ for (const locale of ['fr', 'ar'] as const)
       }
       await expect(
         page.locator('[data-language-switch] a[lang="ar"]'),
-      ).toHaveCSS('font-family', /IBM Plex Sans Arabic/);
+      ).toHaveCSS('font-family', /^Tahoma/);
       await expect(
         page.locator('[data-language-switch] a[lang="ar"]'),
       ).toHaveCSS('font-size', '18px');

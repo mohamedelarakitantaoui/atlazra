@@ -4,28 +4,30 @@ Run the phases **in order**, one prompt per agent session. Each prompt is self-c
 After each phase: review the diff, run the site, commit. Don't start a phase until the previous one passes its checks.
 
 **Who does what (suggested)**
-- **Claude Code**: phases with design judgment and multi-file refactors (1, 2, 3, 4, 8).
-- **Codex**: well-specified backend and test work (5, 6, 7, 9, 10). Either agent can do any phase.
+- **Claude Code**: phases with design judgment and multi-file refactors (1, 2, 3, 4, 6).
+- **Codex**: well-specified backend and test work (5, 7, 8). Either agent can do any phase.
 - Use git worktrees if you run two agents in parallel (e.g. phase 5 + phase 3). Never let two agents edit the same files.
 
 ## Architecture at a glance
 
+The site is a **showcase**: it presents the company's work. Visitors upload or host nothing.
+No database, no admin panel, no Docker. (Decided 2026-10-30, replacing the earlier Supabase plan.)
+
 ```
-Browser ── Astro pages (static, FR/AR/EN) ── islands: 3D model · contact form · admin
+Browser ── Astro pages (static, FR/AR/EN) ── islands: 3D model · contact form
                      │
-                     ├── /api/leads (server) ── zod ── Supabase Postgres (leads) ── Resend email
-                     ├── /api/revalidate (server) ── Vercel deploy hook
-                     └── /admin (Supabase Auth, allowlisted emails) ── projects + photos (Storage)
+                     ├── src/content/projects/*.md + photos  (projects, added by the developer, git push → rebuild)
+                     ├── src/data/site.ts                      (phone, WhatsApp, email, hours, Instagram)
+                     └── /api/contact (Vercel function) ── zod ── Resend email to Atlazra
 ```
 
 | Layer | Choice | Why |
 |---|---|---|
 | Frontend | Astro 5, TypeScript, plain CSS tokens | Fast static pages, built-in i18n, islands only where needed |
 | 3D | three.js (lazy island) | The signature: the client sees the garden before work |
-| Database | Supabase Postgres + Row Level Security | You already know it; auth + storage included |
-| Files | Supabase Storage bucket `project-photos` | Project photos and 3D renders |
-| Email | Resend | New lead → email to Atlazra |
-| Hosting | Vercel | Astro adapter, preview deploys per branch |
+| Content | Astro content collections (Markdown + images in the repo) | Projects are files; no database to run or pay for |
+| Email | Resend | Contact form → email to Atlazra |
+| Hosting | Vercel | Astro adapter, preview deploys per branch, one serverless function |
 
 ---
 
@@ -108,139 +110,72 @@ Read AGENTS.md, especially "Motion and interaction". Port the 3D model from the 
 Acceptance: 60 fps while dragging on a mid-range Android (check Performance panel, no long tasks > 50 ms after load); JS for the island < 200 KB gzip; Lighthouse performance ≥ 90 on mobile.
 ```
 
-## Phase 5 — Database (Supabase)
+## Phase 5 — Simplify the stack + contact form
 
 ```text
-Read AGENTS.md. Create the Supabase schema as SQL migrations in supabase/migrations/ (use the Supabase CLI: `supabase init`, `supabase migration new`).
+Read AGENTS.md and docs/STATUS.md first. The site is a showcase only: no database, no admin, no Supabase, no Docker. Do this phase only.
 
-Tables:
+Cleanup:
+- AGENTS.md: replace the stack line with "Astro 5 + TypeScript (strict), plain CSS tokens, three.js island, Astro content collections for projects, Resend for the contact email, Vercel". Islands are: 3D model and contact form (remove "admin"). Remove Supabase from the secrets rule; keep "secrets only in env vars, never in the browser".
+- .env.example: keep only RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL, CONTACT_SIGNING_SECRET.
+- src/data/site.ts: a typed object for phone, whatsapp, email, hours (per locale), instagram, address, map URL. Values the client hasn't given stay as TODO(client) and render in the neutral "à compléter" style. The home contact teaser and footer read from it.
 
-leads
-- id uuid pk default gen_random_uuid()
-- created_at timestamptz default now()
-- name text not null check (char_length(name) between 2 and 120)
-- phone text not null check (char_length(phone) between 6 and 30)
-- email text null
-- project_type text not null check (project_type in ('villa','riad','terrasse','pro','3d'))
-- surface_m2 integer null check (surface_m2 > 0 and surface_m2 < 1000000)
-- city text null
-- message text not null check (char_length(message) between 4 and 4000)
-- locale text not null check (locale in ('fr','ar','en'))
-- status text not null default 'new' check (status in ('new','contacted','visit_planned','quoted','won','lost'))
-- source text null  -- utm or referrer
-- notes text null   -- internal
+Contact form:
+- src/pages/api/contact.ts (prerender = false), POST:
+  - zod schema: name (2–120), phone (6–30, normalize Moroccan numbers 06…/07…, +212…, 00212… to E.164), email optional, project_type (villa | riad | terrasse | pro | 3d), surface_m2 optional, city optional, message (4–4000), locale (fr | ar | en).
+  - Spam: hidden honeypot field + minimum fill time 3 s using an HMAC-signed timestamp (CONTACT_SIGNING_SECRET). No rate-limit store (there's no database); note this in a comment.
+  - Send with Resend to CONTACT_TO_EMAIL, subject "Nouvelle demande — {type} — {name}", body with every field, a wa.me/{phone} link and the reply-to set to the visitor's email if given.
+  - Responses: 200 {ok:true} | 400 {errors:{field:message}} localized | 502 if Resend fails. On 502 the UI shows the error state with a "Écrire sur WhatsApp" fallback, so the visitor can still reach the company.
+- Contact form island on /[lang]/contact: same UI as the reference (chips for project type, inline validation on blur, submit with loading state, success state that replaces the form, error state with retry + WhatsApp). Works without JS as a normal POST (redirect to /{lang}/contact/merci or back with errors).
+- "Écrire sur WhatsApp" button with a prefilled localized message from site.ts. Hidden while the number is still TODO(client).
 
-projects
-- id uuid pk, created_at, updated_at (trigger)
-- slug text unique not null
-- status text not null default 'draft' check (status in ('draft','published'))
-- type text not null (same values as lead project_type)
-- city text, surface_m2 integer, year integer
-- title jsonb not null       -- {"fr": "...", "ar": "...", "en": "..."}
-- summary jsonb not null
-- body jsonb null            -- rich text per locale (markdown strings)
-- cover_image_id uuid null references project_images(id) on delete set null (add after project_images exists)
-- sort_order integer default 0
-
-project_images
-- id uuid pk, created_at
-- project_id uuid not null references projects(id) on delete cascade
-- storage_path text not null      -- in bucket project-photos
-- kind text not null check (kind in ('photo','render_3d','before','after','plan'))
-- alt jsonb not null              -- per locale, required
-- width int, height int, sort_order int default 0
-
-site_settings (single row, id = 1)
-- phone text, whatsapp text, email text, hours jsonb, instagram text, address jsonb, updated_at
-
-admin_users
-- email text pk   -- allowlist checked by RLS
-
-Row Level Security:
-- leads: no public select/update/delete. Inserts only through the server API (service role). Admins (auth.email() in admin_users) can select and update.
-- projects / project_images: public select only where status = 'published' (images through their project); admins full access.
-- site_settings: public select; admins update.
-- Storage bucket project-photos: public read; write only for admins.
-
-Also: indexes on leads(created_at desc), leads(status), projects(status, sort_order); seed.sql with site_settings row (values TODO) and 2 draft example projects clearly named "EXEMPLE — à supprimer".
-Generate TypeScript types into src/lib/database.types.ts (`supabase gen types typescript`).
-
-Acceptance: `supabase db reset` runs clean locally; a SQL test file proves anon cannot read leads and can read only published projects.
+Acceptance: Vitest unit tests for the schema and phone normalization; Playwright tests with Resend mocked: success, field errors, honeypot → 400 and no email sent, Resend failure → 502 + WhatsApp fallback visible; no-JS submit works. lint, check, build, all tests pass. Update STATUS.md (note the stack change), commit as "feat: phase 5 contact form, remove database plan", stop.
 ```
 
-## Phase 6 — Backend: contact form and leads
+## Phase 6 — Projects (Réalisations)
 
 ```text
-Read AGENTS.md. Build the lead pipeline.
+Read AGENTS.md and docs/STATUS.md. Build the projects section from Astro content collections. No database.
 
-- src/lib/supabase/server.ts: server-only client with the service role key (throws if imported in client code).
-- src/pages/api/leads.ts (prerender = false), POST JSON:
-  - zod schema matching the leads table; normalize Moroccan phone numbers (0612…, +212612…, 00212…) to E.164.
-  - Spam protection: hidden honeypot field, minimum fill time (3 s, signed timestamp), and rate limit 5 requests / 10 min per IP (Upstash Ratelimit or a Supabase table — pick one and justify in a comment).
-  - Insert into leads; then send an email with Resend to LEADS_TO_EMAIL (subject: "Nouvelle demande — {type} — {name}", body with all fields and a WhatsApp link wa.me/{phone}). Email failure must not lose the lead (log it, still return 201).
-  - Responses: 201 {ok:true} | 400 {errors:{field:message}} localized | 429.
-- Contact form island (/contact page and home teaser): same UI as the reference (chips for project type, inline validation on blur, submit button with loading state, success state that replaces the form, error state with retry). Works without JS as a normal form POST (progressive enhancement, redirect to /{lang}/contact/merci).
-- Add a "Écrire sur WhatsApp" button that opens wa.me with a prefilled message, using site_settings.whatsapp.
+- src/content.config.ts: a `projects` collection. One folder per project: src/content/projects/<slug>/index.md + photos next to it.
+  Frontmatter (zod): status (draft | published), type (villa | riad | terrasse | pro | 3d), city, surface_m2?, year, sort_order, title {fr, ar, en}, summary {fr, ar, en}, cover (image()), images: [{ src: image(), kind: photo | render_3d | before | after | plan, alt {fr, ar, en} (required) }]. Body: one Markdown section per locale (or index.fr.md / index.ar.md / index.en.md — pick one and document it).
+- Drafts never build in production.
+- /[lang]/realisations: grid of published projects (cover, title, city, type). Asymmetric layout: first project large, the rest in a 2-column grid. Filter chips by type (client-side, URL hash).
+- /[lang]/realisations/[slug]: title, meta (type, city, surface, year), gallery with a lightbox (swipe with momentum + rubber-band at the ends, Escape to close, focus returns to the thumbnail), and a before/after slider when the project has 'before' and 'after' images (pointer-captured drag, keyboard arrows, mirrored in RTL).
+- Images through astro:assets <Image>/<Picture>: AVIF/WebP, width/height always set, lazy below the fold.
+- Home "Réalisations" teaser: up to 3 latest published projects; if none, keep the honest placeholder. Never fake projects.
+- JSON-LD per project (CreativeWork with image list).
+- docs/adding-a-project.md: step by step (copy the template folder, add photos, fill the frontmatter, set status: published, git push → Vercel rebuilds). Include a template folder src/content/projects/_template/ that is ignored by the collection.
+- Add 2 example projects with status: draft named "EXEMPLE — à supprimer" for local testing only.
 
-Acceptance: Vitest unit tests for the zod schema and phone normalization; Playwright test submits the form, sees the success state, and the row exists in the local Supabase; spam test (honeypot filled) gets 400 without inserting.
+Acceptance: with the 2 examples switched to published locally, pages render in FR/AR/EN; switched back to draft, the honest placeholder shows. Lighthouse mobile ≥ 90, CLS 0. lint, check, build, tests pass. Update STATUS.md, commit "feat: phase 6 projects from content collections", stop.
 ```
 
-## Phase 7 — Projects (Réalisations)
+## Phase 7 — SEO, performance, accessibility
 
 ```text
-Read AGENTS.md. Build the projects section from Supabase data.
+Read AGENTS.md and docs/STATUS.md. Audit and finish.
 
-- /[lang]/realisations: grid of published projects (cover image, title, city, type). Asymmetric layout: first project large, the rest in a 2-column grid. Filter chips by type (client-side, URL hash).
-- /[lang]/realisations/[slug]: title, meta (type, city, surface, year), gallery with a lightbox (swipe with momentum + rubber-band at the ends, Escape to close, focus returns to the thumbnail), and a before/after comparison slider when the project has 'before' and 'after' images (pointer-captured drag, keyboard arrows).
-- Pages are prerendered at build time (getStaticPaths from Supabase). /api/revalidate (POST, admin only) calls VERCEL_DEPLOY_HOOK_URL so publishing a project rebuilds the site.
-- Images: Supabase Storage image transformations or Astro <Image> with remote patterns; always width/height, lazy below the fold, AVIF/WebP.
-- If no project is published: show the honest placeholder block from the reference, never fake projects.
-- JSON-LD for each project (CreativeWork with image list).
-
-Acceptance: with the 2 seed projects published locally, both pages render in FR/AR/EN; Lighthouse ≥ 90; no layout shift from images.
-```
-
-## Phase 8 — Admin
-
-```text
-Read AGENTS.md. Build a small admin for the Atlazra team at /admin (noindex, excluded from sitemap).
-
-- Auth: Supabase magic link; only emails in admin_users can enter (check server-side on every admin route and API).
-- Leads inbox: table sorted by date, status pill (new/contacted/visit planned/quoted/won/lost) changeable inline, notes field, click-to-call and WhatsApp buttons, CSV export, a count of new leads in the header.
-- Projects: list + create/edit form with FR/AR/EN tabs for title, summary, body; type, city, surface, year, status draft/published; photo uploader (drag and drop, client-side resize to max 2400 px and WebP, kind selector, alt text per locale required before saving, reorder by drag); "Publish" triggers /api/revalidate.
-- Settings: edit phone, WhatsApp, email, hours, Instagram (site_settings).
-- Same design tokens as the public site; a utilitarian treatment, no marketing styling.
-
-Acceptance: a non-allowlisted email is rejected; an admin can create a project with 3 photos, publish it, and see it on /fr/realisations after the rebuild.
-```
-
-## Phase 9 — SEO, performance, accessibility
-
-```text
-Read AGENTS.md. Audit and finish.
-
-- JSON-LD on the home page: LocalBusiness (or HomeAndConstructionBusiness) with name, logo, address, geo (34.1051351, -6.7560591), areaServed (Rabat, Salé, Kénitra, Témara), sameAs (Instagram), telephone from settings.
-- sitemap.xml (all locales, published projects), robots.txt, canonical + hreflang everywhere, OG image per page (generate with satori or a static template using the logo on white).
+- JSON-LD on the home page: HomeAndConstructionBusiness with name, logo, address, geo (34.1051351, -6.7560591), areaServed (Rabat, Salé, Kénitra, Témara), sameAs (Instagram), telephone from src/data/site.ts (omit while TODO).
+- sitemap.xml (all locales, published projects), robots.txt, canonical + hreflang everywhere, OG image per page (generate at build with satori or a static template using the logo on white).
 - Titles ≤ 60 chars, descriptions ≤ 155, French keywords: paysagiste Rabat, paysagiste Salé, aménagement jardin villa, conception jardin 3D Maroc.
-- Run Lighthouse (mobile) on home, /realisations, one project, /contact in FR and AR. Fix everything below 90. Run axe in Playwright on every page: zero serious issues.
-- Check contrast of every text color on its real background, including placeholders and disabled states.
+- Lighthouse (mobile) on home, /realisations, one project, /contact in FR and AR. Fix everything below 90. axe in Playwright on every page: zero serious issues.
+- Contrast check of every text color on its real background, including placeholders and disabled states.
 
-Acceptance: a report table (page × locale × 4 Lighthouse scores) in docs/qa.md.
+Acceptance: a report table (page × locale × 4 Lighthouse scores) in docs/qa.md. Commit "chore: phase 7 seo, performance and accessibility", stop.
 ```
 
-## Phase 10 — Deploy
+## Phase 8 — Deploy
 
 ```text
-Read AGENTS.md. Prepare production.
+Read AGENTS.md and docs/STATUS.md. Prepare production.
 
-- Vercel project linked to the repo; env vars set for Production and Preview (never commit them).
-- Supabase production project: run migrations, create the storage bucket and policies, insert admin_users and site_settings.
-- Resend: verify the sending domain (SPF/DKIM DNS records), set LEADS_FROM_EMAIL on that domain.
+- Vercel project linked to the repo; env vars (RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL, CONTACT_SIGNING_SECRET) set for Production and Preview, never committed. Node version pinned to match Vercel.
+- Resend: verify the sending domain (SPF/DKIM DNS records); CONTACT_FROM_EMAIL on that domain.
 - Custom domain (e.g. atlazra.ma + www redirect), HTTPS.
-- Vercel deploy hook URL stored in VERCEL_DEPLOY_HOOK_URL.
-- Write docs/runbook.md: how to add a project, how leads arrive, how to change the phone number, how to roll back a deploy, monthly checks.
+- docs/runbook.md: how to add a project (link docs/adding-a-project.md), where contact emails arrive, how to change the phone number (src/data/site.ts), how to roll back a deploy, monthly checks.
 
-Acceptance: production form submission arrives by email and in the admin inbox; publishing a project from the admin appears on the live site within 3 minutes.
+Acceptance: a production form submission arrives by email; pushing a new published project appears on the live site after the Vercel build.
 ```
 
 ---
@@ -254,7 +189,7 @@ Read AGENTS.md. Review the pages changed in the last commit against reference/in
 
 **Break it**
 ```text
-Use the break-ui skill on the contact form, project pages and admin tables: very long names, Arabic + French mixed text, 0 and 500 projects, huge photos, slow 3G. Fix what breaks.
+Use the break-ui skill on the contact form and project pages: very long names, Arabic + French mixed text, 0 and 50 projects, huge photos, slow 3G. Fix what breaks.
 ```
 
 **Animation audit**

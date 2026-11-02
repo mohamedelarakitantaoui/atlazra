@@ -63,7 +63,6 @@ for (const locale of ['fr', 'ar'] as const) {
         path,
         fullPage: true,
         animations: 'disabled',
-        style: 'astro-dev-toolbar { display: none !important; }',
       });
       await testInfo.attach(`ui-${locale}-${width}`, {
         path,

@@ -15,13 +15,39 @@ export default defineConfig({
     routing: { prefixDefaultLocale: true, redirectToDefaultLocale: false },
   },
   integrations: [
+    {
+      name: 'bundle-contact-validation',
+      hooks: {
+        'astro:config:setup': ({ command, updateConfig }) => {
+          // Vercel's function packager otherwise copies pnpm symlinks, which
+          // Windows cannot create without Developer Mode. Dev needs no change.
+          if (command === 'build')
+            updateConfig({ vite: { ssr: { noExternal: ['zod'] } } });
+        },
+      },
+    },
     sitemap({
+      customPages: ['fr', 'ar', 'en'].map((lang) => `${site}/${lang}/contact/`),
       i18n: { defaultLocale: 'fr', locales: { fr: 'fr', ar: 'ar', en: 'en' } },
       filter: (page) =>
-        !/^\/(?:fr|ar|en)\/dev(?:\/|$)/.test(new URL(page).pathname),
+        !/^\/(?:fr|ar|en)\/(?:dev(?:\/|$)|contact\/merci\/)/.test(
+          new URL(page).pathname,
+        ),
     }),
   ],
+  // The Node function rebuilds request URLs from Host / X-Forwarded-Host only
+  // for these hosts, else as localhost, and Astro's checkOrigin then rejects
+  // every form POST. Loopback serves the local production build in tests.
+  security: {
+    allowedDomains: [
+      { hostname: new URL(site).hostname, protocol: 'https' },
+      { hostname: `www.${new URL(site).hostname}`, protocol: 'https' },
+      { hostname: '**.vercel.app', protocol: 'https' },
+      { hostname: '127.0.0.1', protocol: 'http' },
+      { hostname: 'localhost', protocol: 'http' },
+    ],
+  },
   output: 'static',
-  adapter: vercel({ edgeMiddleware: true }),
+  adapter: vercel(),
   trailingSlash: 'always',
 });

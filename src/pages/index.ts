@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-// One on-demand root endpoint enables the adapter's Edge middleware.
+// One on-demand root endpoint runs src/middleware.ts in the Node function.
 // All localized content pages remain prerendered. Middleware negotiates the locale;
 // this endpoint retains the French fallback if invoked without that middleware.
 export const prerender = false;

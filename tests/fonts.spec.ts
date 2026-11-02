@@ -1,5 +1,26 @@
 import { expect, test, type Page } from '@playwright/test';
 
+for (const locale of ['fr', 'en'])
+  for (const width of [390, 1440]) {
+    test(`${locale} requests no Arabic fonts at ${width}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 900 });
+      const fonts: string[] = [];
+      page.on('request', (request) => {
+        if (/\.woff2(?:\?|$)/.test(request.url())) fonts.push(request.url());
+      });
+      for (const path of [`/${locale}/`, `/${locale}/contact/`]) {
+        await page.goto(path);
+        await page.evaluate(() => document.fonts.ready);
+        await expect(
+          page.locator('[data-language-switch] a[lang="ar"]'),
+        ).toHaveText('ع');
+      }
+      expect(fonts).toEqual([]);
+    });
+  }
+
 test('only Arabic pages preload the hero heading font', async ({ page }) => {
   await page.goto('/ar/');
   const preloads = page.locator('link[rel="preload"][as="font"]');

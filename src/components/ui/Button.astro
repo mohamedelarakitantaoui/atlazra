@@ -19,8 +19,7 @@ const { variant = 'primary', class: className, ...attributes } = Astro.props;
     </a>
   ) : (
     <button
-      type="button"
-      {...(attributes as HTMLAttributes<'button'>)}
+      {...({ type: 'button', ...attributes } as HTMLAttributes<'button'>)}
       class:list={['btn', `btn-${variant}`, className]}
     >
       <slot />

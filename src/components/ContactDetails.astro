@@ -1,0 +1,73 @@
+---
+import { site, isPending } from '../data/site';
+import { t } from '../i18n/content';
+import type { Locale } from '../i18n/routing';
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+---
+
+<dl>
+  <div>
+    <dt>{t(locale, 'contact.address')}</dt><dd>
+      {site.address[locale]}<br /><a
+        class="link"
+        href={site.mapUrl}
+        target="_blank"
+        rel="noopener">{t(locale, 'contact.map')}</a>
+    </dd>
+  </div>
+  {
+    (['phone', 'email', 'hours'] as const).map((key) => {
+      const value = key === 'hours' ? site.hours[locale] : site[key];
+      return (
+        <div>
+          <>
+            <dt>{t(locale, `contact.${key}`)}</dt>
+            <dd
+              class:list={{ muted: isPending(value) }}
+              data-client-todo={isPending(value) ? value : undefined}
+            >
+              {isPending(value) ? (
+                t(locale, 'contact.pending')
+              ) : key === 'phone' ? (
+                <a href={`tel:${value}`}>{value}</a>
+              ) : key === 'email' ? (
+                <a href={`mailto:${value}`}>{value}</a>
+              ) : (
+                value
+              )}
+            </dd>
+          </>
+        </div>
+      );
+    })
+  }
+</dl>
+<style>
+  dl {
+    margin: 0;
+    display: grid;
+    gap: 18px;
+  }
+  dt {
+    font-size: 0.82rem;
+    color: var(--ink-2);
+    margin-block-end: 2px;
+  }
+  dd {
+    margin: 0;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+  .muted {
+    color: var(--ink-2);
+    font-weight: 400;
+  }
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+</style>

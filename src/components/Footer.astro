@@ -2,6 +2,7 @@
 import Logo from './ui/Logo.astro';
 import { t } from '../i18n/content';
 import type { Locale } from '../i18n/routing';
+import { site, isPending } from '../data/site';
 interface Props {
   locale: Locale;
 }
@@ -19,12 +20,25 @@ const [copyrightStart, copyrightEnd] = t(locale, 'footer.copyright')
         ><Logo decorative /></a
       >
       <small>{t(locale, 'home.title')}</small>
-      <small>{t(locale, 'footer.location')}</small>
-      <a
-        class="map-link"
-        href="https://maps.app.goo.gl/6f43CHxzyrMHoT4f9"
-        target="_blank"
-        rel="noopener">{t(locale, 'footer.map')}</a
+      <small>{site.address[locale]}</small>
+      {
+        (['phone', 'email'] as const).map((key) => (
+          <small
+            data-client-todo={isPending(site[key]) ? site[key] : undefined}
+          >
+            {t(locale, `contact.${key}`)} :{' '}
+            {isPending(site[key]) ? (
+              t(locale, 'contact.pending')
+            ) : (
+              <a href={`${key === 'phone' ? 'tel' : 'mailto'}:${site[key]}`}>
+                {site[key]}
+              </a>
+            )}
+          </small>
+        ))
+      }
+      <a class="map-link" href={site.mapUrl} target="_blank" rel="noopener"
+        >{t(locale, 'footer.map')}</a
       >
     </div>
     <nav class="legal-links" aria-label={t(locale, 'footer.links')}>

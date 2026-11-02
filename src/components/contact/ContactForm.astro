@@ -1,0 +1,203 @@
+---
+import Button from '../ui/Button.astro';
+import Field from '../ui/Field.astro';
+import ChoiceChip from '../ui/ChoiceChip.astro';
+import { t } from '../../i18n/content';
+import type { Locale } from '../../i18n/routing';
+import { projectTypes, type ContactErrors } from '../../lib/contact/schema';
+import { whatsappUrl } from '../../data/site';
+interface Props {
+  locale: Locale;
+  token: string;
+  errors: ContactErrors;
+  failed: boolean;
+}
+const { locale, token, errors, failed } = Astro.props;
+const whatsapp = whatsappUrl(locale);
+---
+
+<contact-form data-locale={locale} id="contact-form">
+  <form action="/api/contact/" method="post" novalidate>
+    <input type="hidden" name="locale" value={locale} />
+    <input type="hidden" name="token" value={token} />
+    <div hidden aria-hidden="true">
+      <label for="website">{t(locale, 'contact.form.honeypot')}</label><input
+        id="website"
+        name="website"
+        tabindex="-1"
+        autocomplete="off"
+      />
+    </div>
+    <div class="f2">
+      <Field
+        id="name"
+        name="name"
+        label={t(locale, 'contact.form.name')}
+        autocomplete="name"
+        required
+        minlength="2"
+        maxlength="120"
+        error={errors.name}
+      />
+      <Field
+        id="phone"
+        name="phone"
+        label={t(locale, 'contact.form.phone')}
+        type="tel"
+        autocomplete="tel"
+        required
+        minlength="6"
+        maxlength="30"
+        error={errors.phone}
+      />
+    </div>
+    <fieldset aria-describedby="project_type-error">
+      <legend>{t(locale, 'contact.form.project_type')}</legend>
+      <div class="chipset">
+        {
+          projectTypes.map((type) => (
+            <ChoiceChip
+              id={`type-${type}`}
+              name="project_type"
+              value={type}
+              checked={type === 'villa'}
+            >
+              {t(locale, `contact.form.types.${type}`)}
+            </ChoiceChip>
+          ))
+        }
+      </div>
+      <span class="err" id="project_type-error">{errors.project_type}</span>
+    </fieldset>
+    <Field
+      id="email"
+      name="email"
+      label={t(locale, 'contact.form.email')}
+      type="email"
+      autocomplete="email"
+      maxlength="254"
+      error={errors.email}
+    />
+    <div class="f2">
+      <Field
+        id="surface_m2"
+        name="surface_m2"
+        label={t(locale, 'contact.form.surface_m2')}
+        inputmode="decimal"
+        error={errors.surface_m2}
+      />
+      <Field
+        id="city"
+        name="city"
+        label={t(locale, 'contact.form.city')}
+        autocomplete="address-level2"
+        maxlength="120"
+        error={errors.city}
+      />
+    </div>
+    <Field
+      id="message"
+      name="message"
+      as="textarea"
+      label={t(locale, 'contact.form.message')}
+      placeholder={t(locale, 'contact.form.placeholder')}
+      required
+      minlength="4"
+      maxlength="4000"
+      error={errors.message}
+    />
+    <p
+      class="err summary"
+      role="alert"
+      tabindex="-1"
+      hidden={!Object.keys(errors).length}
+    >
+      {Object.values(errors).join(' ')}
+    </p>
+    <div class="failure" hidden={!failed} role="alert" tabindex="-1">
+      <p>{t(locale, 'contact.form.failure')}</p>
+      {
+        whatsapp && (
+          <Button href={whatsapp} data-whatsapp-fallback>
+            {t(locale, 'contact.form.whatsapp')}
+          </Button>
+        )
+      }
+    </div>
+    <Button type="submit" variant="primary"
+      >{
+        t(locale, failed ? 'contact.form.retry' : 'contact.form.submit')
+      }</Button
+    >
+  </form>
+  <div class="success" hidden role="status" tabindex="-1">
+    <h2>{t(locale, 'contact.form.success')}</h2><p>
+      {t(locale, 'contact.form.successDetail')}
+    </p>
+  </div>
+</contact-form>
+<script src="./client.ts"></script>
+<style>
+  contact-form {
+    display: block;
+    min-width: 0;
+    scroll-margin-block-start: 110px;
+  }
+  form {
+    background: var(--paper);
+    border-radius: var(--radius-l);
+    padding: clamp(20px, 3vw, 32px);
+    display: grid;
+    gap: 16px;
+    box-shadow:
+      0 1px 2px rgba(23, 32, 27, 0.04),
+      0 12px 40px rgba(23, 32, 27, 0.06);
+  }
+  .f2 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+  }
+  fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+  legend {
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-block-end: 6px;
+  }
+  .chipset {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .err {
+    color: var(--danger);
+    font-size: 0.82rem;
+  }
+  .err:empty {
+    display: none;
+  }
+  .success,
+  .failure {
+    display: grid;
+    gap: 16px;
+    padding: 16px;
+    background: var(--mist);
+    border-radius: var(--radius-s);
+  }
+  .success h2 {
+    font-size: 1.5rem;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  @media (max-width: 540px) {
+    .f2 {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -119,6 +119,45 @@
       "email": "TODO(client): Email address.",
       "hours": "TODO(client): Opening hours.",
       "address": "TODO(client): Confirm Dar Nizar label; the map pin is named Top Dar Fleur."
+    },
+    "form": {
+      "name": "Nom",
+      "phone": "Téléphone",
+      "email": "Email (facultatif)",
+      "project_type": "Type de projet",
+      "surface_m2": "Surface en m² (facultatif)",
+      "city": "Ville (facultatif)",
+      "message": "Votre projet",
+      "placeholder": "Surface, ville, ce que vous aimeriez avoir dans le jardin…",
+      "submit": "Envoyer la demande",
+      "loading": "Envoi en cours…",
+      "retry": "Réessayer",
+      "success": "Votre demande a été envoyée.",
+      "successDetail": "Nous vous recontacterons pour parler de votre projet.",
+      "failure": "La demande n’a pas pu être envoyée. Réessayez ou contactez-nous sur WhatsApp.",
+      "whatsapp": "Écrire sur WhatsApp",
+      "honeypot": "Laisser ce champ vide",
+      "back": "Retour à l’accueil",
+      "types": {
+        "villa": "Jardin de villa",
+        "riad": "Patio ou riad",
+        "terrasse": "Terrasse",
+        "pro": "Résidence ou entreprise",
+        "3d": "Conception 3D"
+      },
+      "errors": {
+        "name": "Indiquez un nom de 2 à 120 caractères.",
+        "phone": "Indiquez un numéro marocain valide (06…, 07… ou +212…).",
+        "email": "Indiquez une adresse email valide.",
+        "project_type": "Choisissez un type de projet.",
+        "surface_m2": "Indiquez une surface supérieure à zéro.",
+        "city": "La ville doit contenir au maximum 120 caractères.",
+        "message": "Décrivez votre projet en 4 à 4 000 caractères.",
+        "locale": "Choisissez une langue valide.",
+        "spam": "Envoi refusé. Rechargez la page et réessayez.",
+        "time": "Patientez au moins 3 secondes avant d’envoyer. Si le problème persiste, rechargez la page.",
+        "form": "Vérifiez les champs du formulaire."
+      }
     }
   },
   "pages": {

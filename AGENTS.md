@@ -66,11 +66,11 @@ When porting, keep its tokens, spacing, copy and interactions. Don't "improve" i
 - RTL: use logical properties (`margin-inline-start`, `inset-inline-start`), mirror arrows, keep the 3D model LTR.
 
 ## Engineering rules
-- Stack: **Astro 5 + TypeScript (strict)**, plain CSS with tokens (no UI kit), **three.js** for the 3D island, **Supabase** (Postgres, Auth, Storage), **Resend** for email, deploy on **Vercel**.
+- Stack: Astro 5 + TypeScript (strict), plain CSS tokens, three.js island, Astro content collections for projects, Resend for the contact email, Vercel.
 - Package manager: pnpm. Node 20+.
-- Every page server-renders its content; JS only for islands (3D model, form, admin).
-- Secrets only in env vars; the Supabase **service role key never reaches the browser**.
-- Validate every input on the server with zod. Rate-limit public endpoints.
+- Every page server-renders its content; JS only for islands (3D model and contact form).
+- Secrets only in env vars, never in the browser.
+- Validate every input on the server with zod. Contact spam protection uses a honeypot and HMAC-signed minimum fill time; no database or rate-limit store.
 - No invented content: missing facts stay as `TODO(client): …` in content files and show as a neutral placeholder in the UI.
 - Accessibility: one `h1` per page, landmarks, labels, visible focus, contrast AA, alt text on every photo.
 - Performance budget: Lighthouse ≥ 90 in all four categories on mobile; LCP < 2.5 s; three.js loaded only when the model scrolls into view.
